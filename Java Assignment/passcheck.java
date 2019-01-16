@@ -10,8 +10,9 @@ class passcheck {
 
 		while(tc-->0){
 			String pass = sc.next();
-			String pattern  = "[a-zA-Z]{0,}[-!@_$]{0,}[a-zA-Z]{2,}[0-9]{1,}";
-                        Pattern pat = Pattern.compile(pattern);
+			//String pattern  = "[a-zA-Z]{0,}[-!@_$]{0,}[a-zA-Z]{2,}[0-9]{1,}";
+                        String pattern  = "^(?=.*[0-9])(?=[a-zA-Z]{2,})([@$!A-Za-z0-9_-]+)";
+			Pattern pat = Pattern.compile(pattern);
                         Matcher mat = pat.matcher(pass);
 
 			if((pass.length()>=8 && pass.length()<=15) && mat.matches()) {
