@@ -1,7 +1,7 @@
 package user;
 
 /*
- *	Constant declarations 
+ *	Constant declarations.
  */
 
 public class Constants {

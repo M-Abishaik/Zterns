@@ -1,7 +1,7 @@
 package user;
 
 /*
- *	User bean class 
+ *	User bean class.
  */
 
 public class User {

@@ -24,6 +24,7 @@ public class Main{
 			
 			int choice = scanner.nextInt();
 						
+			scanner.nextLine();
 			String userMail = scanner.next();
 			String userPass = scanner.next();
 						
