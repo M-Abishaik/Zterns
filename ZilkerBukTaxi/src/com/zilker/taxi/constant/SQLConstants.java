@@ -1,6 +1,6 @@
 package com.zilker.taxi.constant;
 
-public class Query {
+public class SQLConstants {
 	
 	public static final String CHECK_MAIL_EXISTS = "SELECT * FROM CUSTOMER_DETAIL WHERE MAIL=?";
 	
@@ -10,13 +10,13 @@ public class Query {
 	
 	public static final String CHECK_CAB_EXISTS = "SELECT * FROM CAB_DETAIL";
 
-	public static final String GET_ROUTES_LIST = "SELECT * from ROUTE_DETAIL";
+	public static final String GET_ROUTES_LIST = "SELECT * FROM ROUTE_DETAIL";
 	
 	public static final String INSERT_PERSONAL_DETAILS = "INSERT INTO CUSTOMER_DETAIL(FIRST_NAME, LAST_NAME, MAIL) VALUES(?,?,?)";
 
 	public static final String INSERT_RIDE_DETAILS = "INSERT INTO CAB_RIDE_DETAIL(CUSTOMER_ID, DRIVER_ID, START_TIME, END_TIME, SOURCE_ADDRESS_ID, DESTINATION_ADDRESS_ID, CAB_ID, PRICE) VALUES(?,?,?,?,?,?,?,?)";
 
-	public static final String GET_BOOKING_ID = "SELECT * from CAB_RIDE_DETAIL WHERE CUSTOMER_ID=? AND DRIVER_ID=?";
+	public static final String GET_BOOKING_ID = "SELECT * FROM CAB_RIDE_DETAIL WHERE CUSTOMER_ID=? AND DRIVER_ID=?";
 
 	public static final String UPDATE_DRIVER_STATUS = "UPDATE DRIVER_DETAIL SET DRIVER_STATUS=? WHERE DRIVER_ID=?";
 

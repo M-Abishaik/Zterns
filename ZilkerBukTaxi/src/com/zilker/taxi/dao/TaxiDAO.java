@@ -9,10 +9,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.zilker.taxi.bean.BookingResponse;
 import com.zilker.taxi.bean.Customer;
 import com.zilker.taxi.bean.Invoice;
 import com.zilker.taxi.bean.Route;
-import com.zilker.taxi.constant.Query;
+import com.zilker.taxi.bean.UpdateRide;
+import com.zilker.taxi.constant.Constants;
+import com.zilker.taxi.constant.SQLConstants;
 import com.zilker.taxi.util.DbConnect;
 
 /*
@@ -39,7 +43,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.CHECK_MAIL_EXISTS);
+		    pst = conn.prepareStatement(SQLConstants.CHECK_MAIL_EXISTS);
 		    pst.setString(1, mail);
 		    rs = pst.executeQuery();
 		    if(rs.next()) {
@@ -65,7 +69,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.CHECK_BOOKING_EXISTS);
+		    pst = conn.prepareStatement(SQLConstants.CHECK_BOOKING_EXISTS);
 		    pst.setInt(1, bID);
 		    rs = pst.executeQuery();
 		    if(rs.next()) {
@@ -90,11 +94,11 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.CHECK_DRIVER_EXISTS);
+		    pst = conn.prepareStatement(SQLConstants.CHECK_DRIVER_EXISTS);
 		    rs = pst.executeQuery();
 		    
 		    while (rs.next()) {
-		    	if(rs.getString(5).equals("Available"))
+		    	if(rs.getString(5).equals(Constants.AVAILABLE))
 		    	  {
 		    		  String test = rs.getString(1);
 		    		  driverID= Integer.parseInt(test);
@@ -120,11 +124,11 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.CHECK_CAB_EXISTS);
+		    pst = conn.prepareStatement(SQLConstants.CHECK_CAB_EXISTS);
 		    rs = pst.executeQuery();
 		    
 		    while (rs.next()) {
-		    	if(rs.getString(3).equals("Available"))
+		    	if(rs.getString(3).equals(Constants.AVAILABLE))
 		    	  {
 		    		String test = rs.getString(1);
 		    		cabID= Integer.parseInt(test);
@@ -152,7 +156,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.GET_ROUTES_LIST);
+		    pst = conn.prepareStatement(SQLConstants.GET_ROUTES_LIST);
 		    rs = pst.executeQuery();
 		    
 		    while (rs.next()) {
@@ -181,12 +185,11 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.INSERT_PERSONAL_DETAILS);
+		    pst = conn.prepareStatement(SQLConstants.INSERT_PERSONAL_DETAILS);
 		    pst.setString(1, customer.getFirstName());
 		    pst.setString(2, customer.getLastName());
 		    pst.setString(3, customer.getMailId());
 		    int count = pst.executeUpdate();
-		    LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in inserting personal details.");
 		    } finally {
@@ -204,7 +207,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.INSERT_RIDE_DETAILS);
+		    pst = conn.prepareStatement(SQLConstants.INSERT_RIDE_DETAILS);
 		    pst.setInt(1, invoice.getCustomerID());
 		    pst.setInt(2, invoice.getDriverID());
 		    pst.setString(3, invoice.getRideStartTime());
@@ -214,7 +217,6 @@ public class TaxiDAO {
 		    pst.setInt(7, invoice.getCabID());
 		    pst.setFloat(8, invoice.getPrice());
 		    int count = pst.executeUpdate();
-		    LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		    
 		    if(count>0) {
 		    	bookingID = fetchBookingID(invoice.getCustomerID(), invoice.getDriverID());
@@ -238,7 +240,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.GET_BOOKING_ID);
+		    pst = conn.prepareStatement(SQLConstants.GET_BOOKING_ID);
 		    pst.setInt(1, customerID);
 		    pst.setInt(2, driverID);
 		    rs = pst.executeQuery();
@@ -264,15 +266,14 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.UPDATE_DRIVER_STATUS);
+		    pst = conn.prepareStatement(SQLConstants.UPDATE_DRIVER_STATUS);
 		    if(flag==0) {
-		    	pst.setString(1, "Unavailable");
+		    	pst.setString(1, Constants.NOT_AVAILABLE);
 		    }else {
-		    	pst.setString(1, "Available");
+		    	pst.setString(1, Constants.AVAILABLE);
 		    }
 		    pst.setInt(2, driverID);
 		    int count = pst.executeUpdate();
-		    LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating driver status.");
 		    } finally {
@@ -288,15 +289,14 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.UPDATE_CAB_STATUS);
+		    pst = conn.prepareStatement(SQLConstants.UPDATE_CAB_STATUS);
 		    if(flag==0) {
-		    	pst.setString(1, "Unavailable");
+		    	pst.setString(1, Constants.NOT_AVAILABLE);
 		    }else {
-		    	pst.setString(1, "Available");
+		    	pst.setString(1, Constants.AVAILABLE);
 		    }
 		    pst.setInt(2, cabID);
 		    int count = pst.executeUpdate();
-		    LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating cab status.");
 		    } finally {
@@ -314,7 +314,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.GET_LOCATION_ID);
+		    pst = conn.prepareStatement(SQLConstants.GET_LOCATION_ID);
 		    pst.setString(1, location);
 		    rs = pst.executeQuery();
 		    if(rs.next()) {
@@ -340,7 +340,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.GET_LOCATION);
+		    pst = conn.prepareStatement(SQLConstants.GET_LOCATION);
 		    pst.setInt(1, locationID);
 		    rs = pst.executeQuery();
 		    if(rs.next()) {
@@ -365,7 +365,7 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.GET_START_TIME);
+		    pst = conn.prepareStatement(SQLConstants.GET_START_TIME);
 		    pst.setInt(1, bookingID);
 		    rs = pst.executeQuery();
 		    if(rs.next()) {
@@ -384,19 +384,26 @@ public class TaxiDAO {
 	 * Displays the customer profile. 
 	 */
 	
-	public void displayProfile(String email) {
+	public Customer displayProfile(String email) {
+		
+		String firstName = "", lastName = "", mail = "";
 		
 		try {
 		      conn = DbConnect.getConnection();
-		      pst = conn.prepareStatement(Query.DISPLAY_PROFILE);
+		      pst = conn.prepareStatement(SQLConstants.DISPLAY_PROFILE);
 		      pst.setString(1, email);
 		      rs = pst.executeQuery();
 		      while (rs.next()) {
-					LOGGER.log(Level.INFO, "First name: " + rs.getString(2) + "\nLast name: " + rs.getString(3) 
-					+ "\nEmail: " + rs.getString(4));
+					firstName = rs.getString(2); 
+					lastName = rs.getString(3);
+					mail = rs.getString(4);
 		      }
+		      
+		      Customer customer = new Customer(firstName, lastName, mail);
+		      return customer;
 		} catch (Exception e) {
-		    	LOGGER.log(Level.SEVERE, "Error in displaying profile details.");
+		    	LOGGER.log(Level.SEVERE, "Error in retrieving profile details from the DB.");
+		    	return null;
 		  } finally {
 		      DbConnect.closeConnection(conn, pst, rs);
 		  }
@@ -406,7 +413,7 @@ public class TaxiDAO {
 	 * Displays the ride details of a customer.
 	 */
 	
-	public void displayBookingDetails(int bookingID) {
+	public BookingResponse displayBookingDetails(int bookingID) {
 		
 		String startTime = "", endTime = "";
 		float price = 0.0f;
@@ -415,7 +422,7 @@ public class TaxiDAO {
 		
 		try {
 		      conn = DbConnect.getConnection();
-		      pst = conn.prepareStatement(Query.DISPLAY_BOOKING_DETAILS);
+		      pst = conn.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
 		      pst.setInt(1, bookingID);
 		      rs = pst.executeQuery();
 		      
@@ -429,13 +436,13 @@ public class TaxiDAO {
 		      
 		      source = findLocation(sourceID);
 		      destination = findLocation(destinationID);
-
-		      LOGGER.log(Level.INFO, "Booking ID: " + bookingID + "\nSource: " + source 
-				+ "\nDestination: " + destination + "\nStart Time: " + startTime + "\nEnd Time: " + endTime
-				+ "\nFare: " + price);
-		      		      
+		      
+		      BookingResponse bookingResponse = new BookingResponse(bookingID, price, source, destination, startTime, endTime);
+		      
+		      return bookingResponse;		      
 		} catch (Exception e) {
 		    	LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
+		    	return null;
 		} finally {
 		      DbConnect.closeConnection(conn, pst, rs);
 		}
@@ -452,7 +459,7 @@ public class TaxiDAO {
 
 		try {
 		      conn = DbConnect.getConnection();
-		      pst = conn.prepareStatement(Query.DISPLAY_BOOKING_DETAILS);
+		      pst = conn.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
 		      pst.setInt(1, bookingID);
 		      rs = pst.executeQuery();
 		      
@@ -463,13 +470,12 @@ public class TaxiDAO {
 		    	  	hashMap.put(driverID, cabID);
 		      }
 		      
-		      pst = conn.prepareStatement(Query.DELETE_RIDE);
+		      pst = conn.prepareStatement(SQLConstants.DELETE_RIDE);
 		      pst.setInt(1, bookingID);
 		      int count = pst.executeUpdate();
 		      if(count>0) {
 			      LOGGER.log(Level.INFO, "Ride cancelled successfully.");
 		      }
-		      LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		      return hashMap;
 		    } catch (SQLException e) {
 		    	LOGGER.log(Level.INFO, "Error in cancelling the ride.");
@@ -490,26 +496,23 @@ public class TaxiDAO {
 		try {
 		      conn = DbConnect.getConnection();
 		      
-		      pst = conn.prepareStatement(Query.DELETE_PROFILE);
+		      pst = conn.prepareStatement(SQLConstants.DELETE_PROFILE);
 		      pst.setInt(1, customerID);
 		      count = pst.executeUpdate();
 		      if(count>0) {
 			      LOGGER.log(Level.INFO, "Profile deleted successfully.");
 		      }
 		      
-		      LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		      count = 0;
 		       
-		      pst = conn.prepareStatement(Query.DELETE_CUSTOMER_RIDES);
+		      pst = conn.prepareStatement(SQLConstants.DELETE_CUSTOMER_RIDES);
 		      pst.setInt(1, customerID);
 		      count = pst.executeUpdate();
 		      
 		      if(count>0) {
 			      LOGGER.log(Level.INFO, "Rides deleted successfully.");
 		      }
-		      
-		      LOGGER.log(Level.INFO, "Number of rows affected " + count);
-		      
+		      		      
 		    } catch (SQLException e) {
 		    	LOGGER.log(Level.INFO, "Error in deleting details.");
 		    } finally {
@@ -525,12 +528,11 @@ public class TaxiDAO {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.UPDATE_PROFILE);
+		    pst = conn.prepareStatement(SQLConstants.UPDATE_PROFILE);
 		    pst.setString(1, customer.getFirstName());
 		    pst.setString(2, customer.getLastName());
 		    pst.setString(3, customer.getMailId());
 		    int count = pst.executeUpdate();
-		    LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating personal details.");
 		    } finally {
@@ -542,19 +544,18 @@ public class TaxiDAO {
 	 * Updates the ride details of a customer. 
 	 */
 	
-	public void updateRideDetails(int bookingID, int sourceID, int destinationID, String rideStartTime, String rideEndTime, float price) {
+	public void updateRideDetails(UpdateRide updateRide) {
 		
 		try {
 			conn = DbConnect.getConnection();
-		    pst = conn.prepareStatement(Query.UPDATE_RIDE_DETAILS);
-		    pst.setString(1, rideStartTime);
-		    pst.setString(2, rideEndTime);
-		    pst.setInt(3, sourceID);
-		    pst.setInt(4, destinationID);
-		    pst.setFloat(5, price);
-		    pst.setInt(6, bookingID);
+		    pst = conn.prepareStatement(SQLConstants.UPDATE_RIDE_DETAILS);
+		    pst.setString(1, updateRide.getRideStartTime());
+		    pst.setString(2, updateRide.getRideEndTime());
+		    pst.setInt(3, updateRide.getSourceID());
+		    pst.setInt(4, updateRide.getDestinationID());
+		    pst.setFloat(5, updateRide.getPrice());
+		    pst.setInt(6, updateRide.getBookingID());
 		    int count = pst.executeUpdate();
-		    LOGGER.log(Level.INFO, "Number of rows affected " + count);
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating ride details.");
 		    } finally {

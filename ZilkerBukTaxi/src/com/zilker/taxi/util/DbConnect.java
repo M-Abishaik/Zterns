@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.zilker.taxi.constant.ConstantVar;
+import com.zilker.taxi.constant.Constants;
 
 /*
  * Handles the connection information with the database. 
@@ -26,9 +26,9 @@ public class DbConnect {
 	public static Connection getConnection() {
 	    Connection conn = null;
 	    try {
-	      conn = DriverManager.getConnection(ConstantVar.CONNECTION, ConstantVar.USERNAME, ConstantVar.PASSWORD);
+	      conn = DriverManager.getConnection(Constants.CONNECTION, Constants.USERNAME, Constants.PASSWORD);
 	    } catch (SQLException e) {
-	    	LOGGER.log(Level.INFO, "Error in connecting with driver.");
+	    	LOGGER.log(Level.SEVERE, "Error in connecting with driver.");
 	    }
 	    return conn;
 	  }
@@ -49,7 +49,7 @@ public class DbConnect {
 				conn.close();
 			}
 	    } catch (SQLException e) {
-	    	LOGGER.log(Level.INFO, "Error in closing the connection.");
+	    	LOGGER.log(Level.SEVERE, "Error in closing the connection.");
 	    }
 	}
 }

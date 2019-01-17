@@ -8,6 +8,8 @@ public class Customer {
 
 	private String firstName, lastName, mailId;
 	
+	public Customer() {}
+	
 	public Customer(String firstName, String lastName, String mailId) {
 		super();
 		this.firstName = firstName;
