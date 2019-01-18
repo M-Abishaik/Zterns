@@ -4,23 +4,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-
-import com.zilker.taxi.bean.Customer;
 import com.zilker.taxi.bean.Route;
-import com.zilker.taxi.bean.Vertex;
-import com.zilker.taxi.bean.Edge;
 import com.zilker.taxi.dao.TaxiDAO;
-
 /*
  * Computes the estimated finish time and price corresponding to the distance between source and destination.
  */
@@ -28,10 +17,7 @@ import com.zilker.taxi.dao.TaxiDAO;
 public class ShortestPath {
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	//private static List<Vertex> nodes;
-	//private static List<Edge> edges;
 
-	
 	public ShortestPath() {}
 	
 	/*
@@ -40,12 +26,9 @@ public class ShortestPath {
 	
 	public HashMap<String, Float> calculateTravel(int sourceID, int destinationID, String startTime) {
 		
-		//ShortestPath shortestPath = new ShortestPath();
 		HashMap<String, Float> hashMap= new HashMap<String, Float>();
 		ArrayList<Route> routesList = new ArrayList<Route>();
-		//nodes = new ArrayList<Vertex>();
-        //edges = new ArrayList<Edge>();
-        
+		
 		float distance = 0.0f, price = 0.0f;
 		String endTime = "";
 		
@@ -93,7 +76,7 @@ public class ShortestPath {
 	 * Computes the finish time of a ride. 
 	 */
 	
-	public String calculateFinishTime(String startTime, int minutes) {
+	private String calculateFinishTime(String startTime, int minutes) {
 		
          SimpleDateFormat df = new SimpleDateFormat("HH:mm");
          String endTime = "";
@@ -106,7 +89,7 @@ public class ShortestPath {
         	 endTime = df.format(cal.getTime());
         	 return endTime;
          }catch(ParseException pe){
-        	 pe.printStackTrace();
+        	 LOGGER.log(Level.INFO, "Invalid time format.");
         	 return "";
          }
 	}

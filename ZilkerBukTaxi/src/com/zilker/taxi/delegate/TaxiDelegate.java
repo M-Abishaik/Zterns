@@ -1,6 +1,6 @@
 package com.zilker.taxi.delegate;
 
-import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -11,9 +11,8 @@ import com.zilker.taxi.bean.Customer;
 import com.zilker.taxi.bean.Invoice;
 import com.zilker.taxi.bean.Route;
 import com.zilker.taxi.bean.UpdateRide;
-import com.zilker.taxi.constant.Query;
 import com.zilker.taxi.dao.TaxiDAO;
-import com.zilker.taxi.util.DbConnect;
+import com.zilker.taxi.util.ShortestPath;
 
 public class TaxiDelegate {
 	
@@ -313,7 +312,6 @@ public class TaxiDelegate {
 	
 	public Customer displayProfile(String email) {
 		
-		String firstName = "", lastName = "", mail = "";
 		Customer customer = null;
 		
 		try {
@@ -362,15 +360,17 @@ public class TaxiDelegate {
 	}
 	
 	
+	/*
+	 * Computes the estimated finish time and price corresponding to the distance between source and destination.
+	 */
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public HashMap<String, Float> calculateTravel(int sourceID, int destinationID, String formattedTime) {
+		HashMap<String, Float> hashMap = new HashMap<String, Float>();
+		
+		ShortestPath shortestPath = new ShortestPath();
+		hashMap = shortestPath.calculateTravel(sourceID, destinationID, formattedTime);
+
+		return hashMap;
+		
+	}
 }

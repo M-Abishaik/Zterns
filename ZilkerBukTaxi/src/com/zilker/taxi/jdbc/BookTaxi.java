@@ -1,23 +1,22 @@
 package com.zilker.taxi.jdbc;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.math.BigDecimal;
+import java.util.InputMismatchException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
+
+import com.zilker.taxi.bean.BookingResponse;
 import com.zilker.taxi.bean.Customer;
 import com.zilker.taxi.bean.Invoice;
 import com.zilker.taxi.bean.UpdateRide;
 import com.zilker.taxi.constant.Constants;
-import com.zilker.taxi.dao.TaxiDAO;
-import com.zilker.taxi.util.ShortestPath;
+import com.zilker.taxi.util.RegexUtility;
 import com.zilker.taxi.delegate.TaxiDelegate;
 
 /*
@@ -44,8 +43,14 @@ public class BookTaxi {
 							+ "6. Cance a ride." + "\n" + "7. Delete account." + "\n" + "8. Exit");
 			LOGGER.log(Level.INFO, "Enter your choice: ");
 
-			choice = SCANNER.nextInt();
+			try {
+				choice = SCANNER.nextInt();
+			} catch(InputMismatchException e) {
+				LOGGER.log(Level.WARNING, "Invalid input. Please enter a valid number.");
+				SCANNER.next();
+			}
 
+			
 			switch (choice) {
 			case 1:
 				bookTaxi.registerAccount();
@@ -85,38 +90,49 @@ public class BookTaxi {
 	public void registerAccount() {
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
+			RegexUtility regexUtility = new RegexUtility();
 			
-			String mail = "", firstName = "", lastName = "";
-			Matcher matcher = null;
+			String mail = "", firstName = "", lastName = "", fullName = "";
 			boolean check = false;
 			int customerID = 0;
 
 			SCANNER.nextLine();
 
-			LOGGER.log(Level.INFO, "Enter first name: ");
-			firstName = SCANNER.nextLine();
+			do {
+				LOGGER.log(Level.INFO, "Enter first name: ");
+				firstName = SCANNER.nextLine();
 
-			LOGGER.log(Level.INFO, "Enter Last name: ");
-			lastName = SCANNER.nextLine();
+				LOGGER.log(Level.INFO, "Enter Last name: ");
+				lastName = SCANNER.nextLine();
+				
+				fullName = firstName + " " + lastName;
+		
+				check = regexUtility.validateRegex(Constants.VALID_NAME_REGEX, fullName);
+				if(check == true) {
+					break;
+				} else {
+					LOGGER.log(Level.WARNING, "Invalid name. Enter a valid one.");
+				}
+				
+			}while(check != true);
+			
+			check = false;
 
 			do {
 				LOGGER.log(Level.INFO, "Enter your mail: ");
 				mail = SCANNER.next();
 
-				matcher = Constants.VALID_EMAIL_ADDRESS_REGEX.matcher(mail);
-				if (matcher.find() == true) {
-					check = true;
+				check = regexUtility.validateRegex(Constants.VALID_EMAIL_ADDRESS_REGEX, mail);
+				if(check == true) {
 					break;
 				} else {
-					LOGGER.log(Level.WARNING, "Invalid e-mail. Enter a valid one.");
+					LOGGER.log(Level.WARNING, "Invalid mail. Enter a valid one.");
 				}
 			} while (check != true);
 
 			customerID = taxiDelegate.checkMailExists(mail);
 			
-			//customerID = taxiDAO.checkMailExists(mail);
 			if (customerID != (-1)) {
 				LOGGER.log(Level.WARNING, mail + " " + "already exists.");
 				return;
@@ -125,8 +141,6 @@ public class BookTaxi {
 			Customer customer = new Customer(firstName, lastName, mail);
 			taxiDelegate.insertPersonalDetails(customer);
 			
-			//taxiDAO.insertPersonalDetails(customer);
-
 			LOGGER.log(Level.INFO, "Account successfully created.");
 
 		} catch (Exception e) {
@@ -141,13 +155,10 @@ public class BookTaxi {
 	public void bookRide() {
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
-
-			ShortestPath shortestPath = new ShortestPath();
+			RegexUtility regexUtility = new RegexUtility();
 
 			String source = "", destination = "", rideStartTime = "", rideEndTime = "", mail = "", formattedTime = "";
-			Matcher matcher = null;
 			boolean check = false;
 			int customerID = 0, driverID = 0, cabID = 0, sourceID = 0, destinationID = 0, bookingID = 0;
 			Date date = null;
@@ -161,18 +172,16 @@ public class BookTaxi {
 
 				mail = SCANNER.nextLine();
 
-				matcher = Constants.VALID_EMAIL_ADDRESS_REGEX.matcher(mail);
-				if (matcher.find() == true) {
-					check = true;
+				check = regexUtility.validateMail(Constants.VALID_EMAIL_ADDRESS_REGEX, mail);
+				if(check == true) {
 					break;
 				} else {
-					LOGGER.log(Level.WARNING, "Invalid e-mail. Enter a valid one.");
+					LOGGER.log(Level.WARNING, "Invalid mail. Enter a valid one.");
 				}
 			} while (check != true);
 
 			check = false;
 
-			//customerID = taxiDAO.checkMailExists(mail);
 			customerID = taxiDelegate.checkMailExists(mail);
 			
 			if (customerID == (-1)) {
@@ -186,9 +195,6 @@ public class BookTaxi {
 
 				LOGGER.log(Level.INFO, "Enter the drop location: ");
 				destination = SCANNER.nextLine();
-
-				//sourceID = taxiDAO.findLocationID(source);
-				//destinationID = taxiDAO.findLocationID(destination);
 				
 				sourceID = taxiDelegate.findLocationID(source);
 				destinationID = taxiDelegate.findLocationID(destination);
@@ -201,33 +207,26 @@ public class BookTaxi {
 				}
 			} while (check != true);
 
-			
-			//driverID = taxiDAO.checkDriverExists();
-
-			//cabID = taxiDAO.checkCabExists();
-
 			driverID = taxiDelegate.checkDriverExists();
 			cabID = taxiDelegate.checkCabExists();
 			
 			
 			if (driverID != (-1) && cabID != (-1)) {
-				LOGGER.log(Level.INFO, "At what time do you wish to start the ride? ");
+				
+				LOGGER.log(Level.INFO, "At what time do you wish to start the ride?(Example: 11:30 PM)");
 				rideStartTime = SCANNER.nextLine();
 
 				dateFormat = new SimpleDateFormat("hh:mm aa");
 				outputFormat = new SimpleDateFormat("HH:mm");
 
-				try {
-					date = dateFormat.parse(rideStartTime);
-					formattedTime = outputFormat.format(date);
-				} catch (ParseException pe) {
-					LOGGER.log(Level.INFO, pe.getMessage());
-				}
-
+				
+				date = dateFormat.parse(rideStartTime);
+				formattedTime = outputFormat.format(date);
+		
 				// Computes the estimated finish time and price corresponding to the distance
 				// between source and destination.
 
-				hashMap = shortestPath.calculateTravel(sourceID, destinationID, formattedTime);
+				hashMap = taxiDelegate.calculateTravel(sourceID, destinationID, formattedTime);
 				if (hashMap == null) {
 					LOGGER.log(Level.WARNING, "Please enter a valid set of source and destination.");
 					return;
@@ -238,8 +237,6 @@ public class BookTaxi {
 
 				Invoice invoice = new Invoice(customerID, driverID, cabID, sourceID, destinationID, formattedTime,
 						rideEndTime, price);
-
-				//bookingID = taxiDAO.insertRideDetails(invoice);
 				
 				bookingID = taxiDelegate.insertRideDetails(invoice);
 				
@@ -247,9 +244,6 @@ public class BookTaxi {
 
 				// Updates the driver and cab status to be unavailable until the current ride
 				// has been completed.
-
-				//taxiDAO.updateDriverStatus(driverID, 0);
-				//taxiDAO.updateCabStatus(cabID, 0);
 				
 				taxiDelegate.updateDriverStatus(driverID, 0);
 				taxiDelegate.updateCabStatus(cabID, 0);
@@ -260,7 +254,10 @@ public class BookTaxi {
 				LOGGER.log(Level.INFO, "All rides are busy. Please try after sometime.");
 			}
 
-		} catch (Exception e) {
+		} catch (ParseException pe) {
+			LOGGER.log(Level.INFO, "Invalid time. Please enter a valid one.");
+
+		}catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
@@ -299,13 +296,14 @@ public class BookTaxi {
 
 	public void displayProfile() {
 		String mail = "";
-		Matcher matcher = null;
 		boolean check = false;
 		int customerID = 0;
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
+			RegexUtility regexUtility = new RegexUtility();
+
+			Customer customer = new Customer();
 			
 			do {
 				LOGGER.log(Level.INFO, "Enter your registered mail-ID: ");
@@ -313,23 +311,23 @@ public class BookTaxi {
 
 				mail = SCANNER.nextLine();
 
-				matcher = Constants.VALID_EMAIL_ADDRESS_REGEX.matcher(mail);
-				if (matcher.find() == true) {
-					check = true;
+				check = regexUtility.validateRegex(Constants.VALID_EMAIL_ADDRESS_REGEX, mail);
+				if(check == true) {
 					break;
 				} else {
-					LOGGER.log(Level.WARNING, "Invalid e-mail. Enter a valid one.");
+					LOGGER.log(Level.WARNING, "Invalid mail. Enter a valid one.");
 				}
 			} while (check != true);
 
-			//customerID = taxiDAO.checkMailExists(mail);
 			customerID = taxiDelegate.checkMailExists(mail);
 			if (customerID == (-1)) {
 				LOGGER.log(Level.WARNING, mail + " " + "doesn't exist. Please register.");
 				return;
 			}
-			//taxiDAO.displayProfile(mail);
-			taxiDelegate.displayProfile(mail);
+			
+			customer = taxiDelegate.displayProfile(mail);
+			LOGGER.log(Level.INFO, "First name: " + customer.getFirstName() + "\nLast name: " + customer.getLastName() + 
+					"\nMail: " + customer.getMailId());
 			LOGGER.log(Level.INFO, "Profile displayed.");
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
@@ -343,16 +341,15 @@ public class BookTaxi {
 	public void displayBookingDetails() {
 		int bookingID = 0;
 		boolean check = false;
+		BookingResponse bookingResponse = null;
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
 
 			LOGGER.log(Level.INFO, "Enter your bookingID: ");
 			SCANNER.nextLine();
 
 			bookingID = SCANNER.nextInt();
-			//check = taxiDAO.checkBookingExists(bookingID);
 			check = taxiDelegate.checkBookingExists(bookingID);
 
 			if (check == false) {
@@ -360,9 +357,13 @@ public class BookTaxi {
 				return;
 			}
 
-			//taxiDAO.displayBookingDetails(bookingID);
-			taxiDelegate.displayBookingDetails(bookingID);
+			bookingResponse = taxiDelegate.displayBookingDetails(bookingID);
+			LOGGER.log(Level.INFO, "Booking ID: " + bookingResponse.getBookingID() + "\nSource: " + bookingResponse.getSource()
+					+ "\nDestination: " + bookingResponse.getDestination() + "\nPrice: " + bookingResponse.getPrice()
+					+ "\nStart time: " + bookingResponse.getStartTime() + "\nEnd time: " + bookingResponse.getEndTime());
 			LOGGER.log(Level.INFO, "Booking details displayed.");
+		}catch (InputMismatchException e) {
+			LOGGER.log(Level.INFO, "Enter a valid integer.");
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -374,14 +375,13 @@ public class BookTaxi {
 
 	public void updatePersonalDetails() {
 
-		String mail = "", firstName = "", lastName = "";
-		Matcher matcher = null;
+		String mail = "", firstName = "", lastName = "", fullName = "";
 		boolean check = false;
 		int customerID = 0;
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
+			RegexUtility regexUtility = new RegexUtility();
 
 			do {
 				LOGGER.log(Level.INFO, "Enter your registered mail-ID: ");
@@ -389,16 +389,16 @@ public class BookTaxi {
 
 				mail = SCANNER.next();
 
-				matcher = Constants.VALID_EMAIL_ADDRESS_REGEX.matcher(mail);
-				if (matcher.find() == true) {
-					check = true;
+				check = regexUtility.validateRegex(Constants.VALID_EMAIL_ADDRESS_REGEX, mail);
+				if(check == true) {
 					break;
 				} else {
-					LOGGER.log(Level.WARNING, "Invalid e-mail. Enter a valid one.");
+					LOGGER.log(Level.WARNING, "Invalid mail. Enter a valid one.");
 				}
 			} while (check != true);
+			
+			check = false;
 
-			//customerID = taxiDAO.checkMailExists(mail);
 			customerID = taxiDelegate.checkMailExists(mail);
 			if (customerID == (-1)) {
 				LOGGER.log(Level.WARNING, mail + " " + "doesn't exist. Please register.");
@@ -407,18 +407,24 @@ public class BookTaxi {
 
 			SCANNER.nextLine();
 
-			LOGGER.log(Level.INFO, "Enter first name: ");
-			firstName = SCANNER.nextLine();
+			do {
+				LOGGER.log(Level.INFO, "Enter first name: ");
+				firstName = SCANNER.nextLine();
 
-			LOGGER.log(Level.INFO, "Enter Last name: ");
-			lastName = SCANNER.nextLine();
-
-			if (firstName.isEmpty() || lastName.isEmpty()) {
-				LOGGER.log(Level.WARNING, "First name and Last name details are mandatory");
-			}
+				LOGGER.log(Level.INFO, "Enter Last name: ");
+				lastName = SCANNER.nextLine();
+				
+				fullName = firstName + " " + lastName;
+				
+				check = regexUtility.validateRegex(Constants.VALID_NAME_REGEX, fullName);
+				if(check == true) {
+					break;
+				} else {
+					LOGGER.log(Level.WARNING, "Invalid name. Enter a valid one.");
+				}				
+			}while(check != true);
 
 			Customer customer = new Customer(firstName, lastName, mail);
-			//taxiDAO.updatePersonalDetails(customer);
 			taxiDelegate.updatePersonalDetails(customer);
 
 			LOGGER.log(Level.INFO, "Profile successfully updated.");
@@ -447,15 +453,12 @@ public class BookTaxi {
 		HashMap<String, Float> hashMap = new HashMap<String, Float>();
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
-			ShortestPath shortestPath = new ShortestPath();
 
 			LOGGER.log(Level.INFO, "Enter your bookingID: ");
 			SCANNER.nextLine();
 
 			bookingID = SCANNER.nextInt();
-			//check = taxiDAO.checkBookingExists(bookingID);
 			check = taxiDelegate.checkBookingExists(bookingID);
 
 			if (check == false) {
@@ -465,7 +468,6 @@ public class BookTaxi {
 
 			check = false;
 
-			//startTime = taxiDAO.findStartTime(bookingID);
 			startTime = taxiDelegate.findStartTime(bookingID);
 
 			calendar = Calendar.getInstance();
@@ -495,9 +497,6 @@ public class BookTaxi {
 				LOGGER.log(Level.INFO, "Enter the drop location: ");
 				destination = SCANNER.nextLine();
 
-				//sourceID = taxiDAO.findLocationID(source);
-				//destinationID = taxiDAO.findLocationID(destination);
-				
 				sourceID = taxiDelegate.findLocationID(source);
 				destinationID = taxiDelegate.findLocationID(destination);
 
@@ -508,24 +507,25 @@ public class BookTaxi {
 					LOGGER.log(Level.WARNING, "Invalid location(s). Enter a valid one.");
 				}
 			} while (check != true);
+			
+			check = false;
 
-			LOGGER.log(Level.INFO, "At what time do you wish to start the ride? ");
-			rideStartTime = SCANNER.nextLine();
+		
+				LOGGER.log(Level.INFO, "At what time do you wish to start the ride?(Example: 11:30 PM)");
+				rideStartTime = SCANNER.nextLine();
 
-			dateFormat = new SimpleDateFormat("hh:mm aa");
-			outputFormat = new SimpleDateFormat("HH:mm");
+				dateFormat = new SimpleDateFormat("hh:mm aa");
+				outputFormat = new SimpleDateFormat("HH:mm");
 
-			try {
+				
 				date = dateFormat.parse(rideStartTime);
-				formattedTime = outputFormat.format(date);
-			} catch (ParseException pe) {
-				LOGGER.log(Level.INFO, pe.getMessage());
-			}
+				formattedTime = outputFormat.format(date);			
+			
 
 			// Recomputes the new estimated finish time and price corresponding to the
 			// distance between source and destination.
 			
-			hashMap = shortestPath.calculateTravel(sourceID, destinationID, formattedTime);
+			hashMap = taxiDelegate.calculateTravel(sourceID, destinationID, formattedTime);
 			if (hashMap == null) {
 				LOGGER.log(Level.WARNING, "Please enter a valid set of source and destination.");
 				return;
@@ -534,11 +534,15 @@ public class BookTaxi {
 			rideEndTime = (String) hashMap.keySet().toArray()[0];
 			price = hashMap.get(rideEndTime);
 
-			//taxiDAO.updateRideDetails(bookingID, sourceID, destinationID, formattedTime, rideEndTime, price);
 			UpdateRide updateRide = new UpdateRide(formattedTime, rideEndTime, sourceID, destinationID, bookingID, price);
 			taxiDelegate.updateRideDetails(updateRide);
+			
 			LOGGER.log(Level.INFO, "Booking details successfully updated.");
-		} catch (Exception e) {
+		} catch (ParseException pe) {
+			LOGGER.log(Level.INFO, "Invalid time. Please enter a valid one.");
+		}catch (InputMismatchException e) {
+			LOGGER.log(Level.INFO, "Enter a valid integer.");
+		}catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
@@ -554,14 +558,12 @@ public class BookTaxi {
 		HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
 
 			LOGGER.log(Level.INFO, "Enter your bookingID: ");
 			SCANNER.nextLine();
 
 			bookingID = SCANNER.nextInt();
-			//check = taxiDAO.checkBookingExists(bookingID);
 			check = taxiDelegate.checkBookingExists(bookingID);
 
 
@@ -572,22 +574,20 @@ public class BookTaxi {
 
 			// Fetches corresponding driver and cab ID's.
 
-			//hashMap = taxiDAO.cancelRide(bookingID);
 			hashMap = taxiDelegate.cancelRide(bookingID);
 
 			driverID = (int) hashMap.keySet().toArray()[0];
 			cabID = hashMap.get(driverID);
 
 			// Updates the driver and cab statuses to be available now.
-
-			//taxiDAO.updateDriverStatus(driverID, 1);
-			//taxiDAO.updateCabStatus(cabID, 1);
 			
 			taxiDelegate.updateDriverStatus(driverID, 1);
 			taxiDelegate.updateCabStatus(cabID, 1);
 
 			LOGGER.log(Level.INFO, "Ride cancelled successfully.");
-		} catch (Exception e) {
+		} catch (InputMismatchException e) {
+			LOGGER.log(Level.INFO, "Enter a valid integer.");
+		}catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
 	}
@@ -598,37 +598,33 @@ public class BookTaxi {
 
 	public void deleteAccount() {
 		String mail = "";
-		Matcher matcher = null;
 		boolean check = false;
 		int customerID = 0;
 
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
+			RegexUtility regexUtility = new RegexUtility();
 
 			do {
 				LOGGER.log(Level.INFO, "Enter your registered mail-ID: ");
 				SCANNER.nextLine();
+				mail = SCANNER.next();
 
-				mail = SCANNER.nextLine();
-
-				matcher = Constants.VALID_EMAIL_ADDRESS_REGEX.matcher(mail);
-				if (matcher.find() == true) {
-					check = true;
+				check = regexUtility.validateRegex(Constants.VALID_EMAIL_ADDRESS_REGEX, mail);
+				if(check == true) {
 					break;
 				} else {
-					LOGGER.log(Level.WARNING, "Invalid e-mail. Enter a valid one.");
+					LOGGER.log(Level.WARNING, "Invalid mail. Enter a valid one.");
 				}
 			} while (check != true);
 
-			//customerID = taxiDAO.checkMailExists(mail);
 			customerID = taxiDelegate.checkMailExists(mail);
 
 			if (customerID == (-1)) {
 				LOGGER.log(Level.WARNING, mail + " " + "doesn't exist.");
 				return;
 			}
-			//taxiDAO.deleteAccount(mail, customerID);
+			
 			taxiDelegate.deleteAccount(mail, customerID);
 
 			LOGGER.log(Level.INFO, "Account deleted successfully.");

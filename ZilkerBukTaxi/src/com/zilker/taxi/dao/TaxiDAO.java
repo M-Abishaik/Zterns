@@ -189,7 +189,7 @@ public class TaxiDAO {
 		    pst.setString(1, customer.getFirstName());
 		    pst.setString(2, customer.getLastName());
 		    pst.setString(3, customer.getMailId());
-		    int count = pst.executeUpdate();
+		    pst.executeUpdate();
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in inserting personal details.");
 		    } finally {
@@ -273,7 +273,7 @@ public class TaxiDAO {
 		    	pst.setString(1, Constants.AVAILABLE);
 		    }
 		    pst.setInt(2, driverID);
-		    int count = pst.executeUpdate();
+		    pst.executeUpdate();
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating driver status.");
 		    } finally {
@@ -296,7 +296,7 @@ public class TaxiDAO {
 		    	pst.setString(1, Constants.AVAILABLE);
 		    }
 		    pst.setInt(2, cabID);
-		    int count = pst.executeUpdate();
+		    pst.executeUpdate();
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating cab status.");
 		    } finally {
@@ -432,6 +432,7 @@ public class TaxiDAO {
 		    		sourceID = rs.getInt(6);
 		    	  	destinationID = rs.getInt(7);
 		    	  	price = rs.getFloat(9);
+		    	  	
 		      }
 		      
 		      source = findLocation(sourceID);
@@ -491,20 +492,20 @@ public class TaxiDAO {
 	
 	public void deleteAccount(String mail, int  customerID) {
 		
-		int driverID = 0, cabID = 0, count = 0, bookingID = 0;
+		int count = 0;
 		
 		try {
 		      conn = DbConnect.getConnection();
 		      
 		      pst = conn.prepareStatement(SQLConstants.DELETE_PROFILE);
 		      pst.setInt(1, customerID);
-		      count = pst.executeUpdate();
+		      pst.executeUpdate();
 		      if(count>0) {
 			      LOGGER.log(Level.INFO, "Profile deleted successfully.");
 		      }
 		      
 		      count = 0;
-		       
+		      
 		      pst = conn.prepareStatement(SQLConstants.DELETE_CUSTOMER_RIDES);
 		      pst.setInt(1, customerID);
 		      count = pst.executeUpdate();
@@ -532,7 +533,7 @@ public class TaxiDAO {
 		    pst.setString(1, customer.getFirstName());
 		    pst.setString(2, customer.getLastName());
 		    pst.setString(3, customer.getMailId());
-		    int count = pst.executeUpdate();
+		    pst.executeUpdate();
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating personal details.");
 		    } finally {
@@ -555,7 +556,7 @@ public class TaxiDAO {
 		    pst.setInt(4, updateRide.getDestinationID());
 		    pst.setFloat(5, updateRide.getPrice());
 		    pst.setInt(6, updateRide.getBookingID());
-		    int count = pst.executeUpdate();
+		    pst.executeUpdate();
 		    } catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in updating ride details.");
 		    } finally {
