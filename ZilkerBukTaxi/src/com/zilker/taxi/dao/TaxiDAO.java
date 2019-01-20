@@ -2,6 +2,7 @@ package com.zilker.taxi.dao;
 
 import java.sql.Connection;
 
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
 
 import com.zilker.taxi.bean.BookingResponse;
 import com.zilker.taxi.bean.Customer;
-import com.zilker.taxi.bean.Invoice;
+import com.zilker.taxi.bean.RideInvoice;
 import com.zilker.taxi.bean.Route;
 import com.zilker.taxi.bean.UpdateRide;
 import com.zilker.taxi.constant.Constants;
@@ -63,9 +64,9 @@ public class TaxiDAO {
 	 * Checks if the booking ID of a ride exists.
 	 */
 	
-	public boolean checkBookingExists(int bID) {
+	public int checkBookingExists(int bID) {
 		
-		boolean check = false;
+		int bookingID = -1;
 		
 		try {
 			conn = DbConnect.getConnection();
@@ -73,12 +74,12 @@ public class TaxiDAO {
 		    pst.setInt(1, bID);
 		    rs = pst.executeQuery();
 		    if(rs.next()) {
-		    	 check = true;
+		    	 bookingID = 1;
 		    }
-		    return check;
+		    return bookingID;
 		} catch (SQLException e) {
 		    LOGGER.log(Level.INFO, "Error in checking if booking ID exists.");
-		    return false;
+		    return -1;
 		} finally {
 		    DbConnect.closeConnection(conn, pst, rs);
 		}
@@ -201,7 +202,7 @@ public class TaxiDAO {
 	 * Inserts the ride details of the customer. 
 	 */
 	
-	public int insertRideDetails(Invoice invoice) {
+	public int insertRideDetails(RideInvoice invoice) {
 		
 		int bookingID = -1;
 		

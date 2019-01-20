@@ -4,13 +4,13 @@ package com.zilker.taxi.bean;
  *	Ride details of a customer. 
  */
 
-public class Invoice {
+public class RideInvoice {
 	
 	private int customerID, driverID, cabID, sourceID, destinationID;
 	private String rideStartTime, rideEndTime;
 	private float price;
 	
-	public Invoice(int customerID, int driverID, int cabID, int sourceID, int destinationID, String rideStartTime, 
+	public RideInvoice(int customerID, int driverID, int cabID, int sourceID, int destinationID, String rideStartTime, 
 			String rideEndTime, float price) {
 		super();
 		this.customerID = customerID;

@@ -2,14 +2,16 @@ package com.zilker.taxi.delegate;
 
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.zilker.taxi.bean.BookingResponse;
 import com.zilker.taxi.bean.Customer;
-import com.zilker.taxi.bean.Invoice;
+import com.zilker.taxi.bean.RideInvoice;
 import com.zilker.taxi.bean.Route;
+import com.zilker.taxi.bean.TravelInvoice;
 import com.zilker.taxi.bean.UpdateRide;
 import com.zilker.taxi.dao.TaxiDAO;
 import com.zilker.taxi.util.ShortestPath;
@@ -30,6 +32,7 @@ public class TaxiDelegate {
 			TaxiDAO taxiDAO = new TaxiDAO();
 			customerID = taxiDAO.checkMailExists(mail);
 			
+			
 			return customerID;
 		} catch (Exception e) {
 		    LOGGER.log(Level.INFO, "Error in transfering mail to DAO.");
@@ -42,18 +45,19 @@ public class TaxiDelegate {
 	 * Checks if the booking ID of a ride exists.
 	 */
 	
-	public boolean checkBookingExists(int bID) {
+	public int checkBookingExists(int bID) {
 		
-		boolean check = false;
+	
+		int bookingID = -1;
 		
 		try {
 			TaxiDAO taxiDAO = new TaxiDAO();
-			check = taxiDAO.checkBookingExists(bID);
+			bookingID = taxiDAO.checkBookingExists(bID);
 			
-		    return check;
+		    return bookingID;
 		} catch (Exception e) {
 		    LOGGER.log(Level.INFO, "Error in transfering booking ID to DAO.");
-		    return false;
+		    return -1;
 		} 
 	}
 	
@@ -113,42 +117,7 @@ public class TaxiDelegate {
 		    return null;
 		} 
 	}
-	
-
-	/*
-	 * Passes the customer profile. 
-	 */
-	
-	public void insertPersonalDetails(Customer customer) {
 		
-		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
-			taxiDAO.insertPersonalDetails(customer);
-		} catch(Exception e) {
-			LOGGER.log(Level.INFO, "Error in transfering personal details to DAO.");
-		}
-	}
-	
-	
-	/*
-	 * Inserts the ride details of the customer. 
-	 */
-	
-	public int insertRideDetails(Invoice invoice) {
-		
-		int bookingID = -1;
-		
-		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
-			bookingID = taxiDAO.insertRideDetails(invoice);
-		    
-		    return bookingID;
-		   	} catch (Exception e) {
-		    LOGGER.log(Level.INFO, "Error in transferring invoice details to DAO.");
-		    return -1;
-		    } 
-	}
-	
 	/*
 	 * Retrieves the booking ID of a ride. 
 	 */
@@ -237,25 +206,6 @@ public class TaxiDelegate {
 	}
 	
 	/*
-	 * Cancels the ride of a customer. 
-	 */
-	
-	public HashMap<Integer, Integer> cancelRide(int bookingID) {
-		
-		HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>(); 
-
-		try {
-				TaxiDAO taxiDAO = new TaxiDAO();
-				hashMap = taxiDAO.cancelRide(bookingID);
-				
-		     	return hashMap;
-		    } catch (Exception e) {
-		    	LOGGER.log(Level.INFO, "Error in transferring booking ID to DAO.");
-		    	return null;
-		    } 
-	}
-	
-	/*
 	 *	Removes customer account and its corresponding ride details. 
 	 */
 	
@@ -305,46 +255,7 @@ public class TaxiDelegate {
 		    return -1;
 		    } 
 	}
-	
-	/*
-	 * Displays the customer profile. 
-	 */
-	
-	public Customer displayProfile(String email) {
 		
-		Customer customer = null;
-		
-		try {
-		      TaxiDAO taxiDAO = new TaxiDAO();
-		      customer = taxiDAO.displayProfile(email);
-		      return customer;
-		} catch (Exception e) {
-		    	LOGGER.log(Level.SEVERE, "Error in retrieving profile details from the DB.");
-		    	return null;
-		  } 
-	}
-	
-	/*
-	 * Displays the ride details of a customer.
-	 */
-	
-	public BookingResponse displayBookingDetails(int bookingID) {
-		
-		BookingResponse bookingResponse = null;
-		
-		try {
-		     
-		      TaxiDAO taxiDAO = new TaxiDAO();
-		      bookingResponse = taxiDAO.displayBookingDetails(bookingID);
-		      
-		      return bookingResponse;		      
-		} catch (Exception e) {
-		    	LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
-		    	return null;
-		} 
-	}
-	
-	
 	/*
 	 * Updates the ride details of a customer. 
 	 */
@@ -358,19 +269,184 @@ public class TaxiDelegate {
 		    LOGGER.log(Level.INFO, "Error in updating ride details.");
 		    } 
 	}
+		
+	/*
+	 * Passes the customer profile. 
+	 */
+	
+	public int insertPersonalDetails(Customer customer) {
+		
+		int customerID = -1;
+		
+		try {
+			TaxiDAO taxiDAO = new TaxiDAO();
+			
+			customerID = checkMailExists(customer.getMailId());
+			
+			if (customerID != (-1)) {
+				return customerID;
+			}
+			
+			taxiDAO.insertPersonalDetails(customer);
+			
+			return -1;
+			
+		} catch(Exception e) {
+			LOGGER.log(Level.INFO, "Error in transfering personal details to DAO.");
+			return -1;
+		}
+	}
 	
 	
 	/*
-	 * Computes the estimated finish time and price corresponding to the distance between source and destination.
+	 * Displays the customer profile. 
 	 */
 	
-	public HashMap<String, Float> calculateTravel(int sourceID, int destinationID, String formattedTime) {
-		HashMap<String, Float> hashMap = new HashMap<String, Float>();
+	public Customer displayProfile(String email) {
 		
-		ShortestPath shortestPath = new ShortestPath();
-		hashMap = shortestPath.calculateTravel(sourceID, destinationID, formattedTime);
-
-		return hashMap;
+		Customer customer = null;
+		int customerID = -1;
 		
+		try {
+		      TaxiDAO taxiDAO = new TaxiDAO();
+		      
+		      customerID = checkMailExists(email);
+				
+				if (customerID == (-1)) {
+					return null;
+				}
+		      
+		      customer = taxiDAO.displayProfile(email);
+		      return customer;
+		      
+		} catch (Exception e) {
+		    	LOGGER.log(Level.SEVERE, "Error in retrieving profile details from the DB.");
+		    	return null;
+		  } 
 	}
+	
+	/*
+	 * Displays the ride details of a customer.
+	 */
+	
+	public BookingResponse displayBookingDetails(int bookingID) {
+		
+		BookingResponse bookingResponse = null;
+		int bID = -1; 
+		
+		try {
+		     	TaxiDAO taxiDAO = new TaxiDAO();
+		     	
+		     	bID = checkBookingExists(bookingID);
+		     	if(bID == -1) {
+		     		return null;
+		     	}
+		     	
+		     	bookingResponse = taxiDAO.displayBookingDetails(bookingID);
+		      
+		     	return bookingResponse;		      
+		} catch (Exception e) {
+		    	LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
+		    	return null;
+		} 
+	}
+	
+	
+	/*
+	 * Cancels the ride of a customer. 
+	 */
+	
+	public int cancelRide(int bookingID) {
+
+		int bID = -1, driverID = -1, cabID = -1;
+		HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>(); 
+
+		try {
+				TaxiDAO taxiDAO = new TaxiDAO();
+				
+				bID = checkBookingExists(bookingID);
+		     	if(bID == -1) {
+		     		return -1;
+		     	}
+				
+				hashMap = taxiDAO.cancelRide(bookingID);
+				
+				driverID = (int) hashMap.keySet().toArray()[0];
+				cabID = hashMap.get(driverID);
+				
+				updateDriverStatus(driverID, 1);
+				updateCabStatus(cabID, 1);
+				
+		     	return 1;
+		    } catch (Exception e) {
+		    	LOGGER.log(Level.INFO, "Error in transferring booking ID to DAO.");
+		    	return -1;
+		    } 
+	}
+	
+	/*
+	 * Inserts the ride details of the customer. 
+	 */
+	
+	public int insertRideDetails(RideInvoice invoice) {
+		
+		int bookingID = -1;
+		
+		try {
+			TaxiDAO taxiDAO = new TaxiDAO();
+			bookingID = taxiDAO.insertRideDetails(invoice);
+		    
+		    return bookingID;
+		   	} catch (Exception e) {
+		    LOGGER.log(Level.INFO, "Error in transferring invoice details to DAO.");
+		    return -1;
+		    } 
+	}
+	
+	public int calculateTravel(TravelInvoice travelInvoice, int flag) {
+		
+		int result = -1;
+		HashMap<String, Float> hashMap = new HashMap<String, Float>();
+		float price = 0.0f;
+		String rideEndTime = "";
+		
+		try {
+						
+			ShortestPath shortestPath = new ShortestPath();
+			hashMap = shortestPath.calculateTravel(travelInvoice.getSourceID(), travelInvoice.getDestinationID(), travelInvoice.getFormattedTime());
+			
+			rideEndTime = (String) hashMap.keySet().toArray()[0];
+			price = hashMap.get(rideEndTime);
+
+			
+			RideInvoice rideInvoice = new RideInvoice(travelInvoice.getCustomerID(), travelInvoice.getDriverID(),
+					travelInvoice.getCabID(), travelInvoice.getSourceID(), travelInvoice.getDestinationID(), 
+					travelInvoice.getFormattedTime(), rideEndTime, price);
+			
+			if(flag==0) {
+			result = insertRideDetails(rideInvoice);
+		    
+
+			// Updates the driver and cab status to be unavailable until the current ride
+			// has been completed.
+			
+			updateDriverStatus(travelInvoice.getDriverID(), 0);
+			updateCabStatus(travelInvoice.getCabID(), 0);
+			
+		    return result;
+			} else {
+				UpdateRide updateRide = new UpdateRide(travelInvoice.getFormattedTime(), rideEndTime, 
+						travelInvoice.getSourceID(), travelInvoice.getDestinationID(), travelInvoice.getCustomerID(), price);
+				updateRideDetails(updateRide);
+				
+				return travelInvoice.getCustomerID();
+			}
+		   	} catch (Exception e) {
+		    LOGGER.log(Level.INFO, "Error in transferring invoice details to DAO.");
+		    return -1;
+		    } 
+	}
+	
+	
+	
 }

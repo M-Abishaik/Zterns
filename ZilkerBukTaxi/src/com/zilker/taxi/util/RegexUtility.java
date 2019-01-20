@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class RegexUtility {
 	
-	public boolean validateREgex(Pattern regex, String name) {
+	public boolean validateRegex(Pattern regex, String name) {
 		Matcher nameMatcher = null;
 		
 		nameMatcher = regex.matcher(name);

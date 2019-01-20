@@ -1,8 +1,8 @@
-package com.zilker.taxi.jdbc;
+package com.zilker.taxi.ui;
 
 import java.util.Calendar;
+
 import java.util.Date;
-import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,8 +13,7 @@ import java.util.logging.Logger;
 
 import com.zilker.taxi.bean.BookingResponse;
 import com.zilker.taxi.bean.Customer;
-import com.zilker.taxi.bean.Invoice;
-import com.zilker.taxi.bean.UpdateRide;
+import com.zilker.taxi.bean.TravelInvoice;
 import com.zilker.taxi.constant.Constants;
 import com.zilker.taxi.util.RegexUtility;
 import com.zilker.taxi.delegate.TaxiDelegate;
@@ -36,6 +35,7 @@ public class BookTaxi {
 		int choice = 0;
 		BookTaxi bookTaxi = new BookTaxi();
 
+		try {
 		do {
 			LOGGER.log(Level.INFO, "Taxi Booking Application.");
 			LOGGER.log(Level.INFO, "1. Register account." + "\n" + "2. Book a ride." + "\n" + "3. Display details." + "\n"
@@ -43,14 +43,9 @@ public class BookTaxi {
 							+ "6. Cance a ride." + "\n" + "7. Delete account." + "\n" + "8. Exit");
 			LOGGER.log(Level.INFO, "Enter your choice: ");
 
-			try {
-				choice = SCANNER.nextInt();
-			} catch(InputMismatchException e) {
-				LOGGER.log(Level.WARNING, "Invalid input. Please enter a valid number.");
-				SCANNER.next();
-			}
-
 			
+			choice = SCANNER.nextInt();
+						
 			switch (choice) {
 			case 1:
 				bookTaxi.registerAccount();
@@ -78,9 +73,12 @@ public class BookTaxi {
 			default:
 				LOGGER.log(Level.WARNING, "Invalid choice. Enter a valid one.");
 				break;
-
 			}
 		} while (choice != 8);
+		}  catch(InputMismatchException e) {
+			LOGGER.log(Level.WARNING, "Invalid input. Please enter a valid number.");
+			SCANNER.next();
+		}
 	}
 
 	/*
@@ -95,7 +93,7 @@ public class BookTaxi {
 			
 			String mail = "", firstName = "", lastName = "", fullName = "";
 			boolean check = false;
-			int customerID = 0;
+			int customerID = -1;
 
 			SCANNER.nextLine();
 
@@ -130,16 +128,15 @@ public class BookTaxi {
 					LOGGER.log(Level.WARNING, "Invalid mail. Enter a valid one.");
 				}
 			} while (check != true);
-
-			customerID = taxiDelegate.checkMailExists(mail);
+			
+			Customer customer = new Customer(firstName, lastName, mail);
+			
+			customerID = taxiDelegate.insertPersonalDetails(customer);
 			
 			if (customerID != (-1)) {
 				LOGGER.log(Level.WARNING, mail + " " + "already exists.");
 				return;
-			}
-
-			Customer customer = new Customer(firstName, lastName, mail);
-			taxiDelegate.insertPersonalDetails(customer);
+			} 
 			
 			LOGGER.log(Level.INFO, "Account successfully created.");
 
@@ -158,12 +155,10 @@ public class BookTaxi {
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
 			RegexUtility regexUtility = new RegexUtility();
 
-			String source = "", destination = "", rideStartTime = "", rideEndTime = "", mail = "", formattedTime = "";
+			String source = "", destination = "", rideStartTime = "", mail = "", formattedTime = "";
 			boolean check = false;
 			int customerID = 0, driverID = 0, cabID = 0, sourceID = 0, destinationID = 0, bookingID = 0;
 			Date date = null;
-			float price = 0.0f;
-			HashMap<String, Float> hashMap = new HashMap<String, Float>();
 			DateFormat dateFormat = null, outputFormat = null;
 
 			do {
@@ -172,7 +167,7 @@ public class BookTaxi {
 
 				mail = SCANNER.nextLine();
 
-				check = regexUtility.validateMail(Constants.VALID_EMAIL_ADDRESS_REGEX, mail);
+				check = regexUtility.validateRegex(Constants.VALID_EMAIL_ADDRESS_REGEX, mail);
 				if(check == true) {
 					break;
 				} else {
@@ -218,7 +213,6 @@ public class BookTaxi {
 
 				dateFormat = new SimpleDateFormat("hh:mm aa");
 				outputFormat = new SimpleDateFormat("HH:mm");
-
 				
 				date = dateFormat.parse(rideStartTime);
 				formattedTime = outputFormat.format(date);
@@ -226,27 +220,12 @@ public class BookTaxi {
 				// Computes the estimated finish time and price corresponding to the distance
 				// between source and destination.
 
-				hashMap = taxiDelegate.calculateTravel(sourceID, destinationID, formattedTime);
-				if (hashMap == null) {
-					LOGGER.log(Level.WARNING, "Please enter a valid set of source and destination.");
-					return;
-				}
-
-				rideEndTime = (String) hashMap.keySet().toArray()[0];
-				price = hashMap.get(rideEndTime);
-
-				Invoice invoice = new Invoice(customerID, driverID, cabID, sourceID, destinationID, formattedTime,
-						rideEndTime, price);
+				TravelInvoice travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, formattedTime);
 				
-				bookingID = taxiDelegate.insertRideDetails(invoice);
+				bookingID = taxiDelegate.calculateTravel(travelInvoice, 0);
 				
 				LOGGER.log(Level.INFO, "Please note down the booking ID: " + bookingID);
 
-				// Updates the driver and cab status to be unavailable until the current ride
-				// has been completed.
-				
-				taxiDelegate.updateDriverStatus(driverID, 0);
-				taxiDelegate.updateCabStatus(cabID, 0);
 
 				LOGGER.log(Level.INFO, "Ride successfully booked.");
 
@@ -297,14 +276,13 @@ public class BookTaxi {
 	public void displayProfile() {
 		String mail = "";
 		boolean check = false;
-		int customerID = 0;
 
 		try {
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
 			RegexUtility regexUtility = new RegexUtility();
 
-			Customer customer = new Customer();
-			
+			Customer customer = null;
+
 			do {
 				LOGGER.log(Level.INFO, "Enter your registered mail-ID: ");
 				SCANNER.nextLine();
@@ -319,16 +297,21 @@ public class BookTaxi {
 				}
 			} while (check != true);
 
-			customerID = taxiDelegate.checkMailExists(mail);
-			if (customerID == (-1)) {
-				LOGGER.log(Level.WARNING, mail + " " + "doesn't exist. Please register.");
-				return;
-			}
 			
 			customer = taxiDelegate.displayProfile(mail);
+			
+			
+			if(customer==null) {
+				LOGGER.log(Level.WARNING, mail + " " + "doesn't exist. Please register.");
+				return;
+			} 
+			
 			LOGGER.log(Level.INFO, "First name: " + customer.getFirstName() + "\nLast name: " + customer.getLastName() + 
-					"\nMail: " + customer.getMailId());
+						"\nMail: " + customer.getMailId());
+				
 			LOGGER.log(Level.INFO, "Profile displayed.");
+
+			
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, e.getMessage());
 		}
@@ -339,8 +322,7 @@ public class BookTaxi {
 	 */
 
 	public void displayBookingDetails() {
-		int bookingID = 0;
-		boolean check = false;
+		int bookingID = -1;
 		BookingResponse bookingResponse = null;
 
 		try {
@@ -350,18 +332,20 @@ public class BookTaxi {
 			SCANNER.nextLine();
 
 			bookingID = SCANNER.nextInt();
-			check = taxiDelegate.checkBookingExists(bookingID);
-
-			if (check == false) {
+			
+			bookingResponse = taxiDelegate.displayBookingDetails(bookingID);
+			
+			if(bookingResponse == null) {
 				LOGGER.log(Level.WARNING, bookingID + " " + "doesn't exist. Please book a ride.");
 				return;
 			}
-
-			bookingResponse = taxiDelegate.displayBookingDetails(bookingID);
+			
 			LOGGER.log(Level.INFO, "Booking ID: " + bookingResponse.getBookingID() + "\nSource: " + bookingResponse.getSource()
-					+ "\nDestination: " + bookingResponse.getDestination() + "\nPrice: " + bookingResponse.getPrice()
-					+ "\nStart time: " + bookingResponse.getStartTime() + "\nEnd time: " + bookingResponse.getEndTime());
+			+ "\nDestination: " + bookingResponse.getDestination() + "\nPrice: " + bookingResponse.getPrice()
+			+ "\nStart time: " + bookingResponse.getStartTime() + "\nEnd time: " + bookingResponse.getEndTime());
+	
 			LOGGER.log(Level.INFO, "Booking details displayed.");
+
 		}catch (InputMismatchException e) {
 			LOGGER.log(Level.INFO, "Enter a valid integer.");
 		} catch (Exception e) {
@@ -440,17 +424,16 @@ public class BookTaxi {
 
 	public void updateBookingDetails() {
 
-		int bookingID = 0, sourceID = 0, destinationID = 0;
+		int bookingID = -1, bID = -1, sourceID = 0, destinationID = 0;
 		boolean check = false;
-		String startTime = "", currentTime = "", rideStartTime = "", rideEndTime = "", source = "", destination = "",
+		String startTime = "", currentTime = "", rideStartTime = "", source = "", destination = "",
 				formattedTime = "";
 		Calendar calendar = null;
 		SimpleDateFormat simpleDateFormat = null;
 		Date startDate = null, currentDate = null, date = null;
 		long elapsed = 0, remaining = 0;
 		DateFormat dateFormat = null, outputFormat = null;
-		float price = 0.0f;
-		HashMap<String, Float> hashMap = new HashMap<String, Float>();
+	
 
 		try {
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
@@ -459,14 +442,12 @@ public class BookTaxi {
 			SCANNER.nextLine();
 
 			bookingID = SCANNER.nextInt();
-			check = taxiDelegate.checkBookingExists(bookingID);
+			bID = taxiDelegate.checkBookingExists(bookingID);
 
-			if (check == false) {
+			if (bID == (-1)) {
 				LOGGER.log(Level.WARNING, bookingID + " " + "doesn't exist. Please book a ride.");
 				return;
 			}
-
-			check = false;
 
 			startTime = taxiDelegate.findStartTime(bookingID);
 
@@ -522,22 +503,16 @@ public class BookTaxi {
 				formattedTime = outputFormat.format(date);			
 			
 
-			// Recomputes the new estimated finish time and price corresponding to the
-			// distance between source and destination.
-			
-			hashMap = taxiDelegate.calculateTravel(sourceID, destinationID, formattedTime);
-			if (hashMap == null) {
-				LOGGER.log(Level.WARNING, "Please enter a valid set of source and destination.");
-				return;
-			}
+				
+				TravelInvoice travelInvoice = new TravelInvoice(bookingID, 0, 0, sourceID, destinationID, formattedTime);
+				
+				bookingID = taxiDelegate.calculateTravel(travelInvoice, 1);
+				
+				
 
-			rideEndTime = (String) hashMap.keySet().toArray()[0];
-			price = hashMap.get(rideEndTime);
-
-			UpdateRide updateRide = new UpdateRide(formattedTime, rideEndTime, sourceID, destinationID, bookingID, price);
-			taxiDelegate.updateRideDetails(updateRide);
 			
-			LOGGER.log(Level.INFO, "Booking details successfully updated.");
+			
+			LOGGER.log(Level.INFO, "Booking details of " + bookingID +  " successfully updated.");
 		} catch (ParseException pe) {
 			LOGGER.log(Level.INFO, "Invalid time. Please enter a valid one.");
 		}catch (InputMismatchException e) {
@@ -553,9 +528,7 @@ public class BookTaxi {
 
 	public void cancelRide() {
 
-		int bookingID = 0, driverID = 0, cabID = 0;
-		boolean check = false;
-		HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
+		int bookingID = -1;
 
 		try {
 			TaxiDelegate taxiDelegate = new TaxiDelegate();
@@ -564,27 +537,16 @@ public class BookTaxi {
 			SCANNER.nextLine();
 
 			bookingID = SCANNER.nextInt();
-			check = taxiDelegate.checkBookingExists(bookingID);
-
-
-			if (check == false) {
+			
+			bookingID = taxiDelegate.cancelRide(bookingID);
+			
+			if(bookingID == (-1)) {
 				LOGGER.log(Level.WARNING, bookingID + " " + "doesn't exist. Please book a ride.");
 				return;
-			}
-
-			// Fetches corresponding driver and cab ID's.
-
-			hashMap = taxiDelegate.cancelRide(bookingID);
-
-			driverID = (int) hashMap.keySet().toArray()[0];
-			cabID = hashMap.get(driverID);
-
-			// Updates the driver and cab statuses to be available now.
+			} 
 			
-			taxiDelegate.updateDriverStatus(driverID, 1);
-			taxiDelegate.updateCabStatus(cabID, 1);
-
-			LOGGER.log(Level.INFO, "Ride cancelled successfully.");
+			LOGGER.log(Level.INFO, "Ride cancelled successfully.");			
+			
 		} catch (InputMismatchException e) {
 			LOGGER.log(Level.INFO, "Enter a valid integer.");
 		}catch (Exception e) {
