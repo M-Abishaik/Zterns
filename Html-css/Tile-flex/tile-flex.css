@@ -1,0 +1,36 @@
+html, body, .container {
+	height: 100%;
+	margin: 0px;
+}
+
+.container {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	background-color: white;
+	align-content: flex-start;
+	padding: 5px;
+}
+
+.square, .rectangle {
+	margin: 0.5%;
+	font-size: 45px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: white;
+}
+
+.square {
+	flex-basis: 200px;
+	flex-grow: 1;
+	height: 150px;
+	background-color: yellow;
+}
+
+.rectangle {
+	flex-basis: 230px;
+	flex-grow: 2;
+	height: 100px;
+	background-color: green;
+}

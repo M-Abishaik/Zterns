@@ -1,0 +1,23 @@
+#first-box {
+    border: 1px solid red;
+}
+
+#second-box {
+    margin-top: 100px;
+    height: 40px;
+    border: 1px solid blue;
+    overflow: hidden;
+}
+
+#third-box {
+    margin-top: 100px;
+    height: 40px;
+    overflow: auto;
+    border: 1px solid black;
+}
+
+body {
+    border: 1px solid black;
+    padding: 25px;
+    margin: 75px;
+}

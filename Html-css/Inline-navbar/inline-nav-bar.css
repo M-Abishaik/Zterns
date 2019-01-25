@@ -1,0 +1,110 @@
+body {
+  font-family: Arial;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation {
+  background-color: #175ac6;
+}
+
+.f1 {
+  color: #175ac6;
+}
+
+.navigation a {
+  font-size: 15px;
+  padding: 15px;
+  display: inline-block;
+  color: white;
+  text-decoration: none;
+}
+
+.navigation input[type=text] {
+  font-size: 17px;
+  padding: 6px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 100px;
+  width: 500px;
+  border: none;
+}
+
+button {
+  font-size: 17px;
+  padding: 6px;
+  margin-top: 8px;
+  background: white;
+  border: none;
+  cursor: pointer;
+}
+
+.dropdown {
+  display: inline-block;
+}
+
+.dropdown .dropbutton {
+  font-size: 16px;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+
+.navigation a:hover {
+  background-color: #175ac6;
+}
+
+.wrapper {
+  float: right;
+}
+
+.dropdown-content {
+  display: none;
+  margin-top: 5px;
+  position: absolute;
+  background-color: white;
+  box-shadow: grey;
+}
+
+.dropdown-content a {
+  float: none;
+  color: black;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: lightgrey;
+}
+
+.dropdown:hover .dropdown-content, .dropdown:hover .arrowup {
+  display: block;
+}
+
+#p1 {
+  position: relative;
+}
+
+#p1[data-badge]:after {
+  font-size: 70%;
+  position: absolute;
+  top: -10px;
+  content: attr(data-badge);
+  padding: 2px;
+  border-radius: 40%;
+  color: white;
+  background: rgb(255, 0, 0);
+  text-align: center;
+}
+
+.arrowup {
+  width: 0px;
+  height: 0px;
+  border-left: 8px;
+  border-right: 8px;
+  border-bottom: 8px;
+}

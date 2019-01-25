@@ -1,0 +1,65 @@
+body {
+	height: 500px;
+	width: 500px;
+}
+
+.container {
+	margin-left: 70%;
+	margin-top: 20%;
+	height: 100%;
+	width: 100%;
+}
+
+.row {
+	height: 23%;
+	width: 100%;
+	background-color: black;
+	border: 1px solid black;
+}
+
+.half {
+	height: 48%;
+}
+
+.column-2 {
+	height: 100%;
+	width: 64%;
+	display: inline-block;
+	background-color: green;
+}
+
+.column-1 {
+	height: 100%;
+	width: 31%;
+	display: inline-block;
+	background-color: red;
+}
+
+.half-width {
+	width: 45%;
+}
+
+.border {
+	border: 1px solid black;
+}
+
+.inlineblock {
+	height: 100%;
+	width: 100%;
+	background-color: black;
+}
+
+.inline-row {
+	display: inline-block;
+	width: 100%;
+	background-color: black;
+	border: 1px solid black;
+}
+
+.top {
+	height: 60%;
+}
+
+.bottom {
+	height: 35%;
+}
