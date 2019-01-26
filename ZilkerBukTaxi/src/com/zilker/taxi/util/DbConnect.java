@@ -24,31 +24,31 @@ public class DbConnect {
 	 */
 	
 	public static Connection getConnection() {
-	    Connection conn = null;
+	    Connection connnection = null;
 	    try {
-	      conn = DriverManager.getConnection(Constants.CONNECTION, Constants.USERNAME, Constants.PASSWORD);
-	    } catch (SQLException e) {
+	    	connnection = DriverManager.getConnection(Constants.CONNECTION, Constants.USERNAME, Constants.PASSWORD);
+	    } catch (SQLException sqlException) {
 	    	LOGGER.log(Level.SEVERE, "Error in connecting with driver.");
 	    }
-	    return conn;
+	    return connnection;
 	  }
 	  
 	/*
 	 * Closes the database connection. 
 	 */
 	
-	public static void closeConnection(Connection conn, PreparedStatement pst, ResultSet rs) { 
+	public static void closeConnection(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) { 
 		try { 
-			if (rs != null) {
-				rs.close();
+			if (resultSet != null) {
+				resultSet.close();
 			}
-			if (pst != null) {
-				pst.close();
+			if (preparedStatement != null) {
+				preparedStatement.close();
 			}
-			if (conn != null) {
-				conn.close();
+			if (connection != null) {
+				connection.close();
 			}
-	    } catch (SQLException e) {
+	    } catch (SQLException sqlException) {
 	    	LOGGER.log(Level.SEVERE, "Error in closing the connection.");
 	    }
 	}

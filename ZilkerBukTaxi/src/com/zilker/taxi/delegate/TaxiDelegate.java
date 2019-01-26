@@ -16,6 +16,10 @@ import com.zilker.taxi.bean.UpdateRide;
 import com.zilker.taxi.dao.TaxiDAO;
 import com.zilker.taxi.util.ShortestPath;
 
+/*
+ * Taxi Delegate. 
+ */
+
 public class TaxiDelegate {
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -27,9 +31,10 @@ public class TaxiDelegate {
 	public int checkMailExists(String mail) {
 		
 		int customerID = -1;
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			customerID = taxiDAO.checkMailExists(mail);
 			
 			
@@ -49,9 +54,10 @@ public class TaxiDelegate {
 		
 	
 		int bookingID = -1;
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			bookingID = taxiDAO.checkBookingExists(bID);
 			
 		    return bookingID;
@@ -68,9 +74,10 @@ public class TaxiDelegate {
 	public int checkDriverExists() {
 		
 		int driverID = -1;
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			driverID = taxiDAO.checkDriverExists();
 			
 		    return driverID;
@@ -87,9 +94,10 @@ public class TaxiDelegate {
 	public int checkCabExists() {
 		
 		int cabID = -1;
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			cabID = taxiDAO.checkDriverExists();
 			
 		    return cabID;
@@ -106,9 +114,10 @@ public class TaxiDelegate {
 	public ArrayList<Route> getRoutesList() {
 		
 		ArrayList<Route> routesList = new ArrayList<Route>();
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();			
+			taxiDAO = new TaxiDAO();			
 			routesList = taxiDAO.getRoutesList();
 			
 		    return routesList;
@@ -124,9 +133,10 @@ public class TaxiDelegate {
 	
 	public int fetchBookingID(int customerID, int driverID) {
 		int bookingID = -1;
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			bookingID = taxiDAO.fetchBookingID(customerID, driverID);
 			
 		    return bookingID;
@@ -141,9 +151,10 @@ public class TaxiDelegate {
 	 */
 	
 	public void updateDriverStatus(int driverID, int flag) {
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			taxiDAO.updateDriverStatus(driverID, flag);
 			
 		    } catch (Exception e) {
@@ -157,8 +168,9 @@ public class TaxiDelegate {
 	
 	public void updateCabStatus(int cabID, int flag) {
 		
+		TaxiDAO taxiDAO = null;
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			taxiDAO.updateDriverStatus(cabID, flag);
 			
 		    } catch (Exception e) {
@@ -173,9 +185,9 @@ public class TaxiDelegate {
 	public String findLocation(int locationID) {
 		
 		String location = "";
-		
+		TaxiDAO taxiDAO = null;
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			location = taxiDAO.findLocation(locationID);
 			
 		    return location;
@@ -193,9 +205,10 @@ public class TaxiDelegate {
 	public String findStartTime(int bookingID) {
 		
 		String startTime = "";
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			startTime = taxiDAO.findStartTime(bookingID);
 			
 		    return startTime;
@@ -210,9 +223,10 @@ public class TaxiDelegate {
 	 */
 	
 	public void deleteAccount(String mail, int  customerID) {
-				
+			
+		TaxiDAO taxiDAO = null;
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 		    taxiDAO.deleteAccount(mail, customerID); 
 		    
 		    } catch (Exception e) {
@@ -220,23 +234,7 @@ public class TaxiDelegate {
 		    } 
 	}
 	
-	/*
-	 * Updates customer profile. 
-	 */
-	
-	public void updatePersonalDetails(Customer customer) {
 		
-		try {
-			
-			TaxiDAO taxiDAO = new TaxiDAO();
-		    taxiDAO.updatePersonalDetails(customer); 
-			
-		    } catch (Exception e) {
-		    LOGGER.log(Level.INFO, "Error in transferring customer profile to DAO.");
-		    } 
-	}
-	
-	
 	/*
 	 * Retrieves the location ID using location. 
 	 */
@@ -244,9 +242,10 @@ public class TaxiDelegate {
 	public int findLocationID(String location) {
 		
 		int locationID = -1;
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			locationID = taxiDAO.findLocationID(location);
 			
 		    return locationID;
@@ -262,8 +261,9 @@ public class TaxiDelegate {
 	
 	public void updateRideDetails(UpdateRide updateRide) {
 		
+		TaxiDAO taxiDAO = null;
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			taxiDAO.updateRideDetails(updateRide);
 		    } catch (Exception e) {
 		    LOGGER.log(Level.INFO, "Error in updating ride details.");
@@ -271,71 +271,17 @@ public class TaxiDelegate {
 	}
 		
 	/*
-	 * Passes the customer profile. 
-	 */
-	
-	public int insertPersonalDetails(Customer customer) {
-		
-		int customerID = -1;
-		
-		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
-			
-			customerID = checkMailExists(customer.getMailId());
-			
-			if (customerID != (-1)) {
-				return customerID;
-			}
-			
-			taxiDAO.insertPersonalDetails(customer);
-			
-			return -1;
-			
-		} catch(Exception e) {
-			LOGGER.log(Level.INFO, "Error in transfering personal details to DAO.");
-			return -1;
-		}
-	}
-	
-	
-	/*
-	 * Displays the customer profile. 
-	 */
-	
-	public Customer displayProfile(String email) {
-		
-		Customer customer = null;
-		int customerID = -1;
-		
-		try {
-		      TaxiDAO taxiDAO = new TaxiDAO();
-		      
-		      customerID = checkMailExists(email);
-				
-				if (customerID == (-1)) {
-					return null;
-				}
-		      
-		      customer = taxiDAO.displayProfile(email);
-		      return customer;
-		      
-		} catch (Exception e) {
-		    	LOGGER.log(Level.SEVERE, "Error in retrieving profile details from the DB.");
-		    	return null;
-		  } 
-	}
-	
-	/*
 	 * Displays the ride details of a customer.
 	 */
 	
 	public BookingResponse displayBookingDetails(int bookingID) {
 		
 		BookingResponse bookingResponse = null;
+		TaxiDAO taxiDAO = null;
 		int bID = -1; 
 		
 		try {
-		     	TaxiDAO taxiDAO = new TaxiDAO();
+		     	taxiDAO = new TaxiDAO();
 		     	
 		     	bID = checkBookingExists(bookingID);
 		     	if(bID == -1) {
@@ -359,10 +305,11 @@ public class TaxiDelegate {
 	public int cancelRide(int bookingID) {
 
 		int bID = -1, driverID = -1, cabID = -1;
-		HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>(); 
+		HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
+		TaxiDAO taxiDAO = null;
 
 		try {
-				TaxiDAO taxiDAO = new TaxiDAO();
+				taxiDAO = new TaxiDAO();
 				
 				bID = checkBookingExists(bookingID);
 		     	if(bID == -1) {
@@ -391,9 +338,10 @@ public class TaxiDelegate {
 	public int insertRideDetails(RideInvoice invoice) {
 		
 		int bookingID = -1;
+		TaxiDAO taxiDAO = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
 			bookingID = taxiDAO.insertRideDetails(invoice);
 		    
 		    return bookingID;
@@ -409,17 +357,20 @@ public class TaxiDelegate {
 		HashMap<String, Float> hashMap = new HashMap<String, Float>();
 		float price = 0.0f;
 		String rideEndTime = "";
+		ShortestPath shortestPath = null;
+		RideInvoice rideInvoice = null;
+		UpdateRide updateRide = null;
 		
 		try {
 						
-			ShortestPath shortestPath = new ShortestPath();
+			shortestPath = new ShortestPath();
 			hashMap = shortestPath.calculateTravel(travelInvoice.getSourceID(), travelInvoice.getDestinationID(), travelInvoice.getFormattedTime());
 			
 			rideEndTime = (String) hashMap.keySet().toArray()[0];
 			price = hashMap.get(rideEndTime);
 
 			
-			RideInvoice rideInvoice = new RideInvoice(travelInvoice.getCustomerID(), travelInvoice.getDriverID(),
+			rideInvoice = new RideInvoice(travelInvoice.getCustomerID(), travelInvoice.getDriverID(),
 					travelInvoice.getCabID(), travelInvoice.getSourceID(), travelInvoice.getDestinationID(), 
 					travelInvoice.getFormattedTime(), rideEndTime, price);
 			
@@ -435,7 +386,7 @@ public class TaxiDelegate {
 			
 		    return result;
 			} else {
-				UpdateRide updateRide = new UpdateRide(travelInvoice.getFormattedTime(), rideEndTime, 
+				updateRide = new UpdateRide(travelInvoice.getFormattedTime(), rideEndTime, 
 						travelInvoice.getSourceID(), travelInvoice.getDestinationID(), travelInvoice.getCustomerID(), price);
 				updateRideDetails(updateRide);
 				
@@ -445,8 +396,5 @@ public class TaxiDelegate {
 		    LOGGER.log(Level.INFO, "Error in transferring invoice details to DAO.");
 		    return -1;
 		    } 
-	}
-	
-	
-	
+	}	
 }

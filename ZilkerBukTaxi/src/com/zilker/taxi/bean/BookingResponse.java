@@ -1,10 +1,17 @@
 package com.zilker.taxi.bean;
 
+/*
+ *  The booking response when a ride has been booked.  
+ */
+
 public class BookingResponse {
 
 	private int bookingID;
 	private float price;
-	private String source, destination, startTime, endTime;
+	private String source; 
+	private String destination; 
+	private String startTime; 
+	private String endTime;
 	
 	public BookingResponse(int bookingID, float price, String source, String destination, String startTime,
 			String endTime) {

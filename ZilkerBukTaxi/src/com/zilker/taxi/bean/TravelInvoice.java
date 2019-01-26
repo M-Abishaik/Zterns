@@ -2,7 +2,11 @@ package com.zilker.taxi.bean;
 
 public class TravelInvoice {
 	
-	private int customerID, driverID, cabID, sourceID, destinationID;
+	private int customerID; 
+	private int driverID; 
+	private int cabID; 
+	private int sourceID; 
+	private int destinationID;
 	private String formattedTime;
 	
 	

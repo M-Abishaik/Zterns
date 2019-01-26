@@ -6,8 +6,13 @@ package com.zilker.taxi.bean;
 
 public class RideInvoice {
 	
-	private int customerID, driverID, cabID, sourceID, destinationID;
-	private String rideStartTime, rideEndTime;
+	private int customerID; 
+	private int driverID; 
+	private int cabID;
+	private int sourceID; 
+	private int destinationID;
+	private String rideStartTime;
+	private String rideEndTime;
 	private float price;
 	
 	public RideInvoice(int customerID, int driverID, int cabID, int sourceID, int destinationID, String rideStartTime, 

@@ -9,9 +9,11 @@ public class RegexUtility {
 		Matcher nameMatcher = null;
 		
 		nameMatcher = regex.matcher(name);
-		if(nameMatcher.find()==true)
+		if(nameMatcher.find()==true) {
 				return true;
-		else
-				return false; 
+		}
+		else {
+				return false;
+		}
 	}
 }

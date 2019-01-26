@@ -6,7 +6,8 @@ package com.zilker.taxi.bean;
 
 public class Route {
 	
-	private int source, destination;
+	private int source; 
+	private int destination;
 	private float distance;
 	
 	public Route () {}

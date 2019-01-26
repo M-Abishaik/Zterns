@@ -6,7 +6,9 @@ package com.zilker.taxi.bean;
 
 public class Customer {
 
-	private String firstName, lastName, mailId;
+	private String firstName; 
+	private String lastName; 
+	private String mailId;
 	
 	public Customer() {}
 	

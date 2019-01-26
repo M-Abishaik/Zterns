@@ -6,9 +6,9 @@ public class SQLConstants {
 	
 	public static final String CHECK_BOOKING_EXISTS = "SELECT CAB_RIDE_ID FROM CAB_RIDE_DETAIL WHERE CAB_RIDE_ID=?";
 	
-	public static final String CHECK_DRIVER_EXISTS = "SELECT * FROM DRIVER_DETAIL";
+	public static final String CHECK_DRIVER_EXISTS = "SELECT DRIVER_ID, DRIVER_STATUS FROM DRIVER_DETAIL";
 	
-	public static final String CHECK_CAB_EXISTS = "SELECT * FROM CAB_DETAIL";
+	public static final String CHECK_CAB_EXISTS = "SELECT CAB_ID, CAB_STATUS FROM CAB_DETAIL";
 
 	public static final String GET_ROUTES_LIST = "SELECT * FROM ROUTE_DETAIL";
 	
@@ -24,9 +24,9 @@ public class SQLConstants {
 	
 	public static final String GET_LOCATION_ID = "SELECT ADDRESS_ID FROM ADDRESS_DETAIL WHERE CITY=?";
 	
-	public static final String GET_LOCATION = "SELECT * FROM ADDRESS_DETAIL WHERE ADDRESS_ID=?";
+	public static final String GET_LOCATION = "SELECT CITY FROM ADDRESS_DETAIL WHERE ADDRESS_ID=?";
 
-	public static final String GET_START_TIME = "SELECT * FROM CAB_RIDE_DETAIL WHERE CAB_RIDE_ID=?";
+	public static final String GET_START_TIME = "SELECT START_TIME FROM CAB_RIDE_DETAIL WHERE CAB_RIDE_ID=?";
 
 	public static final String DISPLAY_PROFILE = "SELECT * FROM CUSTOMER_DETAIL WHERE mail=?";
 

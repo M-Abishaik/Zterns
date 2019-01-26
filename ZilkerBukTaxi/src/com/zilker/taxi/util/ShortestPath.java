@@ -26,14 +26,20 @@ public class ShortestPath {
 	
 	public HashMap<String, Float> calculateTravel(int sourceID, int destinationID, String startTime) {
 		
-		HashMap<String, Float> hashMap= new HashMap<String, Float>();
-		ArrayList<Route> routesList = new ArrayList<Route>();
 		
-		float distance = 0.0f, price = 0.0f;
+		float distance = 0.0f; 
+		float price = 0.0f;
 		String endTime = "";
+		TaxiDAO taxiDAO = null;
+		HashMap<String, Float> hashMap = null;
+		ArrayList<Route> routesList = null;
 		
 		try {
-			TaxiDAO taxiDAO = new TaxiDAO();
+			taxiDAO = new TaxiDAO();
+			
+			hashMap = new HashMap<String, Float>();
+			routesList = new ArrayList<Route>();
+			
 			routesList = taxiDAO.getRoutesList();
 			
 			for(Route route : routesList) {
@@ -65,7 +71,7 @@ public class ShortestPath {
 			return hashMap;
 			
 		}catch (Exception e) {
-				LOGGER.log(Level.SEVERE, e.getMessage());
+				LOGGER.log(Level.SEVERE, "Error in calculating the price and time.");
 				return null;
 		} finally {
 				LOGGER.log(Level.INFO, "Price and endTime calculated.");
@@ -80,13 +86,15 @@ public class ShortestPath {
 		
          SimpleDateFormat df = new SimpleDateFormat("HH:mm");
          String endTime = "";
+         Date date = null;
+         Calendar calender = null;
 
          try{
-        	 Date d = df.parse(startTime);
-        	 Calendar cal = Calendar.getInstance();
-        	 cal.setTime(d);
-        	 cal.add(Calendar.MINUTE, minutes);
-        	 endTime = df.format(cal.getTime());
+        	 date = df.parse(startTime);
+        	 calender = Calendar.getInstance();
+        	 calender.setTime(date);
+        	 calender.add(Calendar.MINUTE, minutes);
+        	 endTime = df.format(calender.getTime());
         	 return endTime;
          }catch(ParseException pe){
         	 LOGGER.log(Level.INFO, "Invalid time format.");

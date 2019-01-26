@@ -2,8 +2,11 @@ package com.zilker.taxi.bean;
 
 public class UpdateRide {
 	
-	private String rideStartTime, rideEndTime;
-	int sourceID, destinationID, bookingID;
+	private String rideStartTime;
+	private String rideEndTime;
+	int sourceID; 
+	int destinationID; 
+	int bookingID;
 	float price;
 	
 	public UpdateRide(String rideStartTime, String rideEndTime, int sourceID, int destinationID, int bookingID,
