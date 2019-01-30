@@ -55,7 +55,7 @@ public class CustomerDelegate {
 	 * Passes the customer profile. 
 	 */
 	
-	public int insertPersonalDetails(Customer customer) {
+	/*public int insertPersonalDetails(Customer customer) {
 		
 		int customerID = -1;
 		SharedDelegate sharedDelegate = null;
@@ -79,14 +79,14 @@ public class CustomerDelegate {
 			LOGGER.log(Level.INFO, "Error in transfering personal details to DAO.");
 			return -1;
 		}
-	}
+	}*/
 	
 
 	/*
 	 * Displays the customer profile. 
 	 */
 	
-	public Customer displayProfile(String email) {
+	/*public Customer displayProfile(String email) {
 		
 		Customer customer = null;
 		int customerID = -1;
@@ -110,7 +110,7 @@ public class CustomerDelegate {
 		    	LOGGER.log(Level.SEVERE, "Error in retrieving profile details from the DB.");
 		    	return null;
 		  } 
-	}
+	}*/
 	
 	
 

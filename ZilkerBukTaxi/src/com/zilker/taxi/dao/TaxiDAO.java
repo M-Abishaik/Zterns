@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.zilker.taxi.bean.Address;
 import com.zilker.taxi.bean.BookingResponse;
+import com.zilker.taxi.bean.CabLocation;
 import com.zilker.taxi.bean.Customer;
 import com.zilker.taxi.bean.RideInvoice;
 import com.zilker.taxi.bean.Route;
@@ -18,7 +20,6 @@ import com.zilker.taxi.bean.UpdateRide;
 import com.zilker.taxi.constant.Constants;
 import com.zilker.taxi.constant.SQLConstants;
 import com.zilker.taxi.util.DbConnect;
-
 /*
  * Handles the CRUD operations of customer details and booking details.
  */
@@ -44,7 +45,7 @@ public class TaxiDAO {
 		
 		try {
 			connection = DbConnect.getConnection();
-			preparedStatement = connection.prepareStatement(SQLConstants.CHECK_MAIL_EXISTS);
+			//preparedStatement = connection.prepareStatement(SQLConstants.CHECK_MAIL_EXISTS);
 			preparedStatement.setString(1, mail);
 			resultSet = preparedStatement.executeQuery();
 		    if(resultSet.next()) {
@@ -325,7 +326,7 @@ public class TaxiDAO {
 	/*
 	 * Retrieves the location ID using location. 
 	 */
-	
+		
 	public int findLocationID(String location) {
 		
 		int locationID = -1;
@@ -333,9 +334,12 @@ public class TaxiDAO {
 		
 		try {
 			connection = DbConnect.getConnection();
-			preparedStatement = connection.prepareStatement(SQLConstants.GET_LOCATION_ID);
-			preparedStatement.setString(1, location);
+			//preparedStatement = connection.prepareStatement(SQLConstants.GET_LOCATION_ID);
+			//preparedStatement.setString(1, location);
+			
+			preparedStatement = connection.prepareStatement("SELECT ADDRESS_ID FROM ADDRESS_DETAIL WHERE STREET_ADDRESS LIKE \"%" + location + "%\"");                              
 			resultSet = preparedStatement.executeQuery();
+			
 		    if(resultSet.next()) {
 		    	 test = resultSet.getString(1);
 	    		 locationID= Integer.parseInt(test);
@@ -431,6 +435,74 @@ public class TaxiDAO {
 		      DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		  }
 	}
+	
+	
+	/*
+	 * Displays the travel locations. 
+	 */
+	
+	public ArrayList<Address> displayLocations() {
+		
+		String streetAddress = "";
+		String zipCode = "";
+		ArrayList<Address> address = null;
+		Address object = null;
+		
+		try {
+			address = new ArrayList<Address>();
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_LOCATIONS);
+			resultSet = preparedStatement.executeQuery();
+		      while (resultSet.next()) {
+					streetAddress = resultSet.getString(1); 
+					zipCode = resultSet.getString(2);
+					
+					object = new Address(streetAddress, zipCode);
+					address.add(object);
+					
+		      }
+		      	return address;
+		} catch (Exception e) {
+		    	LOGGER.log(Level.SEVERE, "Error in reading travel locations.");
+		    	return null;
+		  } finally {
+		      DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		  }
+	}
+	
+	/*
+	 * Inserts licence deatils of a driver.
+	 */
+	
+	public void addLicenceDetails(int driverID, String licenceNumber) {
+		
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_LICENCE_DETAILS);
+			preparedStatement.setInt(1, driverID);
+			preparedStatement.setString(2, licenceNumber);
+			preparedStatement.setInt(3, driverID);
+			preparedStatement.setInt(4, driverID);
+			preparedStatement.executeUpdate();
+		    } catch (SQLException e) {
+		    LOGGER.log(Level.INFO, "Error in inserting licence details.");
+		    } finally {
+		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		    }
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/*
 	 * Displays the ride details of a customer.
@@ -587,4 +659,220 @@ public class TaxiDAO {
 		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		    }
 	}	
+	
+	
+	/*
+	 * Reads the cab ID of the available cab.
+	 */
+	
+	public int getCabID() {
+		int cabID = -1;
+		String test = "";
+		
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_CAB_ID);
+			preparedStatement.setString(1, Constants.AVAILABLE);
+			resultSet = preparedStatement.executeQuery();
+		    if(resultSet.next()) {
+		    	 test = resultSet.getString(1);
+	    		 cabID= Integer.parseInt(test);
+		    }
+		    return cabID;
+		}catch (NumberFormatException ne) {
+		    LOGGER.log(Level.INFO, "Error in parsing details.");
+		    return -1;
+		} catch (SQLException e) {
+		    LOGGER.log(Level.INFO, "Error in reading cab ID.");
+		    return -1;
+		} finally {
+		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+		
+	}
+	
+	/*
+	 * Assigns the available cab to the driver.
+	 */
+	
+	public void assignCabDriver(int cabID, int driverID) {
+		
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_CAB_DRIVER);
+			preparedStatement.setInt(1, driverID);
+			preparedStatement.setInt(2, cabID);
+			preparedStatement.setInt(3, driverID);
+			preparedStatement.setInt(4, driverID);
+			preparedStatement.executeUpdate();
+		    } catch (SQLException e) {
+		    LOGGER.log(Level.INFO, "Error in assigning driver to the cab.");
+		    } finally {
+		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		    }
+	}
+	
+	
+	/*
+	 * Reads the model ID of the available cab.
+	 */
+	
+	public int getModelID(int cabID) {
+		int modelID = -1;
+		String test = "";
+		
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_MODEL_ID);
+			preparedStatement.setInt(1, cabID);
+			resultSet = preparedStatement.executeQuery();
+		    if(resultSet.next()) {
+		    	 test = resultSet.getString(1);
+	    		 modelID= Integer.parseInt(test);
+		    }
+		    return modelID;
+		}catch (NumberFormatException ne) {
+		    LOGGER.log(Level.INFO, "Error in parsing details.");
+		    return -1;
+		} catch (SQLException e) {
+		    LOGGER.log(Level.INFO, "Error in reading model ID.");
+		    return -1;
+		} finally {
+		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+		
+	}
+	
+	/*
+	 * Reads the cab ID corresponding to the model ID.
+	 */
+	
+	public int getModelCabID(int modelID) {
+		int cabID = -1;
+		String test = "";
+		
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_MODEL_CAB_ID);
+			preparedStatement.setInt(1, modelID);
+			preparedStatement.setString(2, Constants.NOT_AVAILABLE);
+
+			resultSet = preparedStatement.executeQuery();
+		    if(resultSet.next()) {
+		    	 test = resultSet.getString(1);
+	    		 cabID= Integer.parseInt(test);
+		    }
+		    return cabID;
+		}catch (NumberFormatException ne) {
+		    LOGGER.log(Level.INFO, "Error in parsing details.");
+		    return -1;
+		} catch (SQLException e) {
+		    LOGGER.log(Level.INFO, "Error in reading cab ID corresponding to model ID.");
+		    return -1;
+		} finally {
+		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+		
+	}
+	
+	/*
+	 * Displays the cab locations. 
+	 */
+	
+	public ArrayList<CabLocation> getCabLocations() {
+		
+		int cabID = -1;
+		float latitude = 0.0f;
+		float longitude = 0.0f;
+		ArrayList<CabLocation> cabLocation = null;
+		CabLocation object = null;
+		
+		try {
+			cabLocation = new ArrayList<CabLocation>();
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_CAB_LOCATIONS);
+			resultSet = preparedStatement.executeQuery();
+		      while (resultSet.next()) {
+					cabID = resultSet.getInt(1); 
+					latitude = resultSet.getFloat(2);
+					longitude	 = resultSet.getFloat(3);
+
+
+					object = new CabLocation(cabID, latitude, longitude);
+					cabLocation.add(object);
+					
+		      }
+		      	return cabLocation;
+		} catch (Exception e) {
+		    	LOGGER.log(Level.SEVERE, "Error in reading cab locations.");
+		    	return null;
+		  } finally {
+		      DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		  }
+	}
+	
+	
+	/*
+	 * Reads the driver ID of the available cab.
+	 */
+	
+	public int getDriverID(int cabID) {
+		int driverID = -1;
+		String test = "";
+		
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_DRIVER_ID);
+			preparedStatement.setInt(1, cabID);
+			resultSet = preparedStatement.executeQuery();
+		    if(resultSet.next()) {
+		    	 test = resultSet.getString(1);
+	    		 driverID= Integer.parseInt(test);
+		    }
+		    return driverID;
+		}catch (NumberFormatException ne) {
+		    LOGGER.log(Level.INFO, "Error in parsing details.");
+		    return -1;
+		} catch (SQLException e) {
+		    LOGGER.log(Level.INFO, "Error in reading driver ID.");
+		    return -1;
+		} finally {
+		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+		
+	}
+	
+	/*
+	 * Checks if the cab with requested number of seats is available.
+	 */
+	
+	public boolean isSeatExists(int modelID, int seats) {
+		int numSeats = -1;
+		
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_CAB_SEATS);
+			preparedStatement.setInt(1, modelID);
+			resultSet = preparedStatement.executeQuery();
+		    if(resultSet.next()) {
+		    	 numSeats = resultSet.getInt(1);
+		    }
+		    
+		    if(numSeats>=seats) {
+		    	return true;
+		    } else {
+		    	return false;
+		    }
+		}catch (NumberFormatException ne) {
+		    LOGGER.log(Level.INFO, "Error in parsing details.");
+		    return false;
+		} catch (SQLException e) {
+		    LOGGER.log(Level.INFO, "Error in reading driver ID.");
+		    return false;
+		} finally {
+		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	
 }

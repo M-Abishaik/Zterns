@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.zilker.taxi.bean.User;
+import com.zilker.taxi.constant.Constants;
 import com.zilker.taxi.constant.SQLConstants;
 import com.zilker.taxi.util.DbConnect;
 
@@ -18,31 +20,149 @@ private Connection connection = null;
 private PreparedStatement preparedStatement = null;
 private ResultSet resultSet = null;
 
+
 /*
- * Checks if the email of a customer already exists.
+ * Creates a user account
  */
 
-public int checkMailExists(String mail) {
+public void createAccount(User user) {
+		
+	try {
+		connection = DbConnect.getConnection();
+		preparedStatement = connection.prepareStatement(SQLConstants.INSERT_PERSONAL_DETAILS);
+		preparedStatement.setString(1, user.getUserName());
+		preparedStatement.setString(2, user.getMail());
+		preparedStatement.setString(3, user.getContact());
+		preparedStatement.setString(4, user.getRole());
+		preparedStatement.setString(5, user.getPassword());
+		preparedStatement.executeUpdate();
+	    } catch (SQLException e) {
+	    LOGGER.log(Level.INFO, "Error in inserting personal details.");
+	    } finally {
+	    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+	    }	
+}
+
+/*
+ * Retrieves the user ID.
+ */
+
+public int getUserID(String contact) {
 	
-	int customerID = -1;
+	int userID = -1;
 	String test = "";
 	
 	try {
 		connection = DbConnect.getConnection();
-		preparedStatement = connection.prepareStatement(SQLConstants.CHECK_MAIL_EXISTS);
-		preparedStatement.setString(1, mail);
+		preparedStatement = connection.prepareStatement(SQLConstants.GET_USER_ID);
+		preparedStatement.setString(1, contact);
 		resultSet = preparedStatement.executeQuery();
 	    if(resultSet.next()) {
 	    	 test = resultSet.getString(1);
-    		 customerID= Integer.parseInt(test);
+    		 userID= Integer.parseInt(test);
 	    }
-	    return customerID;
-	} catch (NumberFormatException ne) {
+	    return userID;
+	}catch (NumberFormatException ne) {
 	    LOGGER.log(Level.INFO, "Error in parsing details.");
 	    return -1;
-	}catch (SQLException e) {
-	    LOGGER.log(Level.INFO, "Error in checking if email exists.");
+	} catch (SQLException e) {
+	    LOGGER.log(Level.INFO, "Error in retrieving user ID.");
 	    return -1;
+	} finally {
+	    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+	}
+}
+
+/*
+ * Updates the update timestamp of customer. 
+ */
+
+public void updateAccount(int userID, String contact) {
+	
+	try {
+		connection = DbConnect.getConnection();
+		preparedStatement = connection.prepareStatement(SQLConstants.UPDATE_USER_ID);
+	    preparedStatement.setInt(1, userID);
+	    preparedStatement.setInt(2, userID);
+	    preparedStatement.setString(3, contact);
+	    preparedStatement.executeUpdate();
+	    } catch (SQLException e) {
+	    LOGGER.log(Level.INFO, "Error in updating user record.");
+	    } finally {
+	    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+	    }
+}
+
+/*
+ * Creates an address record for the customer.
+ */
+
+public void createUserAddress(User user, int userID) {
+	
+	try {
+		connection = DbConnect.getConnection();
+		preparedStatement = connection.prepareStatement(SQLConstants.INSERT_USER_ADDRESS);
+	    preparedStatement.setInt(1, userID);
+	    preparedStatement.setString(2, user.getAddress());
+	    preparedStatement.setString(3, user.getCity());
+	    preparedStatement.setString(4, user.getZipCode());
+	    preparedStatement.setInt(5, userID);
+	    preparedStatement.setInt(6, userID);
+	    preparedStatement.executeUpdate();
+	    } catch (SQLException e) {
+	    LOGGER.log(Level.INFO, "Error in inserting customer address record.");
+	    } finally {
+	    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+	    }
+}
+
+/*
+ * Checks if the contact of a user already exists.
+ */
+
+public boolean checkContactExists(String contact) {
+	
+	try {
+		connection = DbConnect.getConnection();
+		preparedStatement = connection.prepareStatement(SQLConstants.CHECK_CONTACT_EXISTS);
+		preparedStatement.setString(1, contact);
+		resultSet = preparedStatement.executeQuery();
+	    if(resultSet.next()) {
+	    	 return true;
+	    } 
+	    return false;
+	} catch (NumberFormatException ne) {
+	    LOGGER.log(Level.INFO, "Error in parsing details.");
+	    return false;
+	}catch (SQLException e) {
+	    LOGGER.log(Level.INFO, "Error in checking if contact exists.");
+	    return false;
+	}finally {
+	    DbConnect.closeConnection(connection, preparedStatement, resultSet);
+	}
+}
+
+
+/*
+ * Login the user.
+ */
+
+public String login(String phone, String password) {
+	String role = "";
+	
+	try {
+		connection = DbConnect.getConnection();
+		preparedStatement = connection.prepareStatement(SQLConstants.CHECK_LOGIN);
+		preparedStatement.setString(1, phone);
+		preparedStatement.setString(2, password);
+		resultSet = preparedStatement.executeQuery();
+	    if(resultSet.next()) {
+	    	 role = resultSet.getString(1);
+	    } 
+	    return role;
+	} catch (SQLException e) {
+	    LOGGER.log(Level.INFO, "Error in checking login credentials.");
+	    return role;
 	}finally {
 	    DbConnect.closeConnection(connection, preparedStatement, resultSet);
 	}
