@@ -1,0 +1,72 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+  height: 100vh;
+}
+
+.container {
+  position: relative;
+  margin: 100px 344px;
+  padding: 20px 0px 20px 0px;
+  width: 45%;
+  border: 2px solid black;
+}
+
+input[type=text], input[type=email], input[type=password] {
+  margin: 10px 20px 0px 10px;
+  width: 90%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.bottomLogin{
+  margin-left: 40%;
+  margin-top: 5%;
+}
+
+.labelText{
+  margin-top: 3%;
+  margin-left: 2%;
+}
+
+label {
+  margin: 10px 20px 0px 10px;
+  padding: 12px 12px 12px 0;
+  display: block;
+}
+
+button {
+  margin-left: 20%;
+  margin-top: 20px;
+  background-color: #303f9f;
+  color: white;
+  padding: 14px 20px;
+  border: none;
+  cursor: pointer;
+  width: 20%;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+input[type=submit]:hover {
+  margin: 20px;
+  background-color: lightgreen;
+}
+
+.hide {
+  display: none;
+}
+
+.cancelbtn {
+  width: 20%;
+  padding: 14px 20px;
+  background-color: #f44336;
+}

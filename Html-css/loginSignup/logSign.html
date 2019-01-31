@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sign-up and Login</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="logSign.css">
+</head>
+
+<body onload="viewlogin()">
+    <div class="container">
+        <button type="submit" onclick="viewlogin()">LOGIN</button>
+        <button type="submit" onclick="viewsignup()">SIGNUP</button>
+        <form  id="login">
+            <div class="login">
+                <label class="labelText" for="uname"><b>USERNAME</b></label>
+                <input id="loginUsername" type="text" placeholder="Enter Username..." name="uname" required>
+                <label class="labelText" for="psw"><b>PASSWORD</b></label>
+                <input id="loginPassword" type="password" placeholder="Enter Password..." name="psw" required>
+                <label><input type="checkbox" checked="checked" name="remember"> Remember me</label><br>
+                <button onclick="validateLogin()" class="bottomLogin" type="button" id="login">LOGIN</button>
+
+            </div>
+        </form>
+        <form action="" id="signup">
+            <div class="signup">
+                <label for="uname"><b>USERNAME</b></label>
+                <input type="text" id="registerUsername" name="username" placeholder="Your name.." required>
+                <label for="email"><b>EMAIL</b></label>
+                <input type="email" id="registerEmail" name="email" placeholder="Your email id.." required>
+                <label for="psw"><b>PASSWORD</b></label>
+                <input type="password" id="registerPassword" placeholder="Enter Password" name="psw" required>
+                <label for="cname"><b>COMPANY NAME</b></label>
+                <input type="text" id="registerCompanyName" name="cname" placeholder="Company name.." required>
+                <label for="designation"><b>DESIGNATION</b></label>
+                <input type="text" id="registerCompanyDesignation" name="designation" placeholder="Enter your designation.." required><br>
+                <button onclick="validateRegister()" class="bottomLogin" type="button" id="register">REGISTER</button>
+
+            </div>
+        </form>
+    </div>
+</body>
+<script src="logSign.js"></script>
+
+</html>
