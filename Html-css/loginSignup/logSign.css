@@ -10,7 +10,7 @@ body {
 
 .container {
   position: relative;
-  margin: 100px 344px;
+  margin: 100px auto;
   padding: 20px 0px 20px 0px;
   width: 45%;
   border: 2px solid black;
@@ -41,6 +41,10 @@ label {
   display: block;
 }
 
+.wrapper{
+  display: flex;
+}
+
 button {
   margin-left: 20%;
   margin-top: 20px;
@@ -49,7 +53,7 @@ button {
   padding: 14px 20px;
   border: none;
   cursor: pointer;
-  width: 20%;
+  width: 100px;
 }
 
 button:hover {
@@ -65,8 +69,18 @@ input[type=submit]:hover {
   display: none;
 }
 
-.cancelbtn {
-  width: 20%;
-  padding: 14px 20px;
-  background-color: #f44336;
+@media (max-width: 799px){
+  .container{
+    width: 70%;
+  }
+
+  .wrapper{
+    margin-right: 23%;
+  }
+
+}
+@media (min-width: 800px) and (max-width: 1024px){
+  .container{
+    width: 60%;
+  }
 }

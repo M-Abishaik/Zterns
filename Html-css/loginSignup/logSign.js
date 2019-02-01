@@ -31,15 +31,15 @@ async function validateLogin() {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ "username": name, "password": password })
+    body: JSON.stringify({ "username": name, "password": pass })
   });
 
   let body = await result.json();
   console.log(body);
 
   if (body['isSuccess']) {
-    sessionStorage.setItem("token", body["responseBody"]["token"]);
-    window.location = "first.html"
+    localStorage.setItem("token", body["responseBody"]["token"]);
+    window.location = "notes.html";
   } else {
     alert(body['responseBody']['token']);
   }
@@ -55,11 +55,12 @@ async function validateRegister() {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ "username": name, "password": password })
+    body: JSON.stringify({ "username": name, "password": pass })
   });
 
+  console.log(result);
   let body = await result.json();
   console.log(body);
-  sessionStorage.setItem("token", body["responseBody"]["token"]);
-
+  localStorage.setItem("token", body["responseBody"]["token"]);
+  localStorage.setItem("isSet", "yes");
 }
