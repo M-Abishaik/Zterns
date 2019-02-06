@@ -5,16 +5,16 @@ package com.zilker.taxi.bean;
  */
 
 public class RideInvoice {
-	
-	private int customerID; 
-	private int driverID; 
+
+	private int customerID;
+	private int driverID;
 	private int cabID;
-	private int sourceID; 
+	private int sourceID;
 	private int destinationID;
 	private String rideStartTime;
 	private float price;
-	
-	public RideInvoice(int customerID, int driverID, int cabID, int sourceID, int destinationID, String rideStartTime, 
+
+	public RideInvoice(int customerID, int driverID, int cabID, int sourceID, int destinationID, String rideStartTime,
 			float price) {
 		super();
 		this.customerID = customerID;
@@ -73,7 +73,7 @@ public class RideInvoice {
 	public void setCabID(int cabID) {
 		this.cabID = cabID;
 	}
-	
+
 	public String getRideStartTime() {
 		return rideStartTime;
 	}

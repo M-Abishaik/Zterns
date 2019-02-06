@@ -1,7 +1,10 @@
 package com.zilker.taxi.bean;
 
+/*
+ * Displays user details.
+ */
 public class User {
-	
+
 	private String userName;
 	private String mail;
 	private String contact;
@@ -10,7 +13,7 @@ public class User {
 	private String address;
 	private String city;
 	private String zipCode;
-	
+
 	public User(String userName, String mail, String contact, String role, String password, String address, String city,
 			String zipCode) {
 		super();

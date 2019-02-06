@@ -14,31 +14,33 @@ import com.zilker.taxi.constant.Constants;
  */
 
 public class DbConnect {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	
-	public DbConnect() {}
-	
+
+	public DbConnect() {
+	}
+
 	/*
-	 * Opens the database connection. 
+	 * Opens the database connection.
 	 */
-	
+
 	public static Connection getConnection() {
-	    Connection connnection = null;
-	    try {
-	    	connnection = DriverManager.getConnection(Constants.CONNECTION, Constants.USERNAME, Constants.PASSWORD);
-	    } catch (SQLException sqlException) {
-	    	LOGGER.log(Level.SEVERE, "Error in connecting with driver.");
-	    }
-	    return connnection;
-	  }
-	  
+		Connection connnection = null;
+		try {
+			connnection = DriverManager.getConnection(Constants.CONNECTION, Constants.USERNAME, Constants.PASSWORD);
+		} catch (SQLException sqlException) {
+			LOGGER.log(Level.SEVERE, "Error in connecting with driver.");
+		}
+		return connnection;
+	}
+
 	/*
-	 * Closes the database connection. 
+	 * Closes the database connection.
 	 */
-	
-	public static void closeConnection(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) { 
-		try { 
+
+	public static void closeConnection(Connection connection, PreparedStatement preparedStatement,
+			ResultSet resultSet) {
+		try {
 			if (resultSet != null) {
 				resultSet.close();
 			}
@@ -48,8 +50,8 @@ public class DbConnect {
 			if (connection != null) {
 				connection.close();
 			}
-	    } catch (SQLException sqlException) {
-	    	LOGGER.log(Level.SEVERE, "Error in closing the connection.");
-	    }
+		} catch (SQLException sqlException) {
+			LOGGER.log(Level.SEVERE, "Error in closing the connection.");
+		}
 	}
 }

@@ -11,19 +11,24 @@ import com.zilker.taxi.bean.CabModel;
 import com.zilker.taxi.constant.SQLConstants;
 import com.zilker.taxi.util.DbConnect;
 
+/*
+ * Describes the admin functionalities.
+ */
 public class AdminDAO {
-	
-private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	
-	private Connection connection = null;
-	private PreparedStatement preparedStatement = null;
-	private ResultSet resultSet = null;
-	
+
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+
 	/*
 	 * Inserts cab model details.
 	 */
-	
+
 	public void insertCabModel(int adminID, CabModel cabModel) {
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
 		try {
 			connection = DbConnect.getConnection();
 			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_CAB_MODEL_DETAILS);
@@ -33,18 +38,22 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			preparedStatement.setInt(4, adminID);
 			preparedStatement.setInt(5, adminID);
 			preparedStatement.executeUpdate();
-		    } catch (SQLException e) {
-		    LOGGER.log(Level.INFO, "Error in inserting cab model details to DB.");
-		    } finally {
-		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
-		    }
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in inserting cab model details to DB.");
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
 	}
-	
+
 	/*
 	 * Launches the cab model.
 	 */
-	
+
 	public void launchCab(int modelID, int adminID, String licencePlate) {
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
 		try {
 			connection = DbConnect.getConnection();
 			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_CAB_LAUNCH_DETAILS);
@@ -53,11 +62,11 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			preparedStatement.setInt(3, adminID);
 			preparedStatement.setInt(4, adminID);
 			preparedStatement.executeUpdate();
-		    } catch (SQLException e) {
-		    LOGGER.log(Level.INFO, "Error in inserting cab launch details to DB.");
-		    } finally {
-		    DbConnect.closeConnection(connection, preparedStatement, resultSet);
-		    }
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in inserting cab launch details to DB.");
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
 	}
 
 }

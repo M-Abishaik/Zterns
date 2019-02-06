@@ -6,35 +6,39 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 import com.zilker.taxi.bean.CabModel;
 import com.zilker.taxi.bean.CabModelDetail;
 import com.zilker.taxi.constant.Constants;
 import com.zilker.taxi.delegate.AdminDelegate;
 import com.zilker.taxi.util.RegexUtility;
 
+/*
+ * Admin UI.
+ */
+
 public class Admin {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	private final static Scanner SCANNER = new Scanner(System.in);
-	
+
 	public void adminConsole(String userPhone) {
-		
+
 		int choice = 0;
 		Admin admin = null;
 
-		try {
-			admin = new Admin();
-			do {
-				LOGGER.log(Level.INFO, "1. Add a cab model." + "\n" + "2. Display cab models." + "\n" + "3. Update a cab model."
-						+ "\n" + "4. Delete a cab model." + "\n" + "5. View driver assigned cabs." + "\n" + "6. Logout.");
+		do {
+			try {
+				admin = new Admin();
+
+				LOGGER.log(Level.INFO, Constants.ADMIN_MESSAGE);
+
 				LOGGER.log(Level.INFO, "Enter your choice: ");
 
 				choice = SCANNER.nextInt();
 
 				switch (choice) {
-				
+
 				case 1:
 					admin.addCabModel(userPhone);
 					break;
@@ -48,25 +52,23 @@ public class Admin {
 					admin.deleteCabModel();
 					break;
 				case 5:
-					admin.viewDriverCabs();
-					break;
-				case 6: return;
+					return;
 				default:
 					LOGGER.log(Level.WARNING, "Invalid choice. Enter a valid one.");
 					break;
 				}
-			} while (choice != 6);
-		} catch (InputMismatchException e) {
-			LOGGER.log(Level.WARNING, "Invalid input. Please enter a valid number.");
-			SCANNER.next();
-		}
-		
+			} catch (InputMismatchException e) {
+				LOGGER.log(Level.WARNING, "Invalid input. Please enter a valid number.");
+				SCANNER.next();
+			}
+
+		} while (choice != 6);
 	}
-	
+
 	/*
-	 * Adds cab model details. 
+	 * Adds cab model details.
 	 */
-	
+
 	public void addCabModel(String userPhone) {
 		String cabModelName = "";
 		String cabModelDescription = "";
@@ -78,73 +80,86 @@ public class Admin {
 		RegexUtility regexUtility = null;
 
 		String response = "";
-		
+
 		try {
-			
+
 			regexUtility = new RegexUtility();
 			cabModel = new CabModel();
 			adminDelegate = new AdminDelegate();
-		
+
 			SCANNER.nextLine();
-			
+
 			LOGGER.log(Level.INFO, "Enter the name of the model: ");
 			cabModelName = SCANNER.nextLine();
-			
+			/*
+			 * do {
+			 * 
+			 * 
+			 * check = regexUtility.validateRegex(Constants.VALID_STRING_REGEX,
+			 * licencePlate); if(check == true) { break; } else { LOGGER.log(Level.WARNING,
+			 * "Invalid input. Enter a valid one."); }
+			 * 
+			 * }while(check!=true);
+			 */
+
+			check = false;
+
 			do {
 				LOGGER.log(Level.INFO, "Enter the licence plate number: ");
 				licencePlate = SCANNER.next();
-				
+
 				check = regexUtility.validateRegex(Constants.VALID_LICENCE_PLATE_REGEX, licencePlate);
 				if (check == true) {
 					break;
 				} else {
 					LOGGER.log(Level.WARNING, "Invalid licence plate number. Enter a valid one.");
 				}
-			
-				}while(check!=true);
-			
+
+			} while (check != true);
+
 			check = false;
 
 			LOGGER.log(Level.INFO, "Enter the description of the model: ");
 			cabModelDescription = SCANNER.next();
-		
+
 			do {
 				LOGGER.log(Level.INFO, "Enter the number of seats in the model: ");
 				numSeats = SCANNER.nextInt();
-				
-				if(numSeats<=0 || numSeats==1) {
+
+				if (numSeats <= 0 || numSeats == 1) {
 					LOGGER.log(Level.INFO, "Invalid number of seats.");
 				} else {
 					check = true;
 					break;
 				}
-			}while(check!=true);
-			
-			
+			} while (check != true);
+
 			cabModel = new CabModel(cabModelName, cabModelDescription, licencePlate, numSeats);
 			response = adminDelegate.addCabModel(cabModel, userPhone);
-			
-			if(response.equals(Constants.SUCCESS)) {
+
+			if (response.equals(Constants.SUCCESS)) {
 				LOGGER.log(Level.INFO, "Cab model successfully added.");
 			} else {
 				LOGGER.log(Level.WARNING, "Error in adding cab model details.");
 			}
-			
-		}catch(Exception exception) {
+
+		} catch (InputMismatchException e) {
+			LOGGER.log(Level.WARNING, "Invalid input. Please enter a valid number.");
+			SCANNER.next();
+		} catch (Exception exception) {
 			LOGGER.log(Level.WARNING, "Error in passing cab model details to DAO.");
 		}
 	}
-	
-	
+
 	/*
 	 * Updates cab model.
 	 */
 
 	public void updateCabModel(String userPhone) {
 
-		String licencePlate = ""; 
-		String modelName = ""; 
-		String modelDescription = ""; 
+		String licencePlate = "";
+		String modelName = "";
+		String modelDescription = "";
 		int numSeats;
 		boolean check = false;
 		int modelID = -1;
@@ -160,21 +175,21 @@ public class Admin {
 			do {
 				LOGGER.log(Level.INFO, "Enter the licence plate number: ");
 				licencePlate = SCANNER.next();
-				
+
 				check = regexUtility.validateRegex(Constants.VALID_LICENCE_PLATE_REGEX, licencePlate);
 				if (check == true) {
 					break;
 				} else {
 					LOGGER.log(Level.WARNING, "Invalid licence plate number. Enter a valid one.");
 				}
-			
-				}while(check!=true);
-			
+
+			} while (check != true);
+
 			check = false;
 
 			modelID = adminDelegate.getModelByLicencePlate(licencePlate);
 			if (modelID == (-1)) {
-				LOGGER.log(Level.WARNING, licencePlate +" doesn't exist.");
+				LOGGER.log(Level.WARNING, licencePlate + " doesn't exist.");
 				return;
 			}
 
@@ -192,7 +207,7 @@ public class Admin {
 			cabModel = new CabModel(modelName, modelDescription, licencePlate, numSeats);
 			response = adminDelegate.updateCabModel(cabModel, userPhone, modelID);
 
-			if(response.equals(Constants.SUCCESS)) {
+			if (response.equals(Constants.SUCCESS)) {
 				LOGGER.log(Level.INFO, "Cab model successfully updated.");
 			} else {
 				LOGGER.log(Level.WARNING, "Couldn't update model.");
@@ -202,14 +217,14 @@ public class Admin {
 			LOGGER.log(Level.SEVERE, "Error in updating cab model.");
 		}
 	}
-	
+
 	/*
 	 * Removes cab model and makes it unavailable for ride.
 	 */
 
 	public void deleteCabModel() {
 		boolean check = false;
-		String licencePlate = ""; 
+		String licencePlate = "";
 		AdminDelegate adminDelegate = null;
 		RegexUtility regexUtility = null;
 		int modelID = -1;
@@ -222,27 +237,27 @@ public class Admin {
 			do {
 				LOGGER.log(Level.INFO, "Enter the licence plate number: ");
 				licencePlate = SCANNER.next();
-				
+
 				check = regexUtility.validateRegex(Constants.VALID_LICENCE_PLATE_REGEX, licencePlate);
 				if (check == true) {
 					break;
 				} else {
 					LOGGER.log(Level.WARNING, "Invalid licence plate number. Enter a valid one.");
 				}
-			
-				}while(check!=true);
-			
+
+			} while (check != true);
+
 			check = false;
 
 			modelID = adminDelegate.getModelByLicencePlate(licencePlate);
 			if (modelID == (-1)) {
-				LOGGER.log(Level.WARNING, licencePlate +" doesn't exist.");
+				LOGGER.log(Level.WARNING, licencePlate + " doesn't exist.");
 				return;
 			}
 
 			response = adminDelegate.deleteCabModel(modelID);
 
-			if(response.equals(Constants.SUCCESS)) {
+			if (response.equals(Constants.SUCCESS)) {
 				LOGGER.log(Level.INFO, "Cab model deleted successfully.");
 			} else {
 				LOGGER.log(Level.WARNING, "Couldn't delete cab model.");
@@ -252,46 +267,37 @@ public class Admin {
 			LOGGER.log(Level.SEVERE, "Error in deleting the account.");
 		}
 	}
-	
+
 	/*
 	 * Displays cab model details.
 	 */
-	
+
 	public void displayCabs() {
-		
+
 		AdminDelegate adminDelegate = null;
 		ArrayList<CabModelDetail> cabModel = null;
 		CabModelDetail object = null;
 		int size = -1;
 		int i = 0;
-		
+
 		LOGGER.log(Level.WARNING, "List of cab model details.");
-		
+
 		try {
-			
+
 			adminDelegate = new AdminDelegate();
 			object = new CabModelDetail();
 			cabModel = adminDelegate.displayCabModelDetails();
-			
+
 			size = cabModel.size();
-			
-			for(i=0;i<size;i++) {
+
+			for (i = 0; i < size; i++) {
 				object = cabModel.get(i);
-				LOGGER.log(Level.INFO, object.getLicencePlate() + " " + object.getModelName() + " " + object.getModelDescription()
-				+ " " + object.getNumSeats());
+				LOGGER.log(Level.INFO, object.getLicencePlate() + " " + object.getModelName() + " "
+						+ object.getModelDescription() + " " + object.getNumSeats());
 			}
-			
-		
-		}catch(Exception e) {
+
+		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error displaying cab model details.");
 		}
-	}
-	
-	/*
-	 * Displays details of cab assigned drivers.
-	 */
-	
-	public void viewDriverCabs() {
-		
 	}
 }

@@ -1,11 +1,15 @@
 package com.zilker.taxi.bean;
 
+/*
+ * Describes the cab model.
+ */
+
 public class CabModel {
 	private String modelName;
 	private String modelDescription;
 	private String licencePlate;
 	private int numberSeats;
-	
+
 	public CabModel() {
 
 	}
@@ -49,6 +53,5 @@ public class CabModel {
 	public void setNumberSeats(int numberSeats) {
 		this.numberSeats = numberSeats;
 	}
-	
-	
+
 }

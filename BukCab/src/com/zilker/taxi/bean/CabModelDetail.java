@@ -1,16 +1,16 @@
 package com.zilker.taxi.bean;
 
 public class CabModelDetail {
-	
+
 	private String licencePlate;
 	private String modelName;
 	private String modelDescription;
 	private int numSeats;
-	
+
 	public CabModelDetail() {
-		
+
 	}
-	
+
 	public CabModelDetail(String licencePlate, String modelName, String modelDescription, int numSeats) {
 		super();
 		this.licencePlate = licencePlate;
@@ -50,8 +50,5 @@ public class CabModelDetail {
 	public void setNumSeats(int numSeats) {
 		this.numSeats = numSeats;
 	}
-	
-	
 
-	
 }

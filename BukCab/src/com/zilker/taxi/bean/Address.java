@@ -1,11 +1,17 @@
 package com.zilker.taxi.bean;
 
+/*
+ * Address bean.
+ */
+
 public class Address {
-	
+
 	private String address;
 	private String zipCode;
-	
-	public Address() {}
+
+	public Address() {
+	}
+
 	public Address(String address, String zipCode) {
 		super();
 		this.address = address;
