@@ -336,7 +336,7 @@ public class CustomerDAO {
 			count = preparedStatement.executeUpdate();
 
 			if (count > 0) {
-				bookingID = fetchBookingID(invoice.getCustomerID(), invoice.getDriverID(), invoice.getCabID());
+				bookingID = fetchBookingID(invoice.getCustomerID(), invoice.getDriverID(), invoice.getCabID(), invoice.getRideStartTime());
 			}
 			return bookingID;
 		} catch (SQLException e) {
@@ -352,7 +352,7 @@ public class CustomerDAO {
 	 * Retrieves the booking ID of a ride.
 	 */
 
-	public int fetchBookingID(int customerID, int driverID, int cabID) {
+	public int fetchBookingID(int customerID, int driverID, int cabID, String startTime) {
 		int bookingID = -1;
 		String test = "";
 		
@@ -367,7 +367,8 @@ public class CustomerDAO {
 			preparedStatement.setInt(1, customerID);
 			preparedStatement.setInt(2, driverID);
 			preparedStatement.setInt(3, cabID);
-
+			preparedStatement.setString(4, startTime);
+			
 			resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				test = resultSet.getString(1);

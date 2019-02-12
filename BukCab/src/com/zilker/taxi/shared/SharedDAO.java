@@ -457,6 +457,7 @@ public class SharedDAO {
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
+		int userID = -1;
 		
 		try {
 			connection = DbConnect.getConnection();
@@ -466,6 +467,17 @@ public class SharedDAO {
 			preparedStatement.setString(3, user.getPassword());
 			preparedStatement.setString(4, user.getContact());
 			preparedStatement.executeUpdate();
+			
+			userID = getUserID(user.getContact());
+			
+			preparedStatement = connection.prepareStatement(SQLConstants.UPDATE_USER_ADDRESS);
+			preparedStatement.setString(1, user.getAddress());
+			preparedStatement.setString(2, user.getCity());
+			preparedStatement.setString(3, user.getZipCode());
+			preparedStatement.setInt(4, userID);
+			preparedStatement.executeUpdate();
+			
+			
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Error in updating personal details.");
 		} finally {
