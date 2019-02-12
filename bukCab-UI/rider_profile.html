@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Rider Profile</title>
+	<link  href="css/style.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+</head>
+
+<body onload="riderviewbook()" id="rider">
+
+	<header>
+		<a href="index.html"><img src="img/logouber2.png" alt="Taxi logo" class="logo"></a>
+		<!--<nav>	
+			<ul class="home">
+				<li><a href="index.html#home">Home</a></li>
+				<li><a href="index.html#about">About</a></li>
+				<li><a href="index.html#gallery">Gallery</a></li>
+				<li><a href="index.html#support">Support</a></li>
+				<li><a href="index.html#contact">Contact</a></li>
+			</ul>
+		</nav>-->
+	</header>
+	<div class="vertical-menu">
+  		<button class="button button-dark" type="submit" onclick="riderviewbook()">Book a ride</button>
+  		<button class="button button-dark" type="submit" onclick="riderviewprofile()">Profile</button>
+  		<button class="button button-dark" type="submit" onclick="riderviewtrips()">My Trips</button>
+
+        <a class="logout" href="index.html">Logout</a>
+	</div> 
+ 	<div class="container3 rider">
+
+        <form id="bookride" onsubmit="return validateRideRegistration()">
+            <h1>Book your Ride</h1>
+            <label>Start Date </label> <input id="date" type="date" value="date" required><br>
+            <label> Start Time </label><input id="time" type="time" value="time" required><br>
+            <!--<label for="Source">Source</label>
+            <input id="source" type="text"  placeholder="Enter Source" required><br>
+            <label for="dest">Destination</label>
+            <input id="destination" type="text"  placeholder="Enter Destination" required><br>-->
+            <label>Source</label><select id="source" style="width: 60%" required>
+                <option>Rajaji street, 602024</option>
+                <option>Annai Indira nagar, 909099</option>
+                <option>Home street, 688902</option>
+            </select>
+            
+            <label>Destination</label><select id="destination" style="width: 60%" required>
+                <option>Rajaji street, 602024</option>
+                <option>Annai Indira nagar, 909099</option>
+                <option>Home street, 688902</option>
+            </select>
+
+            <label>Seats </label><select id="seats" required>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+            <br><br>
+            <button class="bottomLogin button button-accent" type="submit" id="login">Search</button>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d15547.68989918154!2d80.2265543!3d13.04060655!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sua!4v1549776191455" width="600" height="450" frameborder="0" style="border:0" allowfullscreen></iframe>
+        </form>
+
+        <form id="riderprofile" onsubmit="return validateUpdateProfile()">
+        	<img class="my-profile-icon" src="img/4.png">
+        	<h2 class="prof-title">User Name <span>123456789</span> </h2>
+            <label for="email"><b>Email ID</b></label>
+            <input id="riderEmail" type="email" placeholder="Username123@gmail.com" name="email" required>
+            <!--<p><a href="#">Add another email</a></p>-->
+        	<!-- <label for="location">Location</label>
+        	<select id="location">
+        		<option>India</option>
+        		<option>United States of America</option>
+        		<option>United Kingdom</option>
+        		<option>Canada</option>
+        		<option>Australia</option>
+        		<option>Singapore</option>
+        		<option>China</option>
+        		<option>Japan</option>
+        		<option>Switzerland</option>
+        	</select> -->
+
+        	<!-- <label for="lang">Language</label>
+        	<select id="lang">
+        		<option>English</option>
+        		<option>Tamil</option>
+        		<option>Hindi</option>
+        		<option>Chinese</option>
+        		<option>Germany</option>
+        		<option>Japanese</option>
+        		<option>French</option>
+        	</select> -->
+        	<!-- <label for="invite-code">Invite Code</label>
+            <input id="invite-code" type="text" placeholder="Username123" name="inv-code" readonly="readonly"> -->
+            <label for="address"><b>Address</b></label>
+            <textarea id="riderAddress" placeholder="123, Bank Street, Chennai, India" required></textarea>
+            
+            <label for="zipcode"><b>Zip Code</b></label>
+            <input type="text" id="riderZipcode" required>
+            <span id="updateZipcode"></span>
+
+            <label for="psw"><b>Password</b></label>
+            <input type="password" id="riderPassword" placeholder="abishaik123" name="psw" required> 
+            <span id="updatePassword"></span>
+            <br><br>
+            <button class="bottomLogin button button-accent" type="submit" id="login">Save</button>
+            <img class= "my-profile-img" src="img/ride_1.jpg">
+        </form>  
+        
+        <form id="ridertrips">
+                <div class="row">
+                    
+                    <div class="column">
+                        <button class="collapsible"><h2 id="datetime">09 February 2019, 5.42pm</h2>
+                        <h2 id="rs">Rs.200</h2>
+                        <h4 id="place">Chennai</h4>
+                        <h4 id="cash">Cash</h4></button>
+                        <div class="content">
+                            <h3 id="with">Your trip with John</h3>
+                            <h3 id="fromto">From XYZ to ABC</h3>
+                            <button class="button button-accent update">Update</button>
+                            <button class="button button-accent cancel">Cancel</button>
+                            <h4>Rate    
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span> </h4>
+                        </div>
+                    </div>  
+                    <div class="column">
+                        <button class="collapsible"><h2 id="datetime">09 February 2019, 5.42pm</h2>
+                        <h2 id="rs">Rs.200</h2>
+                        <h4 id="place">Chennai</h4>
+                        <h4 id="cash">Cash</h4></button>
+                        <div class="content">
+                            <h3 id="with">Your trip with John</h3>
+                            <h3 id="fromto">From XYZ to ABC</h3>
+                            <button class="button button-accent update">Update</button>
+                            <button class="button button-accent cancel">Cancel</button>
+                            <h4>Rate    
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span> </h4>
+                        </div>
+                    </div>  
+                    <div class="column">
+                        <button class="collapsible"><h2 id="datetime">09 February 2019, 5.42pm</h2>
+                        <h2 id="rs">Rs.200</h2>
+                        <h4 id="place">Chennai</h4>
+                        <h4 id="cash">Cash</h4></button>
+                        <div class="content">
+                            <h3 id="with">Your trip with John</h3>
+                            <h3 id="fromto">From XYZ to ABC</h3>
+                            <button class="button button-accent update">Update</button>
+                            <button class="button button-accent cancel">Cancel</button>
+                            <h4>Rate    
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span> </h4>
+                        </div>
+                    </div>     
+                    <div class="column">
+                        <button class="collapsible"><h2 id="datetime">09 February 2019, 5.42pm</h2>
+                        <h2 id="rs">Rs.200</h2>
+                        <h4 id="place">Chennai</h4>
+                        <h4 id="cash">Cash</h4></button>
+                        <div class="content">
+                            <h3 id="with">Your trip with John</h3>
+                            <h3 id="fromto">From XYZ to ABC</h3>
+                            <button class="button button-accent update">Update</button>
+                            <button class="button button-accent cancel">Cancel</button>
+                            <h4>Rate    
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span> </h4>
+                        </div>
+                    </div>  
+                </div>
+        </form>
+	</div>
+
+
+</body>
+
+    <script src="js/logSign.js"></script>
+</html>
+
+
