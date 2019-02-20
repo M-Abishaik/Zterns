@@ -1,18 +1,3 @@
-function viewlogin() {
-  var x = document.getElementById("signup");
-  var y = document.getElementById("login");
-  console.log(x);
-  x.style.display = "none";
-  y.style.display = "block";
-}
-
-function viewsignup() {
-  var y = document.getElementById("signup");
-  var x = document.getElementById("login");
-  y.style.display = "block";
-  x.style.display = "none";
-}
-
 function riderviewbook() {
 	var a = document.getElementById("bookride");
 	var b = document.getElementById("riderprofile");
@@ -46,29 +31,39 @@ function riderviewtrips() {
 	// d.style.display = "none";
 }
 
-function driverviewlicense() {
-	var a = document.getElementById("driverlicense");
-	var b = document.getElementById("driverprofile");
-	var c = document.getElementById("drivertrips");
+
+function upcoming () {
+	var a = document.getElementById("upcoming");
+	var b = document.getElementById("completed");
+	var c = document.getElementById("cancelled");
 	a.style.display = "block";
 	b.style.display = "none";
 	c.style.display = "none";
 }
 
-function driverviewprofile() {
-	var a = document.getElementById("driverlicense");
-	var b = document.getElementById("driverprofile");
-	var c = document.getElementById("drivertrips");
+function completed () {
+	var a = document.getElementById("upcoming");
+	var b = document.getElementById("completed");
+	var c = document.getElementById("cancelled");
 	a.style.display = "none";
 	b.style.display = "block";
 	c.style.display = "none";
 }
 
-function driverviewtrips() {
-	var a = document.getElementById("driverlicense");
-	var b = document.getElementById("driverprofile");
-	var c = document.getElementById("drivertrips");
+function cancelled () {
+	var a = document.getElementById("upcoming");
+	var b = document.getElementById("completed");
+	var c = document.getElementById("cancelled");
 	a.style.display = "none";
 	b.style.display = "none";
 	c.style.display = "block";
 }
+
+var slider = document.getElementById("myRange");
+var output = document.getElementById("demo");
+output.innerHTML = slider.value; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+  output.innerHTML = this.value;
+} 

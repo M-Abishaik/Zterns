@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+
+/*body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
+  height: 100vh;
+}*/
+
+.container2 {
+  position: relative;
+  float: right;
+  margin: -28em 6em;
+  padding: 2em;
+  width: 30%;
+  border: 0.25em solid #00ff6c;
+  border-radius: 1.5em;
+  background-color: rgba(23,23,23,0.7)
+}
+
+input[type=text], input[type=email], input[type=password] {
+  margin: 10px 20px 0px 10px;
+  width: 90%;
+  padding: 12px;
+  border: 1px solid #black;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.bottomLogin{
+  margin: 2% 25% 0% 25%;
+}
+
+.labelText{
+  margin-top: 3%;
+  margin-left: 2%;
+}
+
+label {
+  margin: 10px 20px 0px 10px;
+  padding: 12px 12px 12px 0;
+  display: block;
+}
+
+.wrapper{
+  display: flex;
+  /*display: inline-block;*/
+  /*float: left;*/
+}
+
+button {
+  display: inline-block;
+  margin: 0 0.5em;
+  background-color: rgba(0,0,0,0.5);
+  /*padding: 2em;*/
+  cursor: pointer;
+  width: 50%;
+}
+
+
+
+button:hover {
+  opacity: 0.8;
+}
+
+input[type=submit]:hover {
+  margin: 20px;
+  background-color: lightgreen;
+}
+
+.hide {
+  display: none;
+}
+
+/*@media (max-width: 799px){
+  .container{
+    width: 70%;
+  }
+
+  .wrapper{
+    margin-right: 23%;
+  }
+
+}
+@media (min-width: 800px) and (max-width: 1024px){
+  .container{
+    width: 60%;
+  }
+}*/
