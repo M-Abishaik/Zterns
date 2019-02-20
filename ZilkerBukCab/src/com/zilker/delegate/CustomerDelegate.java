@@ -6,7 +6,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.zilker.bean.Address;
+import com.zilker.bean.TravelInvoice;
 import com.zilker.dao.CustomerDAO;
+import com.zilker.dao.TaxiDAO;
 import com.zilker.constants.Constants;
 
 public class CustomerDelegate {
@@ -159,44 +161,21 @@ public class CustomerDelegate {
 	 * Calculates the ride price and distance.
 	 */
 
-	/*public int calculateTravel(TravelInvoice travelInvoice, int flag) {
+	public int calculateTravel(TravelInvoice travelInvoice, int flag) {
 
 		int result = -1;
-		float price = 0.0f;
-		float distance = 0.0f;
-		float min = 5000;
-		float max = 1000000;
-		RideInvoice rideInvoice = null;
+		
 		SharedDelegate sharedDelegate = null;
 		TaxiDAO taxiDAO = null;
-		Random random = null;
-
-		// UpdateRide updateRide = null;
 
 		try {
 			taxiDAO = new TaxiDAO();
 			sharedDelegate = new SharedDelegate();
-			random = new Random();
-			distance = min + random.nextFloat() * (max - min);
-
-			if (distance >= 5000 && distance <= 15000) {
-				price = 2500;
-			} else if (distance >= 15001 && distance <= 50000) {
-				price = 10000;
-			} else if (distance >= 50001 && distance <= 70000) {
-				price = 20000;
-			} else {
-				price = 30000;
-			}
-
-			rideInvoice = new RideInvoice(travelInvoice.getCustomerID(), travelInvoice.getDriverID(),
-					travelInvoice.getCabID(), travelInvoice.getSourceID(), travelInvoice.getDestinationID(),
-					travelInvoice.getFormattedTime(), price);
 
 			if (flag == 0) {
-				result = insertRideDetails(rideInvoice);
+				result = insertRideDetails(travelInvoice);
 
-				taxiDAO.insertRouteDetails(travelInvoice.getSourceID(), travelInvoice.getDestinationID(), distance);
+				taxiDAO.insertRouteDetails(travelInvoice.getSourceID(), travelInvoice.getDestinationID(), travelInvoice.getDistance());
 
 				// Updates the driver and cab status to be unavailable until the current ride
 				// has been completed.
@@ -206,7 +185,7 @@ public class CustomerDelegate {
 
 			} else {
 
-				updateRideDetails(rideInvoice);
+				updateRideDetails(travelInvoice);
 
 				return travelInvoice.getCustomerID();
 			}
@@ -214,7 +193,41 @@ public class CustomerDelegate {
 			LOGGER.log(Level.WARNING, "Error in transferring invoice details to DAO.");
 			return -1;
 		}
-	}*/
+	}
+	
+	/*
+	 * Inserts the ride details of the customer.
+	 */
 
+	public int insertRideDetails(TravelInvoice invoice) {
+
+		int bookingID = -1;
+		CustomerDAO customerDAO = null;
+
+		try {
+			customerDAO = new CustomerDAO();
+			bookingID = customerDAO.insertRideDetails(invoice);
+
+			return bookingID;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error in transferring invoice details to DAO.");
+			return -1;
+		}
+	}
+	
+	/*
+	 * Updates the ride details of a customer.
+	 */
+
+	public void updateRideDetails(TravelInvoice invoice) {
+
+		CustomerDAO customerDAO = null;
+		try {
+			customerDAO = new CustomerDAO();
+			customerDAO.updateRideDetails(invoice);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error in updating ride details.");
+		}
+	}
 
 }

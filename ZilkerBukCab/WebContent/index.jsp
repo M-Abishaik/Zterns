@@ -7,13 +7,13 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>ZilkerBukCab</title>
-		<link rel="stylesheet" href="./css/style.css">
+		<link rel="stylesheet" href="./css/index.css">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 	</head>
 	<body onload="viewlogin()" id="home">
 	<%@ page import="com.zilker.config.Config"%>
 	<header>
-		<a href="index.html"><img src="img/logouber2.png" alt="Taxi logo" class="logo"></a>
+		<a href="#"><img src="img/logouber2.png" alt="Taxi logo" class="logo"></a>
 		<nav>	
 			<ul class="home">
 				<li><a href="#home">Home</a></li>
@@ -112,10 +112,6 @@
 		<!-- 1 -->
 		<figure class="port-item">
 			<img src="img/g1.jpg" alt="portfolio item">
-			<!-- <figcaption class="port-desc">
-				<p>Project title</p>
-				<a href="" class="button button-accent button-small">Project details</a>
-			</figcaption> -->
 		</figure>
 		<!-- 2 -->
 		<figure class="port-item">
@@ -197,5 +193,5 @@
 	</footer>
  	
 </body>
-	<script src="js/logSign.js"></script>
+	<script src="js/index.js"></script>
 </html>

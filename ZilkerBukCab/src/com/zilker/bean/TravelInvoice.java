@@ -11,13 +11,15 @@ public class TravelInvoice {
 	private int sourceID;
 	private int destinationID;
 	private String formattedTime;
+	private float price;
+	private float distance;
 
 	public TravelInvoice() {
 
 	}
 
-	public TravelInvoice(int customerID, int driverID, int cabID, int sourceID, int destinationID,
-			String formattedTime) {
+	public TravelInvoice(int customerID, int driverID, int cabID, int sourceID, int destinationID, String formattedTime,
+			float price, float distance) {
 		super();
 		this.customerID = customerID;
 		this.driverID = driverID;
@@ -25,6 +27,8 @@ public class TravelInvoice {
 		this.sourceID = sourceID;
 		this.destinationID = destinationID;
 		this.formattedTime = formattedTime;
+		this.price = price;
+		this.distance = distance;
 	}
 
 	public int getCustomerID() {
@@ -74,4 +78,24 @@ public class TravelInvoice {
 	public void setFormattedTime(String formattedTime) {
 		this.formattedTime = formattedTime;
 	}
+
+	public float getPrice() {
+		return price;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+	public float getDistance() {
+		return distance;
+	}
+
+	public void setDistance(float distance) {
+		this.distance = distance;
+	}
+
+	
+
+	
 }

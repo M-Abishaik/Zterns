@@ -18,22 +18,22 @@ import javax.servlet.http.HttpSession;
 import com.zilker.bean.Address;
 import com.zilker.bean.UpdateProfile;
 import com.zilker.bean.User;
+import com.zilker.constants.Constants;
 import com.zilker.delegate.CustomerDelegate;
 import com.zilker.delegate.SharedDelegate;
-import com.zilker.constants.Constants;
 
 /**
- * Servlet implementation class ProfileServlet
+ * Servlet implementation class DriverProfileServlet
  */
-@WebServlet("/ProfileServlet")
-public class ProfileServlet extends HttpServlet {
+@WebServlet("/DriverProfileServlet")
+public class DriverProfileServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-   	
+       
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ProfileServlet() {
+    public DriverProfileServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -42,7 +42,6 @@ public class ProfileServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		User user = null;
 		SharedDelegate sharedDelegate = null;
 		HttpSession session = null;
@@ -58,20 +57,18 @@ public class ProfileServlet extends HttpServlet {
 			user = sharedDelegate.displayProfile(userPhone);
 			request.setAttribute("userProfile", user);
 			
-			requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
+			requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
 			requestDispatcher.forward(request, response);
 
 		} catch(Exception exception) {
 			
 		}
-
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		String mail = "";
 		String address = "";
 		String zipCode = "";
@@ -106,7 +103,7 @@ public class ProfileServlet extends HttpServlet {
 
 			if (updateResponse.equals(Constants.SUCCESS)) {
 				LOGGER.log(Level.INFO, "Account successfully updated.");
-				requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
+				requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
 				requestDispatcher.forward(request, response);
 			}
 			

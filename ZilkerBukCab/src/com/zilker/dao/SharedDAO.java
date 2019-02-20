@@ -5,14 +5,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.zilker.constants.SQLConstants;
+import com.zilker.bean.BookingResponse;
 import com.zilker.bean.UpdateProfile;
 import com.zilker.bean.User;
 import com.zilker.util.DbConnect;
-
 
 public class SharedDAO {
 	
@@ -32,7 +33,7 @@ public class SharedDAO {
 		ResultSet resultSet = null;
 
 		try {
-			connection = DbConnect.getConnection();
+connection = DbConnect.getConnection();
 			preparedStatement = connection.prepareStatement(SQLConstants.CHECK_LOGIN);
 			preparedStatement.setString(1, phone);
 			preparedStatement.setString(2, password);
@@ -278,6 +279,358 @@ public class SharedDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
+	
+	
+	/*
+	 * Retrieves the driver details for the ride.
+	 */
 
+	public String findDriverByID(int driverID) {
+		String driverName = "";
+		String driverContact = "";
+		String driver = "";
+		
 
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_DRIVER_BY_ID);
+			preparedStatement.setInt(1, driverID);
+
+			resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				driverName = resultSet.getString(1);
+				driverContact = resultSet.getString(2);
+
+				driver = driverName + "- " + driverContact;
+			}
+			return driver;
+		} catch (NumberFormatException ne) {
+			LOGGER.log(Level.WARNING, "Error in parsing details.");
+			return "";
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in retrieving driver details from DB.");
+			return "";
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+
+	}
+
+	/*
+	 * Retrieves the cab details for a ride.
+	 */
+
+	public String findCabByID(int cabID) {
+		String cabModel = "";
+		String cabDescription = "";
+		String cab = "";
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_CAB_BY_ID);
+			preparedStatement.setInt(1, cabID);
+
+			resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				cabModel = resultSet.getString(1);
+				cabDescription = resultSet.getString(2);
+
+				cab = cabModel + "- " + cabDescription;
+			}
+			return cab;
+		} catch (NumberFormatException ne) {
+			LOGGER.log(Level.WARNING, "Error in parsing details.");
+			return "";
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in retrieving cab details from DB.");
+			return "";
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+
+	}
+	
+	/*
+	 * Updates the driver status as available or unavailable depending on the ride.
+	 */
+
+	public void updateDriverStatus(int driverID, int flag) {
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.UPDATE_DRIVER_STATUS);
+			if (flag == 0) {
+				preparedStatement.setInt(1, 6);
+			} else {
+				preparedStatement.setInt(1, 5);
+			}
+			preparedStatement.setInt(2, driverID);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in updating driver status.");
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	/*
+	 * Displays the ride details of a customer.
+	 */
+
+	public BookingResponse displayBookingDetails(int userID) {
+
+		int driverID = -1;
+		String startTime = "";
+		float price = 0.0f;
+		String source = "";
+		String destination = "";
+		String driver = "";
+		String cab = "";
+		int sourceID = -1;
+		int destinationID = -1;
+		int cabID = -1;
+		int bookingID = -1;
+		BookingResponse bookingResponse = null;
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
+			preparedStatement.setInt(1, userID);
+			
+			preparedStatement.setInt(2, 1);	
+			
+			resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next()) {
+				bookingID = resultSet.getInt(1);
+				driverID = resultSet.getInt(2);
+				startTime = resultSet.getString(3);
+				sourceID = resultSet.getInt(4);
+				destinationID = resultSet.getInt(5);
+				cabID = resultSet.getInt(6);
+				price = resultSet.getFloat(7);
+			}
+
+			source = findLocation(sourceID);
+			destination = findLocation(destinationID);
+
+			driver = findDriverByID(driverID);
+			cab = findCabByID(cabID);
+
+			bookingResponse = new BookingResponse(bookingID, driver, cab, source, destination, startTime, price);
+
+			return bookingResponse;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
+			return null;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	
+	/*
+	 * Displays the completed Ride history
+	 */
+	
+	public ArrayList<BookingResponse> displayCompletedRides(int userID){
+		int driverID = -1;
+		String startTime = "";
+		float price = 0.0f;
+		String source = "";
+		String destination = "";
+		String driver = "";
+		String cab = "";
+		int sourceID = -1;
+		int destinationID = -1;
+		int cabID = -1;
+		int bookingID = -1;
+		ArrayList<BookingResponse> completedRides = null;
+		BookingResponse bookingResponse = null;
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		try {
+			completedRides = new ArrayList<BookingResponse>();
+			
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
+			preparedStatement.setInt(1, userID);
+			
+			preparedStatement.setInt(2, 3);	
+			
+			resultSet = preparedStatement.executeQuery();
+
+			while(resultSet.next()) {
+				bookingID = resultSet.getInt(1);
+				driverID = resultSet.getInt(2);
+				startTime = resultSet.getString(3);
+				sourceID = resultSet.getInt(4);
+				destinationID = resultSet.getInt(5);
+				cabID = resultSet.getInt(6);
+				price = resultSet.getFloat(7);
+				
+				source = findLocation(sourceID);
+				destination = findLocation(destinationID);
+
+				driver = findDriverByID(driverID);
+				cab = findCabByID(cabID);
+				
+				bookingResponse = new BookingResponse(bookingID, driver, cab, source, destination, startTime, price);
+				completedRides.add(bookingResponse);
+			}
+
+			return completedRides;
+			
+		}catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
+			return null;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	/*
+	 * Displays the cancelled Ride history
+	 */
+	
+	public ArrayList<BookingResponse> displayCancelledRides(int userID){
+		int driverID = -1;
+		String startTime = "";
+		float price = 0.0f;
+		String source = "";
+		String destination = "";
+		String driver = "";
+		String cab = "";
+		int sourceID = -1;
+		int destinationID = -1;
+		int cabID = -1;
+		int bookingID = -1;
+		ArrayList<BookingResponse> cancelledRides = null;
+		BookingResponse bookingResponse = null;
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		try {
+			cancelledRides = new ArrayList<BookingResponse>();
+			
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
+			preparedStatement.setInt(1, userID);
+			
+			preparedStatement.setInt(2, 4);	
+			
+			resultSet = preparedStatement.executeQuery();
+
+			while(resultSet.next()) {
+				bookingID = resultSet.getInt(1);
+				driverID = resultSet.getInt(2);
+				startTime = resultSet.getString(3);
+				sourceID = resultSet.getInt(4);
+				destinationID = resultSet.getInt(5);
+				cabID = resultSet.getInt(6);
+				price = resultSet.getFloat(7);
+				
+				source = findLocation(sourceID);
+				destination = findLocation(destinationID);
+
+				driver = findDriverByID(driverID);
+				cab = findCabByID(cabID);
+				
+				bookingResponse = new BookingResponse(bookingID, driver, cab, source, destination, startTime, price);
+				cancelledRides.add(bookingResponse);
+			}
+
+			return cancelledRides;
+			
+		}catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
+			return null;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * Retrieves the location using location ID.
+	 */
+
+	public String findLocation(int locationID) {
+
+		String streetAddress = "";
+		String zipCode = "";
+		String location = "";
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_LOCATION);
+			preparedStatement.setInt(1, locationID);
+			resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				streetAddress = resultSet.getString(1);
+				zipCode = resultSet.getString(2);
+
+				location = streetAddress + ", " + zipCode;
+			}
+			return location;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in finding address from DB.");
+			return "";
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	
 }
+

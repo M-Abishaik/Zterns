@@ -1,6 +1,7 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpSession;
 
 import com.zilker.delegate.CustomerDelegate;
 import com.zilker.delegate.SharedDelegate;
+import com.zilker.bean.DisplayInvoice;
 import com.zilker.bean.TravelInvoice;
 import com.zilker.constants.Constants;
 
@@ -73,6 +75,7 @@ public class BookRideServlet extends HttpServlet {
 		CustomerDelegate customerDelegate = null;
 		SharedDelegate sharedDelegate = null;
 		TravelInvoice travelInvoice = null;
+		DisplayInvoice displayInvoice = null;
 		RequestDispatcher requestDispatcher = null;
 		HttpSession session = null;
 		
@@ -89,15 +92,14 @@ public class BookRideServlet extends HttpServlet {
 			customerDelegate = new CustomerDelegate();
 			sharedDelegate = new SharedDelegate();
 			travelInvoice = new TravelInvoice();
-
+			displayInvoice = new DisplayInvoice();
 						
 			customerID = sharedDelegate.getUserID(userPhone);
 			
 			seats = Integer.parseInt(numSeats);
 			startTimeDate = startDate + " " + startTime;
+						
 			
-			
-
 			sourceExtract = customerDelegate.extractLocation(source, 0); 
 			destinationExtract = customerDelegate.extractLocation(destination, 0);
 			zipCode = customerDelegate.extractLocation(source, 1);
@@ -128,11 +130,20 @@ public class BookRideServlet extends HttpServlet {
 			
 			if (driverID != (-1) && cabID != (-1)) {
 				
-				travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, startTimeDate);
+				cab = sharedDelegate.findCabByID(cabID);
+				
+				driver = sharedDelegate.findDriverByID(driverID);
+				
+				displayInvoice = new DisplayInvoice(driver, cab, source, destination, startTimeDate, seats);
+				
+				travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, startTimeDate, 0.0f, 0.0f);
+
 				
 				request.setAttribute("travelInvoice", travelInvoice);
+				request.setAttribute("displayInvoice", displayInvoice);
+
 				
-				requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
+				requestDispatcher = request.getRequestDispatcher("./pages/confirmRide.jsp");
 				requestDispatcher.forward(request, response);
 			}
 			

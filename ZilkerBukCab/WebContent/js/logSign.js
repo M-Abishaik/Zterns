@@ -168,3 +168,14 @@ function validateUpdateProfile() {
 
 	return true;
 }
+
+function drivercompleted() {
+	var a = document.getElementById("driverlicense");
+	var b = document.getElementById("driverprofile");
+	//var c = document.getElementById("drivertrips");
+	var d = document.getElementById("drivercompleted");
+	a.style.display = "none";
+	b.style.display = "none";
+	//c.style.display = "none";
+	d.style.display = "block";
+}

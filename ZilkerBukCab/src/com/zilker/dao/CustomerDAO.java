@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.zilker.bean.Address;
+import com.zilker.bean.TravelInvoice;
 import com.zilker.constants.SQLConstants;
 import com.zilker.util.DbConnect;
 
@@ -269,5 +270,117 @@ public class CustomerDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
+	
+	/*
+	 * Inserts the ride details of the customer.
+	 */
+
+	public int insertRideDetails(TravelInvoice invoice) {
+
+		int bookingID = -1;
+		int count = 0;
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_RIDE_DETAILS);
+			preparedStatement.setInt(1, invoice.getCustomerID());
+			preparedStatement.setInt(2, invoice.getDriverID());
+			preparedStatement.setString(3, invoice.getFormattedTime());
+			preparedStatement.setInt(4, invoice.getSourceID());
+			preparedStatement.setInt(5, invoice.getDestinationID());
+			preparedStatement.setInt(6, invoice.getCabID());
+			preparedStatement.setFloat(7, invoice.getPrice());
+			preparedStatement.setInt(8, invoice.getCustomerID());
+			preparedStatement.setInt(9, invoice.getCustomerID());
+
+			count = preparedStatement.executeUpdate();
+
+			if (count > 0) {
+				bookingID = fetchBookingID(invoice.getCustomerID(), invoice.getDriverID(), invoice.getCabID(), invoice.getFormattedTime());
+			}
+			return bookingID;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in inserting ride details to DB.");
+			return -1;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+
+	}
+	
+	
+	/*
+	 * Retrieves the booking ID of a ride.
+	 */
+
+	public int fetchBookingID(int customerID, int driverID, int cabID, String startTime) {
+		int bookingID = -1;
+		String test = "";
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_BOOKING_ID);
+			preparedStatement.setInt(1, customerID);
+			preparedStatement.setInt(2, driverID);
+			preparedStatement.setInt(3, cabID);
+			preparedStatement.setString(4, startTime);
+			
+			resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				test = resultSet.getString(1);
+				bookingID = Integer.parseInt(test);
+			}
+			return bookingID;
+		} catch (NumberFormatException ne) {
+			LOGGER.log(Level.WARNING, "Error in parsing details.");
+			return -1;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in retrieving booking ID from DB.");
+			return -1;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+
+	}
+	
+	/*
+	 * Updates the ride details of a customer.
+	 */
+
+	public void updateRideDetails(TravelInvoice invoice) {
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.UPDATE_RIDE_DETAILS);
+			preparedStatement.setInt(1, invoice.getDriverID());
+			preparedStatement.setString(2, invoice.getFormattedTime());
+			preparedStatement.setInt(3, invoice.getSourceID());
+			preparedStatement.setInt(4, invoice.getDestinationID());
+			preparedStatement.setInt(5, invoice.getCabID());
+			preparedStatement.setFloat(6, invoice.getPrice());
+			preparedStatement.setInt(7, invoice.getCustomerID());
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in updating ride details.");
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+
 
 }

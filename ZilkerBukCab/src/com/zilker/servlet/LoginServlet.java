@@ -1,8 +1,7 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
-
-
+import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
@@ -21,7 +20,6 @@ import com.zilker.constants.Constants;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
-
 
 /**
  * Servlet implementation class LoginServlet
@@ -43,8 +41,7 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
 	}
 
 	/**
@@ -89,10 +86,7 @@ public class LoginServlet extends HttpServlet {
 					requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
 					requestDispatcher.forward(request, response);
 					
-				} else if(loginResponse.equals(Constants.ADMIN)) {
-					
-				}
-				
+				} 
 			} else {
 				LOGGER.log(Level.INFO,"Invalid login credentials.");
 				request.setAttribute("errorMessage", "Invalid login credentials.");	

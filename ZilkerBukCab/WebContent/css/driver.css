@@ -18,14 +18,6 @@ img {
 	height: auto;
 }
 
-
-#userName, #userMobile, #userMail, #userAddress, #userZipCode, #userPassword, #userRePassword, #updateZipcode, #updatePassword, #RideDate, #RideTime{
-	margin-top: 1%;
-	margin-left: 1%;
-	color: red;
-	font-weight: bold;
-}
-
 .container {
 	width: 95%;
 	margin: 0 auto;
@@ -79,6 +71,7 @@ footer::after {
 	.col-2 {
 		width: 33%;
 		margin: 4em;
+		/*margin-right: 10em;*/
 		text-align: justify;
 	}
 
@@ -88,6 +81,16 @@ footer::after {
 }
 
 
+
+/*typography*/
+
+/*h1 {
+	font-weight: 300;
+	font-size: 2.5rem;
+	margin-top: 0;
+	font-weight: 900;
+	margin-top: 1em;
+}*/
 h1 {
 	font-weight: 300;
 	font-size: 1.7rem;
@@ -149,6 +152,7 @@ p:last-of-type {
 	display: inline-block;
 	font-size: 1.5rem;
 	text-decoration: none;
+	/*text-transform: uppercase;*/
 	border-width: 2px;
 	border-style: ridge;
 	padding: .5em 1.75em;
@@ -181,13 +185,6 @@ p:last-of-type {
 	color: #00ff6c;
 }
 
-.riderProfile{
-	margin-top: 1em;
-	margin-left: .5em;
-	width: 100%;
-	cursor: pointer;
-}
-
 
 @media (min-width: 60rem) {
 	.button {
@@ -201,8 +198,10 @@ p:last-of-type {
 
 header {
 	position: fixed;
+	/*margin-top: 1em;*/
 	left: 0;
 	right: 0;
+/*	margin: 1em;*/
 	padding: .5em 2em;
 	top: 0;
 	background-color: rgba(0,0,0,0.9);
@@ -213,6 +212,8 @@ header {
   width: 130px;
   height: auto;
   margin: 0.5em;
+/*  float: left;
+  padding-left: 15px;*/
 }
 
 nav ul {
@@ -269,13 +270,15 @@ nav a:focus {
 	background-position: center;
 	padding: 15em 0;
 	color: #FFF;
+	/*text-align: left;*/
 	padding-left: 2em;
+	/*float: center;*/
 }
 
 
 @media (min-width: 60rem) {
 	.home-hero {
-		height: 170vh;
+		height: 114vh;
 		padding-top: 25vh;
 		text-align: left
 	}
@@ -290,9 +293,10 @@ nav a:focus {
 
 .home-about-textbox {
 	background-color: #232323;
+	/*padding: 3em;*/
 	width: 106.5%;
 	height: auto;
-	margin: -2% -4%;
+	margin: 0 -4%;
 	outline: 2px solid #00ff6c;
 	outline-offset: -2.5em;
 	color: #FFF;
@@ -336,13 +340,21 @@ nav a:focus {
 	}
 
 	.home-about {
+		/*background-image: url(../img/about-bg.png);*/
 		background-color: #232323;
 		background-repeat: no-repeat;
 		right: 0;
 		background-size: cover;
 		background-position: center;
+		/*padding-bottom: 10em;*/
+
+		/*top: -5em;*/
+		/*outline-offset: -3.75em;*/
+		/*left: -5em;*/
+		/*margin: -2.5em;*/
 		margin: 0 -2.65%;
 		padding: 8vh 0;
+
 	}
 
 	.home-about-textbox {
@@ -350,7 +362,8 @@ nav a:focus {
 		padding: 7em;
 		outline-offset: -3.75em;
 		margin-left: 0;
-		text-align: justify;
+/*		top: -5em;
+*/		text-align: justify;
 		min-width: 45rem; 
 		left: 50%;
 		transform: translateX(-50%);
@@ -370,7 +383,11 @@ nav a:focus {
 
 .portfolio {
 	background-color: black;
+	/*background-color: #232323;*/
+/*	background: linear-gradient(rgba(0,0,0,0.7),rgba(0,0,0,0.7)), url("../img/portfolio-bg.jpg");*/
 	margin: 0 0;
+/*	padding: 1.5em 5%;*/
+	/*float: right;*/
 }
 
 .portfolio h1{
@@ -388,10 +405,13 @@ nav a:focus {
 .port-item img {
 
 	display: inline-block;
+	/*padding: 0 ;*/
+	/*justify-content: center;*/
 	padding: 2em;
 	opacity: 0.6;
 	transition: .5s ease;
 	backface-visibility: hidden;
+	/*border-radius: 1em;*/
 	max-width: 100%;
 	height: auto;
 }
@@ -400,12 +420,28 @@ nav a:focus {
 	opacity: 1;
 }
 
+/*.port-desc {
+	position: absolute;
+	z-index: 100;
+	bottom: 0em;
+	left: 0em;
+	right: 0em;
+	color: white;
+	background: rgba(0,0,0,.6);
+	padding-bottom: 2em;
+}
+
+.port-desc p {
+	margin: 1em;
+}
+*/
 @media (min-width: 37rem) {
 	.port-item {
 		max-width: 50%;
 		height: auto;
 		float: left;
-	}
+/*		padding-left: 1em;
+*/	}
 }
 
 @media (min-width: 60rem) {
@@ -415,6 +451,14 @@ nav a:focus {
 		overflow: hidden;
 		padding-left: 4em;
 	}
+
+	/*.port-desc {
+		transform: translateY(150%);
+	}
+
+	.port-item:hover .port-desc {
+		transform: translateY(0%);
+	}*/
 }
 
 
@@ -447,6 +491,7 @@ nav a:focus {
 	color: white;
 
 	text-decoration: none;
+/*	text-transform: uppercase;*/
 	font-size: 1.5rem;
 	font-weight: 300;
 	float: center;
@@ -470,6 +515,7 @@ nav a:focus {
 =================== */
 
 footer {
+	/*background: #232323;*/
 	background-color: black;
 	color: #fff;
 	text-align: left;
@@ -496,11 +542,16 @@ footer i {
 .container2 {
   position: relative;
   float: center;
+  /*margin: -20em 6em;*/
   margin: 5em 10vw;
-  top: 10%;
+  /*margin-top: 5em;*/
+  /*margin-left: 10vw;*/
+/*  margin-left: 15vw;
+  margin-right: 15vw;*/
   padding: 2em;
   width: 30%;
   border: 0.05em solid #00ff6c;
+  /*border-radius: 1em;*/
   background-color: rgba(23,23,23,0.8);
   min-width: 28em;
   line-height: 1em;
@@ -511,8 +562,7 @@ footer i {
 	font-size: 1.2rem;
 }
 
-
-input[type=text], input[type=email], input[type=password], input[type=select], input[type=submit], input[type=file]{
+input[type=text], input[type=email], input[type=password], input[type=select], input[type=submit], input[type=file] {
   margin: 8px 16px 0px 8px;
   width: 90%;
   padding: 12px;
@@ -526,19 +576,18 @@ input[type=file] {
 	padding-left: .2em;
 }
 
-#driverlicense h1 {
-	margin-top: 1em;
+.driver h1 {
+	/*margin-top: 1em;*/
 	color: #00ff6c;
 }
 
-#driverprofile .my-profile-icon {
+/*#driverprofile .my-profile-icon {
 	margin-top: 3.5em;
 }
 
 #driverprofile h2 {
 	margin-top: -3em;
-}
-
+}*/
 
 #driverlicense .ride-com {
 	width: 70%;
@@ -574,12 +623,15 @@ label {
 
 .wrapper{
   display: flex;
+  /*display: inline-block;*/
+  /*float: left;*/
 }
 
 button {
   display: inline-block;
   margin: 0 0.5em;
   background-color: rgba(0,0,0,0.5);
+  /*padding: 2em;*/
   cursor: pointer;
   width: 50%;
 }
@@ -630,10 +682,16 @@ input[type=submit]:hover {
 .container3 {
   position: relative;
   float: center;
+  /*margin: -20em 6em;*/
   margin-top: 20em;
   margin-left: 10vw;
+/*  margin-left: 15vw;
+  margin-right: 15vw;*/
   padding: 1em 2em;
   width: 30%;
+
+  /*border-radius: 1em;*/
+  /*background-color: rgba(23,23,23,0.8);*/
   min-width: 28em;
 
 }
@@ -666,6 +724,11 @@ input[type=submit]:hover {
 }
 
 #bookride select, input[type=date], input[type=time], input[type=number]{
+/*  margin: 8px 16px 0px 8px;
+  padding: 0.8em;
+  border: 1px solid #00ff6c;
+  border-radius: 4px;
+  resize: vertical;*/
   width: 35%;
 }
 
@@ -682,12 +745,16 @@ input[type=submit]:hover {
 	text-align: left;
 	color: #00ff6c;
 	margin-bottom: 0;
-	margin-top: 0em;
+	margin-top: 0.4em;
 }
 
+/*#bookride {
+	padding-left: 2em;
+}*/
 
 .container3 p {
-	color: #00ff6c;
+/*	margin: 0.2em 0.6em;
+*/	color: #00ff6c;
 	font-size: .8rem;
 }
 
@@ -714,8 +781,14 @@ label {
 
 .wrapper{
   display: flex;
+  /*display: inline-block;*/
+  /*float: left;*/
 }
 
+
+/*button:hover {
+  opacity: 0.8;
+}*/
 
 input[type=submit]:hover {
   margin: 20px;
@@ -742,6 +815,7 @@ input[type=submit]:hover {
 		min-width: 28em;
 		float: right;
 		margin: 2em 5rem;
+		/*border: 1px solid green;*/
 	}
 }
 
@@ -771,6 +845,12 @@ input[type=submit]:hover {
 .my-profile-img:hover {
 	opacity: 1;
 }
+
+/*@media screen and (max-width: 500px) {   
+	nav li {     display: block;     border-bottom: 1px #D25458 solid;   }   
+	nav li:last-child {     border-bottom: none;    } } 
+
+*/
 
 
 .logout {
@@ -822,9 +902,15 @@ input[type=submit]:hover {
 }
 
 .vertical-menu a:hover {
+  /*background-color: #00ff6c; */
   color: #00ff6c;
 
 }
+/*
+.vertical-menu a.active {
+  color: #00ff6c;
+
+}*/
 
 #booknow {
 	background-color: rgba(0,0,0,0.5)
@@ -838,6 +924,7 @@ input[type=submit]:hover {
 
 .column {
 	background-color: black;
+	/*padding: 0 2em 0.5em 2em;*/
 	margin: 1em;
 	width: 150%;
 	border: 0;
@@ -853,6 +940,7 @@ input[type=submit]:hover {
 	padding: .25em;
 	color: white;
 	font-size: 1rem;
+	/*margin-bottom: .8em;*/
 }
 
 .column {
@@ -864,6 +952,7 @@ input[type=submit]:hover {
 	margin: 0;
 	width: 99%;
 	padding: 0 3.3em;
+	/*padding-bottom: 0;*/
 	border: 0;
 	color: white;
 	text-align: left;
@@ -896,30 +985,111 @@ input[type=submit]:hover {
 
 .active, .collapsible:hover {
   background-color: #00ff6c;
+  /*border-color: #00ff6c;*/
   color: black;
 }
 
 .content {
+  /*padding: 0 18px;*/
+  /*display: none;*/
   overflow: hidden;
   padding: 0 3em;
+  /*background-color: pink;*/
+  /*background-color: #f1f1f1;*/
 }
 
 #bookride iframe {
 	position: absolute;
-	margin-top: -35em;
+	margin-top: -30em;
 	margin-left: 8em;
 }
 
-.bookride-img-1 {
+.license-img, .completed-img {
 	width: 90%;
 	height: auto;
 	float: left;
-	margin: -32em 35em;
+	margin: -20em 35em;
 	opacity: 0.8;
 	transition: 0.5 ease;
 	border-radius: .5em;
 }
 
-.bookride-img-1:hover {
+.license-img:hover , .completed-img:hover {
 	opacity: 1;
+}
+
+.filter-drivertrips {
+	margin-top: 0em;
+	padding-left: 1em;
+	width: 150%;
+}
+
+.upcoming, .completed, .cancelled {
+	margin-left: 0;
+	width: 25%;
+	padding: .15em;
+	color: white;
+	font-size: 1rem;
+	/*margin-bottom: .8em;*/
+}
+
+
+/*STAR RATING*/
+
+.user-rating {
+    direction: rtl;
+    font-size: 20px;
+    unicode-bidi: bidi-override;
+    padding: 10px 30px;
+    display: inline-block;
+    margin: 0.5em 0;
+}
+.user-rating input {
+    opacity: 0;
+    position: relative;
+    left: -15px;
+    z-index: 2;
+    cursor: pointer;
+}
+.user-rating span.star:before {
+    color: #777777;
+    content:"ï€†";
+    /*padding-right: 5px;*/
+}
+.user-rating span.star {
+    display: inline-block;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    position: relative;
+    z-index: 1;
+}
+.user-rating span {
+    margin-left: -15px;
+}
+.user-rating span.star:before {
+    color: #777777;
+    content:"\f006";
+    /*padding-right: 5px;*/
+}
+.user-rating input:hover + span.star:before, .user-rating input:hover + span.star ~ span.star:before, .user-rating input:checked + span.star:before, .user-rating input:checked + span.star ~ span.star:before {
+    color: #ffd100;
+    content:"\f005";
+}
+
+.selected-rating{
+    color: #ffd100;
+    font-weight: bold;
+    font-size: 3em;
+}
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #00ff6c;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    color: #00ff6c;
 }
