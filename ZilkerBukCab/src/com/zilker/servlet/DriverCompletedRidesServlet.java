@@ -1,8 +1,7 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -16,18 +15,16 @@ import com.zilker.bean.BookingResponse;
 import com.zilker.delegate.SharedDelegate;
 
 /**
- * Servlet implementation class OnGoingRidesServlet
+ * Servlet implementation class DriverCompletedRidesServlet
  */
-@WebServlet("/OnGoingRidesServlet")
-public class OnGoingRidesServlet extends HttpServlet {
+@WebServlet("/DriverCompletedRidesServlet")
+public class DriverCompletedRidesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public OnGoingRidesServlet() {
+    public DriverCompletedRidesServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -36,8 +33,9 @@ public class OnGoingRidesServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		BookingResponse bookingResponse = null;
+		ArrayList<BookingResponse> completeList = null;
+		
 		SharedDelegate sharedDelegate = null;
 		HttpSession session = null;
 		RequestDispatcher requestDispatcher = null;
@@ -46,20 +44,21 @@ public class OnGoingRidesServlet extends HttpServlet {
 		try {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
+			completeList = new ArrayList<BookingResponse>();
 			//userPhone = (String)session.getAttribute("userPhone");
 			
-			userPhone = "8888888888";
-			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 0);
 			
-			request.setAttribute("onGoingResponse", bookingResponse);
+			userPhone = "9999999999";			
+			completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
 			
-			requestDispatcher = request.getRequestDispatcher("./pages/myTrips-customer.jsp");
+			request.setAttribute("onCompleteResponse", completeList);
+			
+			requestDispatcher = request.getRequestDispatcher("./pages/myTrips-driver.jsp");
 			requestDispatcher.forward(request, response);
 			
 		}catch(Exception exception) {
 			
 		}
-		
 	}
 
 	/**

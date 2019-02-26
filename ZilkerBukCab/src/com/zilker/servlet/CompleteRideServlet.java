@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -54,12 +53,11 @@ public class CompleteRideServlet extends HttpServlet {
 		HttpSession session = null;
 		DriverDelegate driverDelegate = null;
 		SharedDelegate sharedDelegate = null;
-		String oldPinCode = "";
-		String newPinCode = "";
 		String userPhone = "";
 		String rideCompleteResponse = "";
 		int bookingID = -1;
 		int driverID = -1;
+		boolean check = false;
 		
 		try {
 			session = request.getSession();
@@ -68,22 +66,30 @@ public class CompleteRideServlet extends HttpServlet {
 
 			userPhone = (String)session.getAttribute("userPhone");
 
-			oldPinCode = request.getParameter("oldZipCode");
-			newPinCode = request.getParameter("currentZipCode");
-			
+			bookingID = Integer.parseInt(request.getParameter("bookingID"));
+						
 			driverID = sharedDelegate.getUserID(userPhone);
 			
-			rideCompleteResponse = driverDelegate.completeRide(oldPinCode, driverID);
+			check = sharedDelegate.checkBookingExists(bookingID, driverID);
 			
-			if(rideCompleteResponse.equals(Constants.SUCCESS)) {
-				rideCompleteResponse = driverDelegate.updateLocation(newPinCode, driverID);
+			if(check==true) {
+				
+				rideCompleteResponse = driverDelegate.completeRide(bookingID, driverID);
 				
 				if(rideCompleteResponse.equals(Constants.SUCCESS)) {
 					LOGGER.log(Level.INFO, "Location successfully updated.");
+					
+					requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
+					requestDispatcher.forward(request, response);
+					
 				} 
 				
 				LOGGER.log(Level.INFO, "Ride completed successfully.");
-			} 
+				
+			}else {
+				LOGGER.log(Level.INFO, "Error in updating location.");
+
+			}
 			
 		} catch(Exception exception) {
 			

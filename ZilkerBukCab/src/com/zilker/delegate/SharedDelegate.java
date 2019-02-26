@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import com.zilker.constants.Constants;
 import com.zilker.dao.SharedDAO;
 import com.zilker.bean.BookingResponse;
+import com.zilker.bean.CompleteRating;
 import com.zilker.bean.UpdateProfile;
 import com.zilker.bean.User;
 
@@ -200,6 +201,30 @@ public class SharedDelegate {
 
 	}
 	
+	
+	/*
+	 * Checks if the ride is in progress.
+	 */
+	
+	public boolean checkBookingStatus(String userPhone, int flag) {
+		
+		boolean bookingResponse = false;
+		SharedDAO sharedDAO = null;
+		int userID = -1;
+		
+		try {
+			sharedDAO = new SharedDAO();
+			userID = getUserID(userPhone);
+			
+			bookingResponse = sharedDAO.checkBookingStatus(userID, flag);
+			return bookingResponse;
+		}catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error in transfering user contact to DAO.");
+			return false;
+		}
+	}
+	
+	
 	/*
 	 * Updates the driver status as available or unavailable depending on the ride.
 	 */
@@ -220,24 +245,18 @@ public class SharedDelegate {
 	 * Displays on-going ride details.
 	 */
 
-	public BookingResponse displayBookingDetails(String userPhone) {
+	public BookingResponse displayBookingDetails(String userPhone, int flag) {
 
 		int userID = -1;
 		
 		BookingResponse bookingResponse = null;
 		SharedDAO sharedDAO = null;
-		boolean check = false;
 
 		try {
 			userID = getUserID(userPhone);
 			sharedDAO = new SharedDAO();
 
-			/*check = checkBookingExists(userID);
-			if (check == false) {
-				return null;
-			}*/
-
-			bookingResponse = sharedDAO.displayBookingDetails(userID);
+			bookingResponse = sharedDAO.displayBookingDetails(userID, flag);
 
 			return bookingResponse;
 		} catch (Exception e) {
@@ -250,7 +269,7 @@ public class SharedDelegate {
 	 * Display completed ride details 
 	 */
 	
-	public ArrayList<BookingResponse> displayCompletedRides(String userPhone){
+	public ArrayList<BookingResponse> displayCompletedRides(String userPhone, int flag){
 		SharedDAO sharedDAO = null;
 		ArrayList<BookingResponse> completedRides = null;
 		int userID = -1;
@@ -259,7 +278,7 @@ public class SharedDelegate {
 			completedRides = new ArrayList<BookingResponse>();
 			userID = getUserID(userPhone);
 			sharedDAO = new SharedDAO();
-			completedRides = sharedDAO.displayCompletedRides(userID);
+			completedRides = sharedDAO.displayCompletedRides(userID, flag);
 
 			return completedRides;
 		} catch (Exception e) {
@@ -272,7 +291,29 @@ public class SharedDelegate {
 	 * Display completed ride details 
 	 */
 	
-	public ArrayList<BookingResponse>displayCancelledRides(String userPhone){
+	public ArrayList<CompleteRating> displayCompletedRatedRides(String userPhone){
+		SharedDAO sharedDAO = null;
+		ArrayList<CompleteRating> completedRides = null;
+		int userID = -1;
+		
+		try {
+			completedRides = new ArrayList<CompleteRating>();
+			userID = getUserID(userPhone);
+			sharedDAO = new SharedDAO();
+			completedRides = sharedDAO.displayCompletedRatedRides(userID);
+
+			return completedRides;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error in displaying ride history.");
+			return null;
+		}
+	}
+	
+	/*
+	 * Display completed ride details 
+	 */
+	
+	public ArrayList<BookingResponse>displayCancelledRides(String userPhone, int flag){
 		SharedDAO sharedDAO = null;
 		ArrayList<BookingResponse> cancelledRides = null;
 		int userID = -1;
@@ -281,12 +322,101 @@ public class SharedDelegate {
 			cancelledRides = new ArrayList<BookingResponse>();
 			userID = getUserID(userPhone);
 			sharedDAO = new SharedDAO();
-			cancelledRides = sharedDAO.displayCancelledRides(userID);
+			cancelledRides = sharedDAO.displayCancelledRides(userID, flag);
 
 			return cancelledRides;
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error in displaying ride history.");
 			return null;
+		}
+	}
+	
+	/*
+	 * Cancels the ride of a customer.
+	 */
+
+	public boolean cancelRide(int bookingID) {
+
+		int driverID = -1;
+		SharedDAO sharedDAO = null;
+
+		try {
+			sharedDAO = new SharedDAO();
+
+			driverID = sharedDAO.cancelRide(bookingID);
+			System.out.println(driverID);
+
+			updateDriverStatus(driverID, 1);
+
+			return true;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error in transferring booking ID for cancellation to DAO.");
+			return false;
+		}
+	}
+	
+	/*
+	 * Rates a trip.
+	 */
+
+	public String rateTrip(float rating, int bookingID, String userPhone) {
+
+		SharedDAO sharedDAO = null;
+		int userID = -1;
+
+		try {
+
+			sharedDAO = new SharedDAO();
+			
+			userID = getUserID(userPhone);
+			
+			sharedDAO.rateTrip(rating, bookingID, userID);
+
+			return Constants.SUCCESS;
+
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error in transferring rating to DAO.");
+			return Constants.FAILURE;
+		}
+	}
+	
+	/*
+	 * Checks if the booking ID exists.
+	 */
+	
+	public boolean checkBookingExists(int bookingID, int driverID) {
+		
+		boolean check = false;
+		SharedDAO sharedDAO = null;
+
+		try {
+			sharedDAO = new SharedDAO();
+			check = sharedDAO.checkBookingExists(bookingID, driverID);
+
+			return check;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error in transfering booking ID to DAO.");
+			return false;
+		}
+	}
+	
+	/*
+	 * Finds the street address corresponding to the location ID.
+	 */
+	
+	public String findLocation(int locationID) {
+		
+		String location = "";
+		SharedDAO sharedDAO = null;
+
+		try {
+			sharedDAO = new SharedDAO();
+			location = sharedDAO.findLocation(locationID);
+
+			return location;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error in transfering location ID to DAO.");
+			return Constants.FAILURE;
 		}
 	}
 }

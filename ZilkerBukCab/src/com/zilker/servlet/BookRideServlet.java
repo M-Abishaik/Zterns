@@ -2,6 +2,7 @@ package com.zilker.servlet;
 
 import java.io.IOException;
 
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,7 +68,8 @@ public class BookRideServlet extends HttpServlet {
 		String startTimeDate = "";
 		String sourceExtract = "";
 		String destinationExtract = "";
-		String zipCode = "";
+		String zipCodeSource = "";
+		String zipCodeDestination = "";
 		String availabilityResponse = "";
 		String userPhone = "";
 		
@@ -102,14 +104,14 @@ public class BookRideServlet extends HttpServlet {
 			
 			sourceExtract = customerDelegate.extractLocation(source, 0); 
 			destinationExtract = customerDelegate.extractLocation(destination, 0);
-			zipCode = customerDelegate.extractLocation(source, 1);
 			
+			zipCodeSource = customerDelegate.extractLocation(source, 1);
+			zipCodeDestination = customerDelegate.extractLocation(destination, 1);
 			
-			sourceID = customerDelegate.findLocationID(sourceExtract, zipCode);
-			destinationID = customerDelegate.findLocationID(destinationExtract, zipCode);
-		
+			sourceID = customerDelegate.findLocationID(sourceExtract, zipCodeSource);
+			destinationID = customerDelegate.findLocationID(destinationExtract, zipCodeDestination);
 			
-			cabID = customerDelegate.findNearestCab(zipCode, 0);
+			cabID = customerDelegate.findNearestCab(zipCodeSource, 0);
 			
 			if (cabID == (-1)) {
 				LOGGER.log(Level.INFO, "No nearest cab found. Please try later.");
@@ -141,6 +143,8 @@ public class BookRideServlet extends HttpServlet {
 				
 				request.setAttribute("travelInvoice", travelInvoice);
 				request.setAttribute("displayInvoice", displayInvoice);
+				request.setAttribute("source", zipCodeSource);
+				request.setAttribute("destination", zipCodeDestination);
 
 				
 				requestDispatcher = request.getRequestDispatcher("./pages/confirmRide.jsp");

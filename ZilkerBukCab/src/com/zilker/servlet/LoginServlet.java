@@ -1,12 +1,12 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
+
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,19 +41,20 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		String userPhone = "";
 		String userPassword = "";
 		SharedDelegate sharedDelegate = null;
 		CustomerDelegate customerDelegate = null;
 		ArrayList<Address> address = null;
 		String loginResponse = "";
+		boolean bookingResponse = false;
 		RequestDispatcher requestDispatcher = null;
 		
 		
@@ -74,10 +75,9 @@ public class LoginServlet extends HttpServlet {
 				if(loginResponse.equals(Constants.CUSTOMER)) {
 					
 					address = customerDelegate.displayLocations();
-										
+					
 					request.setAttribute("addressList", address);
-					
-					
+	
 					requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
 					requestDispatcher.forward(request, response);
 					
@@ -86,7 +86,8 @@ public class LoginServlet extends HttpServlet {
 					requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
 					requestDispatcher.forward(request, response);
 					
-				} 
+				}
+					
 			} else {
 				LOGGER.log(Level.INFO,"Invalid login credentials.");
 				request.setAttribute("errorMessage", "Invalid login credentials.");	
@@ -101,5 +102,36 @@ public class LoginServlet extends HttpServlet {
 		}
 		
 	}
+	
+	//CUSTOMER
+	
+	/*bookingResponse = sharedDelegate.checkBookingStatus(userPhone,0);
+	
+	if(bookingResponse==true) {
+		requestDispatcher = request.getRequestDispatcher("./pages/after-book.jsp");
+		requestDispatcher.forward(request, response);
+	} else {
+	
+	address = customerDelegate.displayLocations();
+						
+	request.setAttribute("addressList", address);
+	
+	
+	requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
+	requestDispatcher.forward(request, response);
+	}*/
+	
+	//DRIVER
+	
+	/*bookingResponse = sharedDelegate.checkBookingStatus(userPhone,1);
+	
+	if(bookingResponse==true) {
+		requestDispatcher = request.getRequestDispatcher("./pages/after-book.jsp");
+		requestDispatcher.forward(request, response);
+	} else {
+	
+	requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
+	requestDispatcher.forward(request, response);
+	}*/
 
 }

@@ -163,7 +163,8 @@ public class CustomerDelegate {
 
 	public int calculateTravel(TravelInvoice travelInvoice, int flag) {
 
-		int result = -1;
+		int bookingID = -1;
+		String zipCode = "";
 		
 		SharedDelegate sharedDelegate = null;
 		TaxiDAO taxiDAO = null;
@@ -173,15 +174,15 @@ public class CustomerDelegate {
 			sharedDelegate = new SharedDelegate();
 
 			if (flag == 0) {
-				result = insertRideDetails(travelInvoice);
+				bookingID = insertRideDetails(travelInvoice);
 
 				taxiDAO.insertRouteDetails(travelInvoice.getSourceID(), travelInvoice.getDestinationID(), travelInvoice.getDistance());
-
+				
 				// Updates the driver and cab status to be unavailable until the current ride
 				// has been completed.
 
 				sharedDelegate.updateDriverStatus(travelInvoice.getDriverID(), 0);
-				return result;
+				return bookingID;
 
 			} else {
 

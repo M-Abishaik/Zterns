@@ -23,12 +23,17 @@
 
 
 <%if(request.getAttribute("onGoingResponse")!=null){ %>
-		<body onload="ongoing()">
+		<body onload="upcoming()">
 		<%} %>
 	
 <%if(request.getAttribute("onCompleteResponse")!=null){ %>
 		<body onload="completed()">
 		<%} %>
+
+<%if(request.getAttribute("onCancelResponse")!=null){ %>
+		<body onload="cancelled()">
+		<%} %>		
+
 		
 	<header>
 		<a href="#"><img src="${Config.BASE_PATH}/img/logouber2.png" alt="Taxi logo" class="logo"></a>
@@ -43,20 +48,23 @@
  			<div class="filter-ridertrips">
                 <label>Filter by : </label>
                 <!-- <button class="button button-accent upcoming" type="submit" onclick="ongoing()">Ongoing</button> -->
-                <a style="cursor:pointer;" class="button button-accent upcoming" onclick="ongoing()" href="${Config.BASE_PATH}OnGoingRidesServlet">Ongoing</a> 
+                <a style="cursor:pointer;" class="button button-accent upcoming" onclick="upcoming()" href="${Config.BASE_PATH}OnGoingRidesServlet">Upcoming</a> 
                 <a style="cursor:pointer;" class="button button-accent completed" onclick="completed()" href="${Config.BASE_PATH}CompletedRidesServlet">Completed</a>
                 <a style="cursor:pointer;" class="button button-accent cancelled" onclick="cancelled()" href="${Config.BASE_PATH}CancelledRidesServlet">Cancelled</a>
  			</div>
  		
 
-			<% 	BookingResponse bookingResponse =  new BookingResponse();
-			bookingResponse = (BookingResponse)request.getAttribute("onGoingResponse");
-				%>
- 			
  			<div id="ridertrips">
                 <div class="row">
                 
-                    <div class="column" id="ongoing">
+                <% 	
+			if(request.getAttribute("onGoingResponse")!=null){
+			
+			BookingResponse bookingResponse =  new BookingResponse();
+			bookingResponse = (BookingResponse)request.getAttribute("onGoingResponse");
+				%>
+                
+                    <div class="column" id="upcoming">
                         <button class="collapsible"><h2 id="datetime"><% if(bookingResponse!=null){%><%=bookingResponse.getStartTime()%><%}%></h2>
                         <h2 id="rs">Rs<% if(bookingResponse!=null){%><%=bookingResponse.getPrice()%><%}%> Fares might change</h2>
                         <h4 id="place">Chennai</h4>
@@ -65,10 +73,19 @@
                             <h3 id="with">Your trip with <% if(bookingResponse!=null){%><%=bookingResponse.getDriver()%><%}%></h3>
                             <h3 id="fromto">Source: <% if(bookingResponse!=null){%><%=bookingResponse.getSource()%><%}%></h3>
                             <h3 id="fromto">Destination: <% if(bookingResponse!=null){%><%=bookingResponse.getDestination()%><%}%></h3>
-                            <button id=<% if(bookingResponse!=null){%><%=bookingResponse.getBookingID()%><%}%> style="margin-bottom: 1em;" onclick="checkUpdate(this.id)" class="button button-accent update">Update</button>
-                            <button style="margin-bottom: 1em;" class="button button-accent cancel">Cancel</button>
+                            
+                            <form action="${Config.BASE_PATH}UpdateBookingServlet" method="post">
+                            <input type="hidden" name="travelInvoiceBookingID" value=<% if(bookingResponse!=null){%><%=bookingResponse.getBookingID()%><%}%>>
+                            <button style="margin-bottom: 1em; float:left;" class="button button-accent update">Update</button>
+                            </form>
+                            
+                            <form action="${Config.BASE_PATH}CancelBookingServlet" method="post">
+                            <input type="hidden" name="travelInvoiceBookingID" value=<% if(bookingResponse!=null){%><%=bookingResponse.getBookingID()%><%}%>>
+                            <button style="margin-bottom: 1em; margin-left: 20%;" type="submit" class="button button-accent cancel">Cancel</button>
+                        	</form>
                         </div>
                     </div> 
+                    <%} %>
                     
             		<%
             			ArrayList<BookingResponse> completedList = null;
@@ -77,9 +94,11 @@
             			int size = -1;
             			int i = 0;
             			
+            			if(request.getAttribute("onCompleteResponse")!=null){
+            				
             			try{
             				completedList  = new ArrayList<BookingResponse>();
-            				completedList = (ArrayList<BookingResponse>) request.getAttribute("onCompleteResponse");
+            				completedList = (ArrayList<BookingResponse>)request.getAttribute("onCompleteResponse");
             				
             				size = completedList.size();
             				for(i=0;i<size;i++) {
@@ -89,7 +108,7 @@
                     <div id="completed">
                     <div class="column">
                         <button class="collapsible"><h2 id="datetime"><% if(completeRides!=null){%><%=completeRides.getStartTime()%><%}%></h2>
-                        <h2 id="rs"><% if(completeRides!=null){%><%=completeRides.getPrice()%><%}%></h2>
+                        <h2 id="rs">Rs. <% if(completeRides!=null){%><%=completeRides.getPrice()%><%}%></h2>
                         <h4 id="place">Chennai</h4>
                         <h4 id="cash">Cash</h4></button>
                         <div class="content">
@@ -98,19 +117,23 @@
                            	<h3 id="fromto">Destination: <% if(completeRides!=null){%><%=completeRides.getDestination()%><%}%></h3>
                         </div>
                         
-                        <form id="user-rating-form">
+                        <form id="user-rating-form" method="post" action="${Config.BASE_PATH}RateRideServlet">
+                        <input type="hidden" name="travelInvoiceBookingID" value=<% if(completeRides!=null){%><%=completeRides.getBookingID()%><%}%>>
+                        
                             <span class="user-rating">
-                            <input type="radio" name="rating" value="5"><span class="star"></span>
+                            <input id="five" type="radio" name="rating" value="5"><span class="star"></span>
 
-                                <input type="radio" name="rating" value="4"><span class="star"></span>
+                                <input id="four" type="radio" name="rating" value="4"><span class="star"></span>
 
-                                <input type="radio" name="rating" value="3"><span class="star"></span>
+                                <input id="three" type="radio" name="rating" value="3"><span class="star"></span>
 
-                                <input type="radio" name="rating" value="2"><span class="star"></span>
+                                <input id="two" type="radio" name="rating" value="2"><span class="star"></span>
 
-                                <input type="radio" name="rating" value="1"><span class="star"></span>
+                                <input id="one" type="radio" name="rating" value="1"><span class="star"></span>
                             </span>
-                            </form>
+                            <button style="margin-bottom: 1em;" type="submit" class="button button-accent cancel">Rate</button>
+                            
+                        </form>
                             
                     </div>
                      </div> 
@@ -119,8 +142,9 @@
                     
                     <%}catch(Exception e){	
 		e.printStackTrace();
-	}%>
+	}}%>
                     
+						
                     <%
             			ArrayList<BookingResponse> cancelledList = null;
             			BookingResponse cancelledRides = null;
@@ -128,39 +152,26 @@
             			int length = -1;
             			int index = 0;
             			
+            			if(request.getAttribute("onCancelResponse")!=null){ 
+            			
             			try{
             				cancelledList = new ArrayList<BookingResponse>();
-            				cancelledList = (ArrayList<BookingResponse>) request.getAttribute("onCancelResponse");
+            				cancelledList = (ArrayList<BookingResponse>)request.getAttribute("onCancelResponse");
             				
-            				System.out.println(cancelledList);
             				length = cancelledList.size();
-            				for(index=0;index<length;i++) {
+            				for(index=0;index<length;index++) {
             					cancelledRides = cancelledList.get(index);
             		%>
                     
                     <div class="column" id="cancelled">
                         <button class="collapsible"><h2 id="datetime"><% if(cancelledRides!=null){%><%=cancelledRides.getStartTime()%><%}%></h2>
-                        <h2 id="rs"><% if(cancelledRides!=null){%><%=cancelledRides.getPrice()%><%}%></h2>
+                        <h2 id="rs">Rs. <% if(cancelledRides!=null){%><%=cancelledRides.getPrice()%><%}%></h2>
                         <h4 id="place">Chennai</h4>
                         <h4 id="cash">Cash</h4></button>
                         <div class="content">
                             <h3 id="with">Your trip with <% if(cancelledRides!=null){%><%=cancelledRides.getDriver()%><%}%></h3>
                             <h3 id="fromto">Source: <% if(cancelledRides!=null){%><%=cancelledRides.getSource()%><%}%></h3>
                            	<h3 id="fromto">Destination: <% if(cancelledRides!=null){%><%=cancelledRides.getDestination()%><%}%></h3>
-                          
-                            <form id="user-rating-form">
-                            <span class="user-rating">
-                            <input type="radio" name="rating" value="5"><span class="star"></span>
-
-                                <input type="radio" name="rating" value="4"><span class="star"></span>
-
-                                <input type="radio" name="rating" value="3"><span class="star"></span>
-
-                                <input type="radio" name="rating" value="2"><span class="star"></span>
-
-                                <input type="radio" name="rating" value="1"><span class="star"></span>
-                            </span>
-                            </form>
                         </div>
                     </div>
                      <%}%>  
@@ -168,7 +179,7 @@
                     
                     <%}catch(Exception e){	
 		e.printStackTrace();
-	}%>  
+	}}%>  
                 </div>
         </div>
     </div>

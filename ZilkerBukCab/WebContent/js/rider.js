@@ -31,8 +31,8 @@ function riderviewtrips() {
 	// d.style.display = "none";
 }
 
-function ongoing () {
-	var a = document.getElementById("ongoing");
+function upcoming () {
+	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
 	a.style.display = "block";
@@ -41,7 +41,25 @@ function ongoing () {
 }
 
 function completed () {
-	var a = document.getElementById("ongoing");
+	
+	let getParams = "http://localhost:8081/ZilkerBukCab/RateRideServlet";
+	
+	if(window.XMLHttpRequest){
+		xmlhttp = new XMLHttpRequest();
+	} else {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	xmlhttp.onreadystatechange = function(){
+		if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+		           
+		}
+	};
+	
+	xmlhttp.open('GET', getParams, true);
+	xmlhttp.send();
+	
+	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
 	a.style.display = "none";
@@ -50,7 +68,7 @@ function completed () {
 }
 
 function cancelled () {
-	var a = document.getElementById("ongoing");
+	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
 	a.style.display = "none";
@@ -58,9 +76,13 @@ function cancelled () {
 	c.style.display = "block";
 }
 
-function checkUpdate(id) {
+function updateBooking(id) {
 	console.log("clicked");
 	console.log(id);
+}
+
+function cancelBooking(id){
+	console.log("cancelled");
 }
 
 

@@ -1,12 +1,14 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.zilker.bean.BookingResponse;
+import com.zilker.bean.CompleteRating;
 import com.zilker.delegate.SharedDelegate;
 
 /**
@@ -37,8 +40,8 @@ public class CompletedRidesServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		BookingResponse bookingResponse = null;
 		ArrayList<BookingResponse> completeList = null;
+		
 		SharedDelegate sharedDelegate = null;
 		HttpSession session = null;
 		RequestDispatcher requestDispatcher = null;
@@ -52,8 +55,7 @@ public class CompletedRidesServlet extends HttpServlet {
 			
 			
 			userPhone = "8888888888";			
-			completeList = sharedDelegate.displayCompletedRides(userPhone);
-			
+			completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
 			
 			request.setAttribute("onCompleteResponse", completeList);
 			

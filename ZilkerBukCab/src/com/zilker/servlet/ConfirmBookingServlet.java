@@ -3,7 +3,9 @@ package com.zilker.servlet;
 import java.io.IOException;
 
 
+
 import javax.servlet.RequestDispatcher;
+
 import javax.servlet.ServletException;
 
 
@@ -12,8 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zilker.bean.PostConfirm;
 import com.zilker.bean.TravelInvoice;
 import com.zilker.delegate.CustomerDelegate;
+import com.zilker.delegate.SharedDelegate;
 
 /**
  * Servlet implementation class confirmBookingServlet
@@ -86,7 +90,9 @@ public class ConfirmBookingServlet extends HttpServlet {
 		
 		TravelInvoice travelInvoice = null;
 		CustomerDelegate customerDelegate = null;
+		SharedDelegate sharedDelegate = null;
 		RequestDispatcher requestDispatcher = null;
+		PostConfirm postConfirm = null;
 		int customerID = -1;
 		int driverID = -1;
 		int cabID = -1;
@@ -96,39 +102,60 @@ public class ConfirmBookingServlet extends HttpServlet {
 		String startTimeDate;
 		float price = 0.0f;
 		float distance = 0.0f;
+		String source = "";
+		String destination = "";
+		String cab = "";
+		String driver = "";
+		String sourceZipCode = "";
+		String destinationZipCode = "";
 		
 		try {
 			travelInvoice = new TravelInvoice();
 			customerDelegate = new CustomerDelegate();
+			sharedDelegate = new SharedDelegate();
+			postConfirm = new PostConfirm();
 			
 			customerID = Integer.parseInt(request.getParameter("travelInvoiceCustomerID"));
+			
 			driverID = Integer.parseInt(request.getParameter("travelInvoiceDriverID"));
 			
 			cabID = Integer.parseInt(request.getParameter("travelInvoiceCabID"));
+		
 			sourceID = Integer.parseInt(request.getParameter("travelInvoiceSourceID"));
-			destinationID = Integer.parseInt(request.getParameter("travelInvoiceDestinationID"));
-			startTimeDate = request.getParameter("travelInvoiceStartTimeDate");
-			price =Float.parseFloat((request.getParameter("travelInvoicePrice")));
-			distance = Float.parseFloat((request.getParameter("distance")));
-			
-			
-			System.out.println(price + "" + distance);
 
+			destinationID = Integer.parseInt(request.getParameter("travelInvoiceDestinationID"));
+
+			startTimeDate = request.getParameter("travelInvoiceStartTimeDate");
 			
-			//price = 2000f;
-			//distance = 100f;
+			price = Float.parseFloat(request.getParameter("travelInvoicePrice"));
+			
+			distance = Float.parseFloat(request.getParameter("travelInvoiceDistance"));
 						
-			//travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, startTimeDate, price, distance);
+			travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, startTimeDate, price, distance);
 			
-			//bookingID = customerDelegate.calculateTravel(travelInvoice, 0);
+			bookingID = customerDelegate.calculateTravel(travelInvoice, 0);
 			
-			//System.out.println(bookingID);
+			source = sharedDelegate.findLocation(sourceID);
+			sourceZipCode = customerDelegate.extractLocation(source, 1);
 			
-			//requestDispatcher = request.getRequestDispatcher("./pages/myTrips-customer.jsp");
-			//requestDispatcher.forward(request, response);
-			//System.out.println(customerID + " " + driverID + " " + cabID + " " + sourceID + " " + destinationID + " " + startTimeDate);
+			destination = sharedDelegate.findLocation(destinationID);
+			destinationZipCode = customerDelegate.extractLocation(destination, 1);
+			
+			cab = sharedDelegate.findCabByID(cabID);
+			
+			driver = sharedDelegate.findDriverByID(driverID);
 			
 			
+			postConfirm = new PostConfirm(bookingID, startTimeDate, source, destination, driver, cab, price);
+			
+			request.setAttribute("postConfirmInvoice", postConfirm);
+			request.setAttribute("sourceZip", sourceZipCode);
+			request.setAttribute("destinationZip",destinationZipCode);
+
+
+			requestDispatcher = request.getRequestDispatcher("./pages/after-book.jsp");
+			requestDispatcher.forward(request, response);
+						
 		}catch(Exception exception) {
 			
 		}

@@ -26,7 +26,7 @@
         <a class="riderProfile" style="cursor:pointer"onclick="driverviewlicense()">Add License Details</a>
         <a class="riderProfile"  style="cursor:pointer" onclick="drivercompleted()">Complete a ride</a>
         <a class="riderProfile" onclick="driverviewprofile()" href="${Config.BASE_PATH}DriverProfileServlet">Profile</a> 
-        <a class="riderProfile" href="${Config.BASE_PATH}/pages/myTrips-driver.jsp">My Trips</a> 
+        <a class="riderProfile" href="${Config.BASE_PATH}DriverOnGoingRidesServlet">My Trips</a> 
 		<a class="riderProfile" href="${Config.BASE_PATH}LogoutServlet">Logout</a>
 	
 	</div> 
@@ -49,13 +49,11 @@
 
         <form action="${Config.BASE_PATH}CompleteRideServlet" id="drivercompleted" method="post">
             <h1>Completed a Ride?</h1>
-            <label for="bkid">Enter the pincode of the destination reached</label>
-            <input id="bkid" type="text" placeholder="Enter the destination pincode" name="oldZipCode"><br><br>
-            <label for="pin">Update your current location</label>
-            <input id="pin" type="text" placeholder="Enter Pincode" name="currentZipCode">
+            <label for="bkid">Enter the booking ID</label>
+            <input id="bkid" type="text" placeholder="Enter the booking ID" name="bookingID"><br><br>
             <br><br><br>
             
-            <button style="width: 70%;" class="ride-com button button-accent" type="submit" id="login">Update Location</button>
+            <button style="width: 70%;" class="ride-com button button-accent" type="submit" id="login">Complete Ride</button>
             <img class= "license-img" src="${Config.BASE_PATH}img/g2.jpg">
         </form>
         
@@ -64,12 +62,10 @@
 
         <form id="driverprofile">
         	<img class="my-profile-icon" src="${Config.BASE_PATH}img/4.png">
-        	<h2 class="prof-title"><% if(user!=null){%> <%=user.getUserName()%><%}%><br><span><% if(user!=null){%> <%=user.getContact()%><%}%></span>
-                <br><span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star checked"></span>
-                    <span class="fa fa-star"></span></h2>
+        	<h2 class="prof-title"><% if(user!=null){%> <%=user.getUserName()%><%}%><br><span>+91 -<% if(user!=null){%> <%=user.getContact()%><%}%></span></br>
+<%--                <% if(user!=null){%> <%=user.getUserName()%><%}%><br> --%>
+                    </h2>
+                    
             <label for="email"><b>Email ID</b></label>
             <input id="riderEmail" type="email" value=<% if(user!=null){%><%=user.getMail()%><%}%> name="email" required>
     

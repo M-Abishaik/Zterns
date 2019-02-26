@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import com.zilker.constants.SQLConstants;
 import com.zilker.bean.BookingResponse;
+import com.zilker.bean.CompleteRating;
 import com.zilker.bean.UpdateProfile;
 import com.zilker.bean.User;
 import com.zilker.util.DbConnect;
@@ -33,7 +34,7 @@ public class SharedDAO {
 		ResultSet resultSet = null;
 
 		try {
-connection = DbConnect.getConnection();
+			connection = DbConnect.getConnection();
 			preparedStatement = connection.prepareStatement(SQLConstants.CHECK_LOGIN);
 			preparedStatement.setString(1, phone);
 			preparedStatement.setString(2, password);
@@ -356,8 +357,37 @@ connection = DbConnect.getConnection();
 		} finally {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
-
 	}
+	
+	
+	/*
+	 * Updates driver status and location after completion of the ride.
+	 */
+	
+	public void updateDriverLocation(int driverID, int flag) {
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.UPDATE_DRIVER_STATUS);
+			if (flag == 0) {
+				preparedStatement.setInt(1, 6);
+			} else {
+				preparedStatement.setInt(1, 5);
+			}
+			preparedStatement.setInt(2, driverID);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in updating driver status.");
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
 	
 	/*
 	 * Updates the driver status as available or unavailable depending on the ride.
@@ -387,11 +417,47 @@ connection = DbConnect.getConnection();
 		}
 	}
 	
+	
+	/*
+	 * Checks if the ride is in progress.
+	 */
+	
+	public boolean checkBookingStatus(int userID, int flag) {
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		try {
+			connection = DbConnect.getConnection();
+			if(flag==0) {
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_CUSTOMER_BOOKING_STATUS);
+			}else {
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_DRIVER_BOOKING_STATUS);
+			}
+			preparedStatement.setInt(1, userID);
+			resultSet = preparedStatement.executeQuery();
+			
+			if (resultSet.next()) {
+				return true;
+			}
+			return false;
+			
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in fetching booking status from DB.");
+			return false;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+		
+	}
+	
+	
 	/*
 	 * Displays the ride details of a customer.
 	 */
 
-	public BookingResponse displayBookingDetails(int userID) {
+	public BookingResponse displayBookingDetails(int userID, int flag) {
 
 		int driverID = -1;
 		String startTime = "";
@@ -412,7 +478,12 @@ connection = DbConnect.getConnection();
 
 		try {
 			connection = DbConnect.getConnection();
-			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
+			
+			if(flag==0) {
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_CUSTOMER_BOOKING_DETAILS);
+			} else {
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_DRIVER_BOOKING_DETAILS);
+			}
 			preparedStatement.setInt(1, userID);
 			
 			preparedStatement.setInt(2, 1);	
@@ -451,7 +522,7 @@ connection = DbConnect.getConnection();
 	 * Displays the completed Ride history
 	 */
 	
-	public ArrayList<BookingResponse> displayCompletedRides(int userID){
+	public ArrayList<BookingResponse> displayCompletedRides(int userID, int flag){
 		int driverID = -1;
 		String startTime = "";
 		float price = 0.0f;
@@ -474,7 +545,11 @@ connection = DbConnect.getConnection();
 			completedRides = new ArrayList<BookingResponse>();
 			
 			connection = DbConnect.getConnection();
-			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
+			if(flag==0) {
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_CUSTOMER_BOOKING_DETAILS);
+			}else {
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_DRIVER_BOOKING_DETAILS);
+			}
 			preparedStatement.setInt(1, userID);
 			
 			preparedStatement.setInt(2, 3);	
@@ -511,10 +586,75 @@ connection = DbConnect.getConnection();
 	}
 	
 	/*
+	 * Displays the completed rated Ride history
+	 */
+	
+	public ArrayList<CompleteRating> displayCompletedRatedRides(int userID){
+		int driverID = -1;
+		String startTime = "";
+		float price = 0.0f;
+		String source = "";
+		String destination = "";
+		String driver = "";
+		String cab = "";
+		int sourceID = -1;
+		int destinationID = -1;
+		int cabID = -1;
+		int bookingID = -1;
+		float rating = -1f;
+		ArrayList<CompleteRating> completedRides = null;
+		CompleteRating bookingResponse = null;
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+		
+		try {
+			completedRides = new ArrayList<CompleteRating>();
+			
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_COMPLETED_RATED_RIDES);
+			preparedStatement.setInt(1, userID);
+			
+			preparedStatement.setInt(2, 3);	
+			
+			resultSet = preparedStatement.executeQuery();
+
+			while(resultSet.next()) {
+				bookingID = resultSet.getInt(1);
+				driverID = resultSet.getInt(2);
+				startTime = resultSet.getString(3);
+				sourceID = resultSet.getInt(4);
+				destinationID = resultSet.getInt(5);
+				cabID = resultSet.getInt(6);
+				price = resultSet.getFloat(7);
+				rating = resultSet.getFloat(8);
+				
+				source = findLocation(sourceID);
+				destination = findLocation(destinationID);
+
+				driver = findDriverByID(driverID);
+				cab = findCabByID(cabID);
+								
+				bookingResponse = new CompleteRating(bookingID, driver, cab, source, destination, startTime, price, rating);
+				completedRides.add(bookingResponse);
+			}
+
+			return completedRides;
+			
+		}catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
+			return null;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	/*
 	 * Displays the cancelled Ride history
 	 */
 	
-	public ArrayList<BookingResponse> displayCancelledRides(int userID){
+	public ArrayList<BookingResponse> displayCancelledRides(int userID, int flag){
 		int driverID = -1;
 		String startTime = "";
 		float price = 0.0f;
@@ -537,7 +677,11 @@ connection = DbConnect.getConnection();
 			cancelledRides = new ArrayList<BookingResponse>();
 			
 			connection = DbConnect.getConnection();
-			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_BOOKING_DETAILS);
+			if(flag==0) {
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_CUSTOMER_BOOKING_DETAILS);
+			}else {
+			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_DRIVER_BOOKING_DETAILS);
+			}
 			preparedStatement.setInt(1, userID);
 			
 			preparedStatement.setInt(2, 4);	
@@ -572,28 +716,6 @@ connection = DbConnect.getConnection();
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	/*
@@ -631,6 +753,100 @@ connection = DbConnect.getConnection();
 		}
 	}
 	
+	/*
+	 * Cancels the ride of a customer.
+	 */
+
+	public int cancelRide(int bookingID) {
+
+		int driverID = 0;
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_DRIVER_BY_BOOKING_ID);
+			preparedStatement.setInt(1, bookingID);
+			resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next()) {
+				driverID = resultSet.getInt(1);
+			}
+
+			preparedStatement = connection.prepareStatement(SQLConstants.CANCEL_RIDE);
+			preparedStatement.setInt(1, 4);
+			preparedStatement.setInt(2, bookingID);
+			preparedStatement.executeUpdate();
+
+			return driverID;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in cancelling the ride.");
+			return -1;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	
+	/*
+	 * Rates a trip.
+	 */
+
+	public void rateTrip(float rating, int bookingID, int userID) {
+		
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_TRIP_RATING);
+			preparedStatement.setInt(1, bookingID);
+			preparedStatement.setFloat(2, rating);
+			preparedStatement.setInt(3, userID);
+			preparedStatement.setInt(4, userID);
+
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in inserting rating for a ride into DB.");
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
+	
+	/*
+	 * Retrieves the booking ID of a ride.
+	 */
+
+	public boolean checkBookingExists(int bookingID, int driverID) {
+
+		boolean check = false;
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.CHECK_BOOKING_EXISTS);
+			preparedStatement.setInt(1, bookingID);
+			preparedStatement.setInt(2, driverID);
+			resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				check = true;
+			}
+			return check;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in checking if booking ID exists from DB.");
+			return check;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
 	
 }
 

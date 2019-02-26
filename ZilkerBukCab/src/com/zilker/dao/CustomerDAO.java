@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import com.zilker.bean.Address;
 import com.zilker.bean.TravelInvoice;
+import com.zilker.constants.Constants;
 import com.zilker.constants.SQLConstants;
 import com.zilker.util.DbConnect;
 
@@ -286,6 +287,7 @@ public class CustomerDAO {
 		ResultSet resultSet = null;
 
 		try {
+			
 			connection = DbConnect.getConnection();
 			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_RIDE_DETAILS);
 			preparedStatement.setInt(1, invoice.getCustomerID());
@@ -381,6 +383,5 @@ public class CustomerDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-
 
 }

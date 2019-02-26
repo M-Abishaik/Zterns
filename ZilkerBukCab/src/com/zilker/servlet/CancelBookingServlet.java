@@ -2,6 +2,8 @@ package com.zilker.servlet;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,25 +14,24 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import com.zilker.constants.Constants;
+import com.zilker.bean.Address;
 import com.zilker.delegate.CustomerDelegate;
-import com.zilker.delegate.DriverDelegate;
 import com.zilker.delegate.SharedDelegate;
 
 /**
- * Servlet implementation class AddLicenceServlet
+ * Servlet implementation class CancelBookingServlet
  */
-@WebServlet("/AddLicenceServlet")
-public class AddLicenceServlet extends HttpServlet {
+@WebServlet("/CancelBookingServlet")
+public class CancelBookingServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+       
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public AddLicenceServlet() {
+    public CancelBookingServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -47,38 +48,34 @@ public class AddLicenceServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		RequestDispatcher requestDispatcher = null;
-		HttpSession session = null;
-		DriverDelegate driverDelegate = null;
+		boolean check = false;
 		SharedDelegate sharedDelegate = null;
-		String licenceNumber = "";
-		String pinCode = "";
-		String userPhone = "";
-		String addLicenceResponse = "";
-		int driverID = -1;
+		int bookingID = -1;
+		RequestDispatcher requestDispatcher = null;
+		CustomerDelegate customerDelegate = null;
+		ArrayList<Address> address = null;
 		
 		try {
-			session = request.getSession();
-			driverDelegate = new DriverDelegate();
 			sharedDelegate = new SharedDelegate();
+			customerDelegate = new CustomerDelegate();
 
-			userPhone = (String)session.getAttribute("userPhone");
+			bookingID = Integer.parseInt(request.getParameter("travelInvoiceBookingID"));
+			
+			check = sharedDelegate.cancelRide(bookingID);
 
-			licenceNumber = request.getParameter("licenceNumber");
-			pinCode = request.getParameter("pinCode");
+			address = customerDelegate.displayLocations();
 			
-			driverID = sharedDelegate.getUserID(userPhone);
+			request.setAttribute("addressList", address);
 			
-			addLicenceResponse = driverDelegate.addLicenceDetails(licenceNumber, userPhone, pinCode);
-			
-			if(addLicenceResponse.equals(Constants.SUCCESS)) {
-				LOGGER.log(Level.INFO, "Cab successfully allocated!");
-			} 
-			
-		} catch(Exception exception) {
-			
+			requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
+			requestDispatcher.forward(request, response);
+
+		} catch (InputMismatchException e) {
+			LOGGER.log(Level.INFO, "Enter a valid integer.");
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error in cancelling the ride.");
 		}
+		
 	}
 
 }

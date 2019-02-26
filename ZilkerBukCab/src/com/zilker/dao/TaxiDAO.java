@@ -1,6 +1,7 @@
 package com.zilker.dao;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.zilker.constants.SQLConstants;
+import com.zilker.constants.Constants;
 import com.zilker.util.DbConnect;
 
 public class TaxiDAO {
@@ -156,34 +158,26 @@ public class TaxiDAO {
 	 * Completes the current ride.
 	 */
 
-	public int completeRide(String zipCode, int driverID) {
-		int bookingID = -1;
-		String test = "";
+	public String completeRide(int bookingID, int driverID) {
 		
-
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
+		int count = -1;
 
 		try {
 			connection = DbConnect.getConnection();
-			preparedStatement = connection.prepareStatement(SQLConstants.COMPLETE_RIDE);
-			preparedStatement.setString(1, zipCode);
-			preparedStatement.setInt(2, driverID);
-			preparedStatement.setInt(3, 1);
-			resultSet = preparedStatement.executeQuery();
-			if (resultSet.next()) {
-				test = resultSet.getString(1);
-				bookingID = Integer.parseInt(test);
-				System.out.println(bookingID);
+			preparedStatement = connection.prepareStatement(SQLConstants.UPDATE_RIDE_COMPLETION);
+			preparedStatement.setInt(1, driverID);
+			preparedStatement.setInt(2, bookingID);
+			count = preparedStatement.executeUpdate();
+			if (count>0) {
+				return Constants.SUCCESS;
 			}
-			return bookingID;
-		} catch (NumberFormatException ne) {
-			LOGGER.log(Level.WARNING, "Error in parsing details.");
-			return -1;
+			return Constants.FAILURE;
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Error in reading booking ID from DB.");
-			return -1;
+			return Constants.FAILURE;
 		} finally {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
@@ -216,7 +210,7 @@ public class TaxiDAO {
 	 * Updates current location of driver after the ride.
 	 */
 
-	public void updateLocation(String zipCode, int driverID) {
+	public void updateDriverLocation(String zipCode, int driverID) {
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -226,6 +220,7 @@ public class TaxiDAO {
 			preparedStatement = connection.prepareStatement(SQLConstants.UPDATE_DRIVER_LOCATION);
 			preparedStatement.setString(1, zipCode);
 			preparedStatement.setInt(2, driverID);
+			preparedStatement.setInt(3, driverID);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Error in updating driver location after ride completion in DB.");
@@ -233,5 +228,36 @@ public class TaxiDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
+	
+	
+	/*
+	 * Reads the zipCode corresponding to the destination ID.
+	 */
 
+	public String getZipCode(int bookingID){
+		String zipCode = "";
+		
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_ZIP_BY_DESTINATION_ID);
+			preparedStatement.setInt(1, bookingID);
+			resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				zipCode = resultSet.getString(1);
+			}
+			return zipCode;
+		} catch (NumberFormatException ne) {
+			LOGGER.log(Level.WARNING, "Error in parsing details.");
+			return Constants.FAILURE;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in reading destination ID from DB.");
+			return Constants.FAILURE;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}
+	}
 }

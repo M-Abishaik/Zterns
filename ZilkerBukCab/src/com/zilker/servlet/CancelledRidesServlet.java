@@ -34,7 +34,6 @@ public class CancelledRidesServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		BookingResponse bookingResponse = null;
 		ArrayList<BookingResponse> cancelledList = null;
 		SharedDelegate sharedDelegate = null;
 		HttpSession session = null;
@@ -50,16 +49,9 @@ public class CancelledRidesServlet extends HttpServlet {
 			
 			
 			userPhone = "8888888888";			
-			cancelledList = sharedDelegate.displayCancelledRides(userPhone);
+			cancelledList = sharedDelegate.displayCancelledRides(userPhone, 0);
 			
-			int size = cancelledList.size();
-			
-			System.out.println(size);
-			for(int i=0;i<size;i++) {
-				bookingResponse = cancelledList.get(i);
-				System.out.println(bookingResponse.getBookingID());
-			}
-			
+		
 			request.setAttribute("onCancelResponse", cancelledList);
 			
 			requestDispatcher = request.getRequestDispatcher("./pages/myTrips-customer.jsp");

@@ -76,17 +76,22 @@ public class DriverDelegate {
 	 * Completes a ride.
 	 */
 
-	public String completeRide(String zipCode, int driverID) {
-		int bookingID = -1;
+	public String completeRide(int bookingID, int driverID) {
 		TaxiDAO taxiDAO = null;
+		String response = "";
+		String zipCode = "";
 
 		try {
 			taxiDAO = new TaxiDAO();
 
-			bookingID = taxiDAO.completeRide(zipCode, driverID);
+			response = taxiDAO.completeRide(bookingID, driverID);
 
-			if (bookingID != (-1)) {
-				taxiDAO.updateBookingTable(bookingID, driverID);
+			if (response.equals(Constants.SUCCESS)) {
+				
+				zipCode = findZipByID(bookingID);
+				
+				updateDriverLocation(zipCode, driverID);
+				
 				return Constants.SUCCESS;
 			}
 
@@ -96,19 +101,42 @@ public class DriverDelegate {
 			return Constants.FAILURE;
 		}
 	}
+	
+
+	/*
+	 * Retrives the zipcode of the destination location.
+	 */
+	
+	public String findZipByID(int bookingID) {
+		
+		String zipCode = "";
+		TaxiDAO taxiDAO = null;
+		
+		try {
+			taxiDAO = new TaxiDAO();
+			zipCode = taxiDAO.getZipCode(bookingID);
+			
+			return zipCode;
+		}catch(Exception exception) {
+			LOGGER.log(Level.WARNING, "Error in transferring destinationID to DAO.");
+			return Constants.FAILURE;
+		}
+		
+	}
+	
 
 	/*
 	 * Updates current location of driver.
 	 */
 
-	public String updateLocation(String zipCode, int driverID) {
+	public String updateDriverLocation(String zipCode, int driverID) {
 
 		TaxiDAO taxiDAO = null;
 
 		try {
 			taxiDAO = new TaxiDAO();
 
-			taxiDAO.updateLocation(zipCode, driverID);
+			taxiDAO.updateDriverLocation(zipCode, driverID);
 
 			return Constants.SUCCESS;
 		} catch (Exception e) {
