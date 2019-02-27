@@ -24,7 +24,7 @@
 	
 	<div class="vertical-menu">
         <a class="riderProfile" style="cursor:pointer"onclick="driverviewlicense()">Add License Details</a>
-        <a class="riderProfile"  style="cursor:pointer" onclick="drivercompleted()">Complete a ride</a>
+        <!--<a class="riderProfile"  style="cursor:pointer" onclick="drivercompleted()">Complete a ride</a> -->
         <a class="riderProfile" onclick="driverviewprofile()" href="${Config.BASE_PATH}DriverProfileServlet">Profile</a> 
         <a class="riderProfile" href="${Config.BASE_PATH}DriverOnGoingRidesServlet">My Trips</a> 
 		<a class="riderProfile" href="${Config.BASE_PATH}LogoutServlet">Logout</a>
@@ -32,7 +32,7 @@
 	</div> 
  	<div class="container3 driver">
 
-        <form action="${Config.BASE_PATH}AddLicenceServlet" id="driverlicense" method="post">
+        <form style="margin-top:10%;" action="${Config.BASE_PATH}AddLicenceServlet" id="driverlicense" method="post">
             <h1>Add License Details</h1>
             <label for="licno">License Number</label>
             <input id="licno" type="text" placeholder="Enter License Number" name="licenceNumber"><br><br>
@@ -42,9 +42,7 @@
 			<label for="pin">Enter the pincode of your current location</label>
             <input id="pin" type="text" placeholder="Enter Pincode" name="pinCode">
             <br><br>
-           
             <button class="lic-submit button button-accent" type="submit" id="login">Submit</button>
-            <img class= "completed-img" src="${Config.BASE_PATH}img/g3.jpg">
         </form>
 
         <form action="${Config.BASE_PATH}CompleteRideServlet" id="drivercompleted" method="post">

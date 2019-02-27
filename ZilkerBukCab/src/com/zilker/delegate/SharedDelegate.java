@@ -7,6 +7,7 @@ import com.zilker.constants.Constants;
 import com.zilker.dao.SharedDAO;
 import com.zilker.bean.BookingResponse;
 import com.zilker.bean.CompleteRating;
+import com.zilker.bean.PostConfirm;
 import com.zilker.bean.UpdateProfile;
 import com.zilker.bean.User;
 
@@ -206,23 +207,46 @@ public class SharedDelegate {
 	 * Checks if the ride is in progress.
 	 */
 	
-	public boolean checkBookingStatus(String userPhone, int flag) {
+	public int checkBookingStatus(String userPhone, int flag) {
 		
-		boolean bookingResponse = false;
 		SharedDAO sharedDAO = null;
 		int userID = -1;
+		int bookingID = -1;
 		
 		try {
 			sharedDAO = new SharedDAO();
 			userID = getUserID(userPhone);
 			
-			bookingResponse = sharedDAO.checkBookingStatus(userID, flag);
-			return bookingResponse;
+			bookingID = sharedDAO.checkBookingStatus(userID, flag);
+			return bookingID;
 		}catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error in transfering user contact to DAO.");
-			return false;
+			return -1;
 		}
 	}
+	
+	
+	/*
+	 * Get ride details by booking ID.
+	 */
+	
+	public PostConfirm getBookingDetails(int bookingID) {
+		
+		PostConfirm postConfirm = null;
+		SharedDAO sharedDAO = null;
+
+		try {
+			sharedDAO = new SharedDAO();
+			postConfirm = sharedDAO.getBookingDetails(bookingID);
+			
+			return postConfirm;
+		}catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error in transfering booking ID to DAO.");
+			return null;
+		}
+		
+	}
+	
 	
 	
 	/*

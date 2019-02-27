@@ -40,8 +40,26 @@ public class CancelBookingServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		RequestDispatcher requestDispatcher = null;
+		CustomerDelegate customerDelegate = null;
+		ArrayList<Address> address = null;
+		
+		try {
+			customerDelegate = new CustomerDelegate();
+
+			address = customerDelegate.displayLocations();
+			
+			request.setAttribute("addressList", address);
+			
+			requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
+			requestDispatcher.forward(request, response);
+
+		} catch (InputMismatchException e) {
+			LOGGER.log(Level.INFO, "Enter a valid integer.");
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error in cancelling the ride.");
+		}
+		
 	}
 
 	/**

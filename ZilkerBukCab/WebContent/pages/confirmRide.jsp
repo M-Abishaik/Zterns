@@ -53,7 +53,9 @@
 		<input type="hidden" name="travelInvoicePrice" id="travelPrice"/> 
     	<button class="button button-accent bookride-confirm" onclick="confirmBooking()" type="submit">Confirm Booking</button>
     	</form>
+ 		<form action="${Config.BASE_PATH}CancelBookingServlet" method="get">
     	<button class="button button-accent bookride-cancel">Cancel Booking</button>
+    	</form>
     </div>
         	
 	<div class="hideMe">

@@ -34,7 +34,7 @@
 	<div class="vertical-menu">
   		<a class="riderProfile" onclick="riderviewbook()" href="${Config.BASE_PATH}LocationServlet">Book a ride</a> 
   		<a class="riderProfile" onclick="riderviewprofile()" href="${Config.BASE_PATH}ProfileServlet">Profile</a> 
-  		<a class="riderProfile" href="${Config.BASE_PATH}OnGoingRidesServlet">My Trips</a> 
+  		<a class="riderProfile" href="${Config.BASE_PATH}CompletedRidesServlet">My Trips</a> 
         <a class="riderProfile" href="${Config.BASE_PATH}LogoutServlet">Logout</a>
 	</div> 
  	<div class="container3 rider">

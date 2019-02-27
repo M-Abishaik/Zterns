@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import com.zilker.constants.SQLConstants;
 import com.zilker.bean.BookingResponse;
 import com.zilker.bean.CompleteRating;
+import com.zilker.bean.PostConfirm;
 import com.zilker.bean.UpdateProfile;
 import com.zilker.bean.User;
 import com.zilker.util.DbConnect;
@@ -422,11 +423,12 @@ public class SharedDAO {
 	 * Checks if the ride is in progress.
 	 */
 	
-	public boolean checkBookingStatus(int userID, int flag) {
+	public int checkBookingStatus(int userID, int flag) {
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
+		int bookingID = -1;
 		
 		try {
 			connection = DbConnect.getConnection();
@@ -439,18 +441,75 @@ public class SharedDAO {
 			resultSet = preparedStatement.executeQuery();
 			
 			if (resultSet.next()) {
-				return true;
+				bookingID = resultSet.getInt(1);
 			}
-			return false;
+			return bookingID;
 			
 		} catch (SQLException e) {
 			LOGGER.log(Level.SEVERE, "Error in fetching booking status from DB.");
-			return false;
+			return -1;
 		} finally {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 		
 	}
+	
+	/*
+	 * Read the ride details by booking ID.
+	 */
+	
+	public PostConfirm getBookingDetails(int bookingID) {
+		
+		int driverID = -1;
+		String startTime = "";
+		float price = 0.0f;
+		String source = "";
+		String destination = "";
+		String driver = "";
+		String cab = "";
+		int sourceID = -1;
+		int destinationID = -1;
+		int cabID = -1;
+		PostConfirm postConfirm = null;
+
+		Connection connection = null;
+		PreparedStatement preparedStatement = null;
+		ResultSet resultSet = null;
+
+		try {
+			connection = DbConnect.getConnection();
+			preparedStatement = connection.prepareStatement(SQLConstants.GET_ONGOING_RIDE_DETAILS);
+			preparedStatement.setInt(1, bookingID);
+						
+			resultSet = preparedStatement.executeQuery();
+
+			if (resultSet.next()) {
+				bookingID = resultSet.getInt(1);
+				driverID = resultSet.getInt(2);
+				startTime = resultSet.getString(3);
+				sourceID = resultSet.getInt(4);
+				destinationID = resultSet.getInt(5);
+				cabID = resultSet.getInt(6);
+				price = resultSet.getFloat(7);
+			}
+
+			source = findLocation(sourceID);
+			destination = findLocation(destinationID);
+
+			driver = findDriverByID(driverID);
+			cab = findCabByID(cabID);
+
+			postConfirm = new PostConfirm(bookingID, startTime, source, destination, driver, cab, price);
+
+			return postConfirm;
+		} catch (SQLException e) {
+			LOGGER.log(Level.SEVERE, "Error in displaying booking details.");
+			return null;
+		} finally {
+			DbConnect.closeConnection(connection, preparedStatement, resultSet);
+		}	
+	}
+	
 	
 	
 	/*

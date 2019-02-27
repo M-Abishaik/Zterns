@@ -20,7 +20,7 @@
 		<a href="index.html"><img src="${Config.BASE_PATH}/img/logouber2.png" alt="Taxi logo" class="logo"></a>
 		<nav>	
 			<ul class="home">
-				<li><a href="${Config.BASE_PATH}AfterBookOnGoingRidesServlet">My Trips</a></li>
+				<li><a href="${Config.BASE_PATH}AfterBookDriverOnGoingRidesServlet">My Trips</a></li>
 				<li><a href="${Config.BASE_PATH}LogoutServlet">Logout</a></li>
 			</ul>
 		</nav>
@@ -41,9 +41,9 @@
     	<h2> Cab :<span><%=postConfirm.getCab()%></span></h2>
     	<h2> Price :<span><%=postConfirm.getPrice()%></span></h2>
     	<br> <br>
-    	<form action="${Config.BASE_PATH}CancelBookingServlet" method="post">
-    	<input type="hidden" name="travelInvoiceBookingID" value=<%=postConfirm.getBookingID()%>>
-    	<button class="button button-accent bookride-cancel" type="submit">Cancel Booking</button>
+    	<form action="${Config.BASE_PATH}CompleteRideServlet" method="post">
+    	<input type="hidden" name="bookingID" value=<%=postConfirm.getBookingID()%>>
+    	<button class="button button-accent bookride-cancel" type="submit">Complete Ride</button>
     	</form>
     </div>
     

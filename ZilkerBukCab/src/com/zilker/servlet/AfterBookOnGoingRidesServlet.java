@@ -1,11 +1,9 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,16 +14,16 @@ import com.zilker.bean.BookingResponse;
 import com.zilker.delegate.SharedDelegate;
 
 /**
- * Servlet implementation class DriverCompletedRidesServlet
+ * Servlet implementation class AfterBookOnGoingRidesServlet
  */
-@WebServlet("/DriverCompletedRidesServlet")
-public class DriverCompletedRidesServlet extends HttpServlet {
+@WebServlet("/AfterBookOnGoingRidesServlet")
+public class AfterBookOnGoingRidesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public DriverCompletedRidesServlet() {
+    public AfterBookOnGoingRidesServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,8 +32,7 @@ public class DriverCompletedRidesServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ArrayList<BookingResponse> completeList = null;
-		
+		BookingResponse bookingResponse = null;
 		SharedDelegate sharedDelegate = null;
 		HttpSession session = null;
 		RequestDispatcher requestDispatcher = null;
@@ -44,16 +41,14 @@ public class DriverCompletedRidesServlet extends HttpServlet {
 		try {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
-			completeList = new ArrayList<BookingResponse>();
 			//userPhone = (String)session.getAttribute("userPhone");
 			
+			userPhone = "8888888888";
+			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 0);
 			
-			userPhone = "9999999999";			
-			completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
+			request.setAttribute("onGoingResponse", bookingResponse);
 			
-			request.setAttribute("onCompleteResponse", completeList);
-			
-			requestDispatcher = request.getRequestDispatcher("./pages/myTrips-driver.jsp");
+			requestDispatcher = request.getRequestDispatcher("./pages/afterBookMyTrips.jsp");
 			requestDispatcher.forward(request, response);
 			
 		}catch(Exception exception) {

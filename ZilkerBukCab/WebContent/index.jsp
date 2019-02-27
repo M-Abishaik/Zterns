@@ -80,11 +80,20 @@
 						<input id="registerRePassword" type="password" placeholder="Re-enter Password" name="registerRePassword" required><br> <br>
 						<span id="userRePassword"></span>
 
-		               	<p><b>Sign up as</b> <select id="ridedriveadmin" name="registerRole">
+		               	<p><b>Sign up as</b> <select id="ridedriveadmin" name="registerRole" onchange="riderdriver(this);">
 		        			<option>customer</option>
 		        			<option>driver</option>
-		        			<option>admin</option>
 		        		</select></p>
+		        		
+		        		<div class="driverlicense" id="driverlicense">
+					            <label for="licno">License Number</label>
+					            <input id="licno" type="text" placeholder="Enter License Number" name="licenceNumber"><br><br>
+					            <label for="file-upload" class="custom-file-upload">
+					    		<i class="fa fa-cloud-upload"></i> Upload
+								License</label>
+								<input id="file-upload" type="file"/>
+					            <br><br>
+				        </div>
 		                <button class="bottomLogin button button-accent" type="submit" id="register">REGISTER</button>
 
 	           	 	</div>

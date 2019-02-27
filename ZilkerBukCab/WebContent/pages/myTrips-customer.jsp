@@ -74,10 +74,10 @@
                             <h3 id="fromto">Source: <% if(bookingResponse!=null){%><%=bookingResponse.getSource()%><%}%></h3>
                             <h3 id="fromto">Destination: <% if(bookingResponse!=null){%><%=bookingResponse.getDestination()%><%}%></h3>
                             
-                            <form action="${Config.BASE_PATH}UpdateBookingServlet" method="post">
+                           <%--  <form action="${Config.BASE_PATH}UpdateBookingServlet" method="post">
                             <input type="hidden" name="travelInvoiceBookingID" value=<% if(bookingResponse!=null){%><%=bookingResponse.getBookingID()%><%}%>>
                             <button style="margin-bottom: 1em; float:left;" class="button button-accent update">Update</button>
-                            </form>
+                            </form> --%>
                             
                             <form action="${Config.BASE_PATH}CancelBookingServlet" method="post">
                             <input type="hidden" name="travelInvoiceBookingID" value=<% if(bookingResponse!=null){%><%=bookingResponse.getBookingID()%><%}%>>
@@ -121,17 +121,17 @@
                         <input type="hidden" name="travelInvoiceBookingID" value=<% if(completeRides!=null){%><%=completeRides.getBookingID()%><%}%>>
                         
                             <span class="user-rating">
-                            <input id="five" type="radio" name="rating" value="5"><span class="star"></span>
+                            <input id="booking-id-<%=completeRides.getBookingID()%>-5"  type="radio" name="rating" value="5"><span class="star"></span>
 
-                                <input id="four" type="radio" name="rating" value="4"><span class="star"></span>
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-4"  type="radio" name="rating" value="4"><span class="star"></span>
 
-                                <input id="three" type="radio" name="rating" value="3"><span class="star"></span>
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-3"  type="radio" name="rating" value="3"><span class="star"></span>
 
-                                <input id="two" type="radio" name="rating" value="2"><span class="star"></span>
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-2"   type="radio" name="rating" value="2"><span class="star"></span>
 
-                                <input id="one" type="radio" name="rating" value="1"><span class="star"></span>
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-1"  type="radio" name="rating" value="1"><span class="star"></span>
                             </span>
-                            <button style="margin-bottom: 1em;" type="submit" class="button button-accent cancel">Rate</button>
+                            <button id="rate-button-<%=completeRides.getBookingID()%>" style="margin-bottom: 1em;" type="submit" class="button button-accent cancel">Rate</button>
                             
                         </form>
                             

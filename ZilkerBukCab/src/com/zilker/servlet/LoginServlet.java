@@ -2,11 +2,13 @@ package com.zilker.servlet;
 
 import java.io.IOException;
 
+
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,8 @@ import javax.servlet.http.HttpSession;
 
 import com.zilker.delegate.SharedDelegate;
 import com.zilker.bean.Address;
+import com.zilker.bean.BookingResponse;
+import com.zilker.bean.PostConfirm;
 import com.zilker.delegate.CustomerDelegate;
 import com.zilker.constants.Constants;
 
@@ -53,17 +57,24 @@ public class LoginServlet extends HttpServlet {
 		SharedDelegate sharedDelegate = null;
 		CustomerDelegate customerDelegate = null;
 		ArrayList<Address> address = null;
+		ArrayList<BookingResponse> completeList = null;
 		String loginResponse = "";
-		boolean bookingResponse = false;
+		int bookingID = -1;
+		String sourceExtract = "";
+		String destinationExtract = "";
+		String zipCodeSource = "";
+		String zipCodeDestination = "";
 		RequestDispatcher requestDispatcher = null;
-		
+		PostConfirm postConfirm = null;
 		
 		HttpSession session = null;
 		
 		try {
+			completeList = new ArrayList<BookingResponse>();
 			session = request.getSession();
 			customerDelegate = new CustomerDelegate();
 			sharedDelegate = new SharedDelegate();
+			postConfirm = new PostConfirm();
 			userPhone = request.getParameter("loginMobile");
 			userPassword = request.getParameter("loginPassword");
 			
@@ -74,17 +85,66 @@ public class LoginServlet extends HttpServlet {
 				session.setAttribute("userPhone", userPhone);
 				if(loginResponse.equals(Constants.CUSTOMER)) {
 					
-					address = customerDelegate.displayLocations();
+					bookingID = sharedDelegate.checkBookingStatus(userPhone,0);
 					
+					if(bookingID!=(-1)) {
+						
+						postConfirm = sharedDelegate.getBookingDetails(bookingID);
+						
+						sourceExtract = customerDelegate.extractLocation(postConfirm.getSource(), 0); 
+						destinationExtract = customerDelegate.extractLocation(postConfirm.getDestination(), 0);
+							
+						zipCodeSource = customerDelegate.extractLocation(postConfirm.getSource(), 1);
+						zipCodeDestination = customerDelegate.extractLocation(postConfirm.getDestination(), 1);
+							
+						request.setAttribute("postConfirmInvoice", postConfirm);
+						request.setAttribute("sourceZip", zipCodeSource);
+						request.setAttribute("destinationZip", zipCodeDestination);
+
+					
+						requestDispatcher = request.getRequestDispatcher("./pages/after-book.jsp");
+						requestDispatcher.forward(request, response);
+					} else {
+					
+					address = customerDelegate.displayLocations();
+										
 					request.setAttribute("addressList", address);
-	
+								
 					requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
 					requestDispatcher.forward(request, response);
+					}
 					
 				} else if(loginResponse.equals(Constants.DRIVER)) {
 					
-					requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
-					requestDispatcher.forward(request, response);
+					bookingID = sharedDelegate.checkBookingStatus(userPhone,1);
+
+					
+					if(bookingID!=(-1)) {
+						
+						postConfirm = sharedDelegate.getBookingDetails(bookingID);
+						
+						sourceExtract = customerDelegate.extractLocation(postConfirm.getSource(), 0); 
+						destinationExtract = customerDelegate.extractLocation(postConfirm.getDestination(), 0);
+							
+						zipCodeSource = customerDelegate.extractLocation(postConfirm.getSource(), 1);
+						zipCodeDestination = customerDelegate.extractLocation(postConfirm.getDestination(), 1);
+							
+						request.setAttribute("postConfirmInvoice", postConfirm);
+						request.setAttribute("sourceZip", zipCodeSource);
+						request.setAttribute("destinationZip", zipCodeDestination);
+
+					
+						requestDispatcher = request.getRequestDispatcher("./pages/afterBookDriver.jsp");
+						requestDispatcher.forward(request, response);
+					} else {
+					
+						completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
+						
+						request.setAttribute("onCompleteResponse", completeList);
+						
+						requestDispatcher = request.getRequestDispatcher("./pages/myTrips-driver.jsp");
+						requestDispatcher.forward(request, response);
+					}
 					
 				}
 					
@@ -102,24 +162,8 @@ public class LoginServlet extends HttpServlet {
 		}
 		
 	}
+		
 	
-	//CUSTOMER
-	
-	/*bookingResponse = sharedDelegate.checkBookingStatus(userPhone,0);
-	
-	if(bookingResponse==true) {
-		requestDispatcher = request.getRequestDispatcher("./pages/after-book.jsp");
-		requestDispatcher.forward(request, response);
-	} else {
-	
-	address = customerDelegate.displayLocations();
-						
-	request.setAttribute("addressList", address);
-	
-	
-	requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
-	requestDispatcher.forward(request, response);
-	}*/
 	
 	//DRIVER
 	

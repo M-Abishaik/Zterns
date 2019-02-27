@@ -1,17 +1,18 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
-
+import java.util.logging.Level;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.zilker.constants.Constants;
+import javax.servlet.http.HttpSession;
 
+import com.zilker.constants.Constants;
+import com.zilker.delegate.DriverDelegate;
 import com.zilker.delegate.SharedDelegate;
 import com.zilker.bean.User;
 
@@ -47,16 +48,23 @@ public class RegistrationServlet extends HttpServlet {
 		String mail = "";
 		String userRole = "";
 		String password = "";
+		int driverID = -1;
 		String rePassword = "";
 		String address = "";
 		String zipCode = "";
+		String licenceNumber = "none";
+		HttpSession session = null;
+		String addLicenceResponse = "";
 		SharedDelegate sharedDelegate = null;
+		DriverDelegate driverDelegate = null;
 		String registerResponse = "";
 		RequestDispatcher requestDispatcher = null;
 		User user = null;
 		
 		try {
 			sharedDelegate = new SharedDelegate();
+			driverDelegate = new DriverDelegate();
+			session = request.getSession();
 			user = new User();
 			
 			userName = request.getParameter("registerUsername");
@@ -66,6 +74,11 @@ public class RegistrationServlet extends HttpServlet {
 			mail.toLowerCase();
 			
 			userRole = request.getParameter("registerRole");
+			
+			if(userRole.equals("driver")) {
+				licenceNumber = request.getParameter("licenceNumber");
+			}
+						
 			password = request.getParameter("registerPassword");
 			rePassword = request.getParameter("registerRePassword");
 			
@@ -73,12 +86,14 @@ public class RegistrationServlet extends HttpServlet {
 			address = address.toLowerCase();
 			
 			zipCode = request.getParameter("registerZipcode");
-			
+						
 			user = new User(userName, mail, contact, userRole, password, address, zipCode);
 			registerResponse = sharedDelegate.register(user);
+			
 
 			if(registerResponse.equals(Constants.SUCCESS)) {
-				
+				session.setAttribute("userPhone", contact);
+
 				if(userRole.equals(Constants.CUSTOMER)) {
 					
 					requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
@@ -86,8 +101,13 @@ public class RegistrationServlet extends HttpServlet {
 					
 				} else if(userRole.equals(Constants.DRIVER)) {
 					
-				} else if(userRole.equals(Constants.ADMIN)) {
+					driverID = sharedDelegate.getUserID(contact);
+					addLicenceResponse = driverDelegate.addLicenceDetails(licenceNumber, contact, zipCode);
 					
+					if(addLicenceResponse.equals(Constants.SUCCESS)) {
+						requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
+						requestDispatcher.forward(request, response);
+					} 
 				}
 			
 			} else {

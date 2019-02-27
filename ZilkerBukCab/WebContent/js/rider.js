@@ -52,7 +52,16 @@ function completed () {
 	
 	xmlhttp.onreadystatechange = function(){
 		if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
-		           
+		          console.log(xmlhttp.responseText); 
+		          let response = JSON.parse(xmlhttp.responseText);
+		          for(let i=0;i<response.bookingid.length;i++) {
+		        	  let rateButton = document.getElementById('rate-button-'+response.bookingid[i].bookingID);
+		        	  rateButton.style.display='none';
+		        	  for(let j=1;j<=response.bookingid[i].rating;j++) {
+		        		  let elem = document.getElementById('booking-id-'+response.bookingid[i].bookingID+'-'+j);
+		        		  elem.checked = true;
+		        	  }
+		          }		          
 		}
 	};
 	

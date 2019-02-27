@@ -19,6 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.zilker.delegate.SharedDelegate;
+import com.zilker.bean.BookingResponse;
 import com.zilker.bean.CompleteRating;
 import com.zilker.constants.Constants;
 
@@ -92,6 +93,8 @@ public class RateRideServlet extends HttpServlet {
 		String ratingResponse = "";
 		String userPhone = "";
 		SharedDelegate sharedDelegate = null;
+		ArrayList<BookingResponse> completeList = null;
+		
 		HttpSession session = null;
 		RequestDispatcher requestDispatcher = null;
 
@@ -99,6 +102,7 @@ public class RateRideServlet extends HttpServlet {
 		try {
 			session = request.getSession();
 			sharedDelegate = new SharedDelegate();
+			completeList = new ArrayList<BookingResponse>();
 
 			bookingID = Integer.parseInt(request.getParameter("travelInvoiceBookingID"));
 			rating = Float.parseFloat(request.getParameter("rating"));
@@ -108,8 +112,14 @@ public class RateRideServlet extends HttpServlet {
 			ratingResponse = sharedDelegate.rateTrip(rating, bookingID, userPhone);
 			
 			if(ratingResponse.equals(Constants.SUCCESS)) {
+				
+				completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
+				
+				request.setAttribute("onCompleteResponse", completeList);
+				
 				requestDispatcher = request.getRequestDispatcher("./pages/myTrips-customer.jsp");
 				requestDispatcher.forward(request, response);
+				
 			}
 
 		}catch(Exception exception) {

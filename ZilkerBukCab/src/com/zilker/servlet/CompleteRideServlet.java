@@ -1,7 +1,7 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.zilker.bean.BookingResponse;
 import com.zilker.constants.Constants;
 import com.zilker.delegate.DriverDelegate;
 import com.zilker.delegate.SharedDelegate;
@@ -49,6 +50,7 @@ public class CompleteRideServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		RequestDispatcher requestDispatcher = null;
+		ArrayList<BookingResponse> completeList = null;
 		
 		HttpSession session = null;
 		DriverDelegate driverDelegate = null;
@@ -60,6 +62,7 @@ public class CompleteRideServlet extends HttpServlet {
 		boolean check = false;
 		
 		try {
+			completeList = new ArrayList<BookingResponse>();
 			session = request.getSession();
 			driverDelegate = new DriverDelegate();
 			sharedDelegate = new SharedDelegate();
@@ -79,7 +82,11 @@ public class CompleteRideServlet extends HttpServlet {
 				if(rideCompleteResponse.equals(Constants.SUCCESS)) {
 					LOGGER.log(Level.INFO, "Location successfully updated.");
 					
-					requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
+					completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
+					
+					request.setAttribute("onCompleteResponse", completeList);
+					
+					requestDispatcher = request.getRequestDispatcher("./pages/myTrips-driver.jsp");
 					requestDispatcher.forward(request, response);
 					
 				} 

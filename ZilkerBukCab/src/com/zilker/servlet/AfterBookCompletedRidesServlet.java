@@ -16,16 +16,16 @@ import com.zilker.bean.BookingResponse;
 import com.zilker.delegate.SharedDelegate;
 
 /**
- * Servlet implementation class DriverCompletedRidesServlet
+ * Servlet implementation class AfterBookCompletedRidesServlet
  */
-@WebServlet("/DriverCompletedRidesServlet")
-public class DriverCompletedRidesServlet extends HttpServlet {
+@WebServlet("/AfterBookCompletedRidesServlet")
+public class AfterBookCompletedRidesServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public DriverCompletedRidesServlet() {
+    public AfterBookCompletedRidesServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,7 +34,7 @@ public class DriverCompletedRidesServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ArrayList<BookingResponse> completeList = null;
+ArrayList<BookingResponse> completeList = null;
 		
 		SharedDelegate sharedDelegate = null;
 		HttpSession session = null;
@@ -48,12 +48,12 @@ public class DriverCompletedRidesServlet extends HttpServlet {
 			//userPhone = (String)session.getAttribute("userPhone");
 			
 			
-			userPhone = "9999999999";			
-			completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
+			userPhone = "8888888888";			
+			completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
 			
 			request.setAttribute("onCompleteResponse", completeList);
 			
-			requestDispatcher = request.getRequestDispatcher("./pages/myTrips-driver.jsp");
+			requestDispatcher = request.getRequestDispatcher("./pages/afterBookMyTrips.jsp");
 			requestDispatcher.forward(request, response);
 			
 		}catch(Exception exception) {
