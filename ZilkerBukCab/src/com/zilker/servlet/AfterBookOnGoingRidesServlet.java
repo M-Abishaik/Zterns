@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpSession;
 
 import com.zilker.bean.BookingResponse;
 import com.zilker.delegate.SharedDelegate;
-
 /**
  * Servlet implementation class AfterBookOnGoingRidesServlet
  */
@@ -41,9 +41,9 @@ public class AfterBookOnGoingRidesServlet extends HttpServlet {
 		try {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
-			//userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String)session.getAttribute("userPhone");
 			
-			userPhone = "8888888888";
+			//userPhone = "8888888888";
 			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 0);
 			
 			request.setAttribute("onGoingResponse", bookingResponse);

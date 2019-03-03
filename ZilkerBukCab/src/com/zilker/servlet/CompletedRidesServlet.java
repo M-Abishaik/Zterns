@@ -51,10 +51,8 @@ public class CompletedRidesServlet extends HttpServlet {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
 			completeList = new ArrayList<BookingResponse>();
-			//userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String)session.getAttribute("userPhone");
 			
-			
-			userPhone = "8888888888";			
 			completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
 			
 			request.setAttribute("onCompleteResponse", completeList);

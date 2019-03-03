@@ -648,7 +648,7 @@ public class SharedDAO {
 	 * Displays the completed rated Ride history
 	 */
 	
-	public ArrayList<CompleteRating> displayCompletedRatedRides(int userID){
+	public ArrayList<CompleteRating> displayCompletedRatedRides(int userID, int flag){
 		int driverID = -1;
 		String startTime = "";
 		float price = 0.0f;
@@ -672,7 +672,11 @@ public class SharedDAO {
 			completedRides = new ArrayList<CompleteRating>();
 			
 			connection = DbConnect.getConnection();
-			preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_COMPLETED_RATED_RIDES);
+			if(flag==0) {
+				preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_CUSTOMER_COMPLETED_RATED_RIDES);
+			} else {
+				preparedStatement = connection.prepareStatement(SQLConstants.DISPLAY_DRIVER_COMPLETED_RATED_RIDES);
+			}
 			preparedStatement.setInt(1, userID);
 			
 			preparedStatement.setInt(2, 3);	

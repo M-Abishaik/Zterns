@@ -23,10 +23,8 @@
 	</header>
 	
 	<div class="vertical-menu">
-        <a class="riderProfile" style="cursor:pointer"onclick="driverviewlicense()">Add License Details</a>
-        <!--<a class="riderProfile"  style="cursor:pointer" onclick="drivercompleted()">Complete a ride</a> -->
         <a class="riderProfile" onclick="driverviewprofile()" href="${Config.BASE_PATH}DriverProfileServlet">Profile</a> 
-        <a class="riderProfile" href="${Config.BASE_PATH}DriverOnGoingRidesServlet">My Trips</a> 
+        <a class="riderProfile" href="${Config.BASE_PATH}DriverCompletedRidesServlet">My Trips</a> 
 		<a class="riderProfile" href="${Config.BASE_PATH}LogoutServlet">Logout</a>
 	
 	</div> 

@@ -46,9 +46,9 @@ public class OnGoingRidesServlet extends HttpServlet {
 		try {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
-			//userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String)session.getAttribute("userPhone");
 			
-			userPhone = "8888888888";
+			//userPhone = "8888888888";
 			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 0);
 			
 			request.setAttribute("onGoingResponse", bookingResponse);

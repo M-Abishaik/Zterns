@@ -42,9 +42,9 @@ public class DriverOnGoingRidesServlet extends HttpServlet {
 		try {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
-			//userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String)session.getAttribute("userPhone");
 			
-			userPhone = "9999999999";
+			//userPhone = "9999999999";
 			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 1);
 			
 			request.setAttribute("onGoingResponse", bookingResponse);

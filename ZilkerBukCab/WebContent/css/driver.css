@@ -581,13 +581,13 @@ input[type=file] {
 	color: #00ff6c;
 }
 
-/*#driverprofile .my-profile-icon {
-	margin-top: 3.5em;
+#driverprofile .my-profile-icon {
+	margin-top: 7em;
 }
 
 #driverprofile h2 {
 	margin-top: -3em;
-}*/
+}
 
 #driverlicense .ride-com {
 	width: 70%;

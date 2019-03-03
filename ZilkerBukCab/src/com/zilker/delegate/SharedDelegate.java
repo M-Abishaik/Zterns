@@ -315,7 +315,7 @@ public class SharedDelegate {
 	 * Display completed ride details 
 	 */
 	
-	public ArrayList<CompleteRating> displayCompletedRatedRides(String userPhone){
+	public ArrayList<CompleteRating> displayCompletedRatedRides(String userPhone, int flag){
 		SharedDAO sharedDAO = null;
 		ArrayList<CompleteRating> completedRides = null;
 		int userID = -1;
@@ -324,7 +324,7 @@ public class SharedDelegate {
 			completedRides = new ArrayList<CompleteRating>();
 			userID = getUserID(userPhone);
 			sharedDAO = new SharedDAO();
-			completedRides = sharedDAO.displayCompletedRatedRides(userID);
+			completedRides = sharedDAO.displayCompletedRatedRides(userID, flag);
 
 			return completedRides;
 		} catch (Exception e) {

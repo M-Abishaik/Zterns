@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,10 +45,8 @@ public class DriverCancelledRidesServlet extends HttpServlet {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
 			cancelledList= new ArrayList<BookingResponse>();
-			//userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String)session.getAttribute("userPhone");
 			
-			
-			userPhone = "9999999999";			
 			cancelledList = sharedDelegate.displayCancelledRides(userPhone, 1);
 			
 		

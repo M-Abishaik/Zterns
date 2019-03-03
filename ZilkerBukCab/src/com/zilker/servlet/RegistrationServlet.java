@@ -1,10 +1,12 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -12,8 +14,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.zilker.constants.Constants;
+import com.zilker.delegate.CustomerDelegate;
 import com.zilker.delegate.DriverDelegate;
 import com.zilker.delegate.SharedDelegate;
+import com.zilker.bean.Address;
 import com.zilker.bean.User;
 
 /**
@@ -50,6 +54,8 @@ public class RegistrationServlet extends HttpServlet {
 		String password = "";
 		int driverID = -1;
 		String rePassword = "";
+		ArrayList<Address> addressList = null;
+		CustomerDelegate customerDelegate = null;
 		String address = "";
 		String zipCode = "";
 		String licenceNumber = "none";
@@ -64,6 +70,8 @@ public class RegistrationServlet extends HttpServlet {
 		try {
 			sharedDelegate = new SharedDelegate();
 			driverDelegate = new DriverDelegate();
+			customerDelegate = new CustomerDelegate();
+			addressList = customerDelegate.displayLocations();
 			session = request.getSession();
 			user = new User();
 			
@@ -95,7 +103,8 @@ public class RegistrationServlet extends HttpServlet {
 				session.setAttribute("userPhone", contact);
 
 				if(userRole.equals(Constants.CUSTOMER)) {
-					
+					addressList = customerDelegate.displayLocations();
+					request.setAttribute("addressList", addressList);
 					requestDispatcher = request.getRequestDispatcher("./pages/customer.jsp");
 					requestDispatcher.forward(request, response);
 					

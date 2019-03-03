@@ -44,10 +44,10 @@ public class AfterBookCancelledRidesServlet extends HttpServlet {
 			sharedDelegate = new SharedDelegate();
 			session = request.getSession();
 			cancelledList= new ArrayList<BookingResponse>();
-			//userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String)session.getAttribute("userPhone");
 			
 			
-			userPhone = "8888888888";			
+			//userPhone = "8888888888";			
 			cancelledList = sharedDelegate.displayCancelledRides(userPhone, 0);
 			
 		

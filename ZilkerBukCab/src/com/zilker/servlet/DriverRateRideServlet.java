@@ -1,13 +1,9 @@
 package com.zilker.servlet;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
-import java.util.logging.Level;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,26 +11,22 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.zilker.delegate.SharedDelegate;
-import com.zilker.bean.BookingResponse;
 import com.zilker.bean.CompleteRating;
-import com.zilker.constants.Constants;
-
+import com.zilker.delegate.SharedDelegate;
 
 /**
- * Servlet implementation class RateRideServlet
+ * Servlet implementation class DriverRateRideServlet
  */
-@WebServlet("/RateRideServlet")
-public class RateRideServlet extends HttpServlet {
+@WebServlet("/DriverRateRideServlet")
+public class DriverRateRideServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public RateRideServlet() {
+    public DriverRateRideServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -43,6 +35,7 @@ public class RateRideServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		ArrayList<CompleteRating> ratingCompleteList = null;
 		CompleteRating completeRating = null;
 		SharedDelegate sharedDelegate = null;
@@ -54,8 +47,8 @@ public class RateRideServlet extends HttpServlet {
 		JSONObject ratedBookingID;
 		
 		int size = -1;
-		int i = 0;
-		int flag = 0;
+		int i=0;
+		int flag = 1;
 		
 		try {
 		ratingCompleteList = new ArrayList<CompleteRating>();
@@ -84,51 +77,16 @@ public class RateRideServlet extends HttpServlet {
 		}
 		response.setContentType("application/json");
 		response.getWriter().write(json.toString());
+
+		
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		int bookingID = -1;
-		float rating = 0.0f;
-		String ratingResponse = "";
-		String userPhone = "";
-		SharedDelegate sharedDelegate = null;
-		ArrayList<BookingResponse> completeList = null;
-		HttpSession session = null;
-		RequestDispatcher requestDispatcher = null;
-
-		int flag = -1;
-		
-		try {
-			session = request.getSession();
-			sharedDelegate = new SharedDelegate();
-			completeList = new ArrayList<BookingResponse>();
-		
-
-			bookingID = Integer.parseInt(request.getParameter("travelInvoiceBookingID"));
-			rating = Float.parseFloat(request.getParameter("rating"));
-			
-			userPhone = (String)session.getAttribute("userPhone");
-
-			ratingResponse = sharedDelegate.rateTrip(rating, bookingID, userPhone);
-			
-			if(ratingResponse.equals(Constants.SUCCESS)) {
-				
-				completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
-				
-				request.setAttribute("onCompleteResponse", completeList);
-				
-				requestDispatcher = request.getRequestDispatcher("./pages/myTrips-customer.jsp");
-				requestDispatcher.forward(request, response);
-				
-			}
-
-		}catch(Exception exception) {
-			
-		}
+		// TODO Auto-generated method stub
+		doGet(request, response);
 	}
 
 }

@@ -3,6 +3,7 @@ package com.zilker.servlet;
 import java.io.IOException;
 
 
+
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
@@ -24,7 +25,6 @@ import com.zilker.constants.Constants;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
-
 /**
  * Servlet implementation class LoginServlet
  */
@@ -57,7 +57,7 @@ public class LoginServlet extends HttpServlet {
 		SharedDelegate sharedDelegate = null;
 		CustomerDelegate customerDelegate = null;
 		ArrayList<Address> address = null;
-		ArrayList<BookingResponse> completeList = null;
+		ArrayList<BookingResponse> cancelledList = null;
 		String loginResponse = "";
 		int bookingID = -1;
 		String sourceExtract = "";
@@ -70,7 +70,7 @@ public class LoginServlet extends HttpServlet {
 		HttpSession session = null;
 		
 		try {
-			completeList = new ArrayList<BookingResponse>();
+			cancelledList= new ArrayList<BookingResponse>();
 			session = request.getSession();
 			customerDelegate = new CustomerDelegate();
 			sharedDelegate = new SharedDelegate();
@@ -116,7 +116,7 @@ public class LoginServlet extends HttpServlet {
 					
 				} else if(loginResponse.equals(Constants.DRIVER)) {
 					
-					bookingID = sharedDelegate.checkBookingStatus(userPhone,1);
+					bookingID = sharedDelegate.checkBookingStatus(userPhone, 1);
 
 					
 					if(bookingID!=(-1)) {
@@ -138,9 +138,8 @@ public class LoginServlet extends HttpServlet {
 						requestDispatcher.forward(request, response);
 					} else {
 					
-						completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
-						
-						request.setAttribute("onCompleteResponse", completeList);
+						cancelledList = sharedDelegate.displayCancelledRides(userPhone, 1);
+						request.setAttribute("onCancelResponse", cancelledList);
 						
 						requestDispatcher = request.getRequestDispatcher("./pages/myTrips-driver.jsp");
 						requestDispatcher.forward(request, response);
@@ -162,20 +161,4 @@ public class LoginServlet extends HttpServlet {
 		}
 		
 	}
-		
-	
-	
-	//DRIVER
-	
-	/*bookingResponse = sharedDelegate.checkBookingStatus(userPhone,1);
-	
-	if(bookingResponse==true) {
-		requestDispatcher = request.getRequestDispatcher("./pages/after-book.jsp");
-		requestDispatcher.forward(request, response);
-	} else {
-	
-	requestDispatcher = request.getRequestDispatcher("./pages/driver.jsp");
-	requestDispatcher.forward(request, response);
-	}*/
-
 }

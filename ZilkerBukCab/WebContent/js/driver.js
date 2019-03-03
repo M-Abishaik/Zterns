@@ -63,6 +63,34 @@ function upcoming () {
 }
 
 function completed () {
+	console.log("clicked");
+	
+	let flag = 1;
+	
+	let getParams = "http://localhost:8081/ZilkerBukCab/DriverRateRideServlet";
+	
+	if(window.XMLHttpRequest){
+		xmlhttp = new XMLHttpRequest();
+	} else {
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	
+	xmlhttp.onreadystatechange = function(){
+		if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+		          console.log(xmlhttp.responseText); 
+		          let response = JSON.parse(xmlhttp.responseText);
+		          for(let i=0;i<response.bookingid.length;i++) {
+		        	  for(let j=1;j<=response.bookingid[i].rating;j++) {
+		        		  let elem = document.getElementById('booking-id-'+response.bookingid[i].bookingID+'-'+j);
+		        		  elem.checked = true;
+		        	  }
+		          }		          
+		}
+	};
+	
+	xmlhttp.open('GET', getParams, true);
+	xmlhttp.send();
+	
 	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");

@@ -42,6 +42,7 @@ function upcoming () {
 
 function completed () {
 	
+	let flag=0;
 	let getParams = "http://localhost:8081/ZilkerBukCab/RateRideServlet";
 	
 	if(window.XMLHttpRequest){

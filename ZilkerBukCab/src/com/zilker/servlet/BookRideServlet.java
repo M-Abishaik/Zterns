@@ -151,32 +151,6 @@ public class BookRideServlet extends HttpServlet {
 				requestDispatcher.forward(request, response);
 			}
 			
-			
-			/*if (driverID != (-1) && cabID != (-1)) {
-
-				// Computes the estimated finish time and price corresponding to the distance
-				// between source and destination.
-
-				travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, startTimeDate);
-
-				bookingID = customerDelegate.calculateTravel(travelInvoice, 0);
-
-				LOGGER.log(Level.INFO, "Please note down the booking ID: " + bookingID);
-
-				LOGGER.log(Level.INFO, "Ride successfully booked.");
-
-				cab = sharedDelegate.findCabByID(cabID);
-
-				driver = sharedDelegate.findDriverByID(driverID);
-
-				LOGGER.log(Level.INFO, "Driver and cab details: ");
-
-				LOGGER.log(Level.INFO, driver + "\n" + cab);
-
-			} else {
-				LOGGER.log(Level.INFO, "All rides are busy. Please try after sometime.");
-			}*/
-			
 
 		}catch(Exception exception) {
 			LOGGER.log(Level.SEVERE,"Error in booking the ride.");

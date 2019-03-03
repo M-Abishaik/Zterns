@@ -33,7 +33,6 @@
 		<a href="#"><img src="${Config.BASE_PATH}/img/logouber2.png" alt="Taxi logo" class="logo"></a>
 	</header>
 	<div class="vertical-menu">
-        <a class="riderProfile" href="${Config.BASE_PATH}/pages/driver.jsp" onclick="driverviewlicense()" style="cursor:pointer">Add License Details</a>
  		<!-- <a class="riderProfile" style="cursor:pointer" onclick="drivercompleted()">Complete a ride</a>    -->    
   		<a class="riderProfile" onclick="driverviewprofile()" href="${Config.BASE_PATH}DriverProfileServlet">Profile</a> 
         <a class="riderProfile" style="cursor:pointer">My Trips</a> 
@@ -100,6 +99,22 @@
                             <h3 id="fromto">Source: <% if(completeRides!=null){%><%=completeRides.getSource()%><%}%></h3>
                            	<h3 id="fromto">Destination: <% if(completeRides!=null){%><%=completeRides.getDestination()%><%}%></h3>
                         </div>
+                        <form id="user-rating-form">
+                        <input type="hidden" name="travelInvoiceBookingID" value=<% if(completeRides!=null){%><%=completeRides.getBookingID()%><%}%>>
+                        
+                            <span class="user-rating">
+                            <input id="booking-id-<%=completeRides.getBookingID()%>-5"  type="radio" name="rating" value="5"><span class="star"></span>
+
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-4"  type="radio" name="rating" value="4"><span class="star"></span>
+
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-3"  type="radio" name="rating" value="3"><span class="star"></span>
+
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-2"   type="radio" name="rating" value="2"><span class="star"></span>
+
+                                <input id="booking-id-<%=completeRides.getBookingID()%>-1"  type="radio" name="rating" value="1"><span class="star"></span>
+                            </span>                            
+                        </form>
+                        
                     </div>      
                 </div> 
                  

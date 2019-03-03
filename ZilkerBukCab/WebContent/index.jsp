@@ -9,6 +9,7 @@
 		<title>ZilkerBukCab</title>
 		<link rel="stylesheet" href="./css/index.css">
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	</head>
 	<body onload="viewlogin()" id="home">
 	<%@ page import="com.zilker.config.Config"%>
@@ -122,31 +123,33 @@
 		<figure class="port-item">
 			<img src="img/g1.jpg" alt="portfolio item">
 		</figure>
+
 		<!-- 2 -->
 		<figure class="port-item">
 			<img src="img/g2.jpg" alt="portfolio item">
 		</figure>
+
 		<!-- 3 -->
 		<figure class="port-item">
 			<img src="img/g3.jpg" alt="portfolio item">
-
 		</figure>
+
 		<!-- 4 -->
 		<figure class="port-item">
 			<img src="img/g4.jpg" alt="portfolio item">
-
 		</figure>
+
 		<!-- 5 -->
 		<figure class="port-item">
 			<img src="img/g5.jpg" alt="portfolio item">
-			
 		</figure>
+
 		<!-- 6 -->
 		<figure class="port-item">
 			<img src="img/g6.jpg" alt="portfolio item">
-
 		</figure>
 	</section>
+
 
 <section class="cta" id="contact">
 	<div class="container">
