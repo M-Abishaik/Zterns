@@ -4,50 +4,48 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Rider Profile</title>
+	<title>Rider Dashboard</title>
 	<link  href="css/rider.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
-<body onload="riderviewbook()" id="rider">
+<body onload="riderdash()" id="rider">
 
 	<header>
 		<a href="index.html"><img src="img/logouber2.png" alt="Taxi logo" class="logo"></a>
 	</header>
 	<div class="vertical-menu">
-  		<a class="ridernav" onclick="riderviewbook()">Book a ride</a>
+  		<a class="ridernav" onclick="riderdash()">Dashboard</a>
   		<a class="ridernav" onclick="riderviewprofile()">Profile</a>
-        <a class="ridernav" onclick=" window.open('mytrips_rider.html', '_self'); return false;">My Trips</a>
-        <a class="logout" href="index.html">Logout</a>
-    </div> 
+        <a class="ridernav" onclick=" window.open('mytrips_rider-dash.html', '_self'); return false;">My Trips</a>
+		<a class="logout" href="index.html">Logout</a>
+	</div> 
  	<div class="container3 rider">
+ 		
+        <div id="riderdash">
+	         <div class="map">
+	    		<iframe src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d15547.68989918154!2d80.2265543!3d13.04060655!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sua!4v1549776191455" width="500" height="400" frameborder="0" style="border:0" allowfullscreen></iframe>
+	   		</div>   
+	   		<div class="dashboard-container" style="margin-top:7%;">
+		    	<h2> Start Date :<span> 13/02/2019 </span></h2>
+		    	<h2> Start Time :<span> 09.56 pm </span></h2>
+		    	<h2> Source :<span> Tnagar </span></h2>
+		    	<h2> To :<span> Sriperumbudur </span></h2>
+		    	<h2> Seats :<span> 3 </span></h2>
+		    	<h2> Price :<span> Rs. 500 </span></h2>
+		    	<br> <br> 
+		    	<button class="button button-accent bookride-confirm">Cancel Booking</button>
+		    </div>
 
-        <form id="bookride">
-            <h1>Book your Ride</h1>
-            <label>Start Date </label> <input id="date" type="date" value="date"><br>
-            <label> Start Time </label><input id="time" type="time" value="time"><br>
-            <label for="Source">Source</label>
-            <input id="source" type="text"  placeholder="Enter Source"><br>
-            <label for="dest">Destination</label>
-            <input id="dest" type="text"  placeholder="Enter Destination"><br>
-            <label>Seats </label><select id="seats">
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
-            </select>
-            <br><br>
-           <a class="rider-search" href="bookride.html">Search</a>
-            <img class="bookride-img-1" src="img/g1.jpg">
-            
-        </form>
+        </div>
 
         <form id="riderprofile">
         	<img class="my-profile-icon" src="img/4.png">
         	<h2 class="prof-title">User Name <span>123456789</span> </h2>
             <label for="email">Email ID</label>
             <input id="email" type="email" placeholder="Username123@gmail.com" name="email" readonly="readonly">
-            <label for="address">Address</label>
+			<label for="address">Address</label>
             <textarea id="address" placeholder="123, Bank Street, Chennai, India" readonly="readonly"></textarea>            
             <label for="zipcode">Zip Code</label>
             <input type="text" id="zipcode">
@@ -55,7 +53,7 @@
             <input type="password" id="riderPassword" name="password" required> 
             <br><br>
             <br> <br>
-            <button class="bottomLogin button button-accent" type="submit" onclick="window.location.href='#save-modal'">Save</button>
+            <button class="bottomLogin button button-accent" type="button" onclick="window.location.href='#save-modal'">Save</button>
             <div id="save-modal" class="modalDialog">
                 <div>
                     <a href="#close" title="Close" class="close">x</a>
@@ -70,7 +68,7 @@
 
 </body>
 
-    <script src="js/rider.js"></script>
+    <script src="js/dashrider.js"></script>
 </html>
 
 

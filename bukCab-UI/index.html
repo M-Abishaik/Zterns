@@ -8,6 +8,7 @@
 	<link  href="css/index.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- <link rel="stylesheet" type="text/css" href="css/logSign.css"> -->
 </head>
 
 <body onload="viewlogin()" id="home">
@@ -27,7 +28,6 @@
 	<section class="home-hero">
 		<div class="slogan">
 			<h1 class="title">Travel the way you want !<span>Book your ride. </span></h1>
-			<a href="rider_profile.html" class="button button-accent" id="booknow">Book Now</a>
 		</div>
 		
 			<div class="container2">
@@ -52,16 +52,30 @@
 	                	<label for="num"><b>Mobile number</b></label>
 	                	<input type="text" id="num" name="number" placeholder="Enter Mobile Number" required>
 	                	<label for="email"><b>Email ID</b></label>
-	                	<input type="email" id="registerEmail" name="email" placeholder="Enter Email ID" required>
-		                <label for="psw"><b>Choose Password</b></label>
+						<input type="email" id="registerEmail" name="email" placeholder="Enter Email ID" required>
+						<label for="address"><b>Address</b></label>
+						<input type="text" id="registerAddress" placeholder="Enter Address" name="registerAddress" required> 
+						<label for="zipCode"><b>Zip Code</b></label>
+						<input type="text" id="registerZipCode" placeholder="Enter Zipcode" name="registerZipcode" required>
+		                <label for="psw"><b>Password</b></label>
 		                <input type="password" id="registerPassword" placeholder="Enter Password" name="psw" required> 
-		                <label class="labelText" for="psw"><b>Password</b></label>
+		                <label class="labelText" for="psw"><b>Confirm Password</b></label>
                 		<input id="loginPassword" type="password" placeholder="Re-nter Password" name="psw" required><br> <br>
-		               	<p><b>Sign up as</b> <select id="ridedriveadmin">
-		        			<option>Rider</option>
-		        			<option>Driver</option>
-		        			<option>Admin</option>
+		               	<p><b>Sign up as</b> <select id="ridedriveadmin"
+		               		onchange="riderdriver(this);">
+		        			<option value="rider">Rider</option>
+		        			<option value="driver">Driver</option>
 		        		</select></p>
+		        		<div class="driverlicense" id="driverlicense">
+					            <label for="licno">License Number</label>
+					            <input id="licno" type="text" placeholder="Enter License Number"><br><br>
+					            <label for="file-upload" class="custom-file-upload">
+					    		<i class="fa fa-cloud-upload"></i> Upload
+								License</label>
+								<input id="file-upload" type="file"/>
+					            <br><br>
+				        </div>
+
 		                <button onclick="validateRegister()" class="bottomLogin button button-accent" type="submit" id="register">REGISTER</button>
 
 	           	 	</div>

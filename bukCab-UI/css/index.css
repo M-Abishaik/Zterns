@@ -220,7 +220,7 @@ nav a:focus {
 
 @media (min-width: 60rem) {
 	.home-hero {
-		height: 114vh;
+		height: 170vh;
 		padding-top: 25vh;
 		text-align: left
 	}
@@ -555,7 +555,7 @@ input[type=submit]:hover {
 {
 	.container2{
 		min-width: 28em;
-		margin: -25% 6em;
+		margin: -21% 6em;
 		float: right;
 	}
 }
@@ -563,7 +563,7 @@ input[type=submit]:hover {
 /*columns*/
 .col-1 {
 	width: 100%;
-	margin-top: 1em;1
+	margin-top: 1em;
 	float: left;
 }
 
@@ -589,3 +589,8 @@ col-1:first-child {
 	}
 
 }
+
+.driverlicense {
+	display: none;
+}
+

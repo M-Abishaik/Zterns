@@ -1,5 +1,5 @@
-function riderviewbook() {
-	var a = document.getElementById("bookride");
+function riderdash() {
+	var a = document.getElementById("riderdash");
 	var b = document.getElementById("riderprofile");
 	var c = document.getElementById("ridertrips");
 	// var d = document.getElementById("logout");
@@ -10,7 +10,7 @@ function riderviewbook() {
 }
 
 function riderviewprofile() {
-	var a = document.getElementById("bookride");
+	var a = document.getElementById("riderdash");
 	var b = document.getElementById("riderprofile");
 	var c = document.getElementById("ridertrips");
 	// var d = document.getElementById("logout");
@@ -21,7 +21,7 @@ function riderviewprofile() {
 }
 
 function riderviewtrips() {
-	var a = document.getElementById("bookride");
+	var a = document.getElementById("riderdash");
 	var b = document.getElementById("riderprofile");
 	var c = document.getElementById("ridertrips");
 	// var d = document.getElementById("logout");

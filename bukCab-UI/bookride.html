@@ -4,26 +4,16 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Rider Profile</title>
+	<title>Book ride</title>
 	<link  href="css/rider.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<!-- <link rel="stylesheet" type="text/css" href="css/logSign.css"> -->
 </head>
 
 <body id="bookridepage">
 
 	<header>
 		<a href="index.html"><img src="img/logouber2.png" alt="Taxi logo" class="logo"></a>
-		<nav>	
-			<ul class="home">
-				<li><a href="index.html#home">Home</a></li>
-				<li><a href="index.html#about">About</a></li>
-				<li><a href="index.html#gallery">Gallery</a></li>
-				<li><a href="index.html#support">Support</a></li>
-				<li><a href="index.html#contact">Contact</a></li>
-			</ul>
-		</nav>
 	</header>
 	
     <div class="map">
@@ -38,9 +28,30 @@
     	<h2> Seats :<span> 3 </span></h2>
     	<h2> Price :<span> Rs. 500 </span></h2>
     	<br> <br>
-    	<button class="button button-accent bookride-confirm">Confirm Booking</button>
-    	<button class="button button-accent bookride-cancel">Cancel Booking</button>
 
+    	<button class="button button-accent bookride-confirm" onclick="window.location.href='#confirm-modal'">Confirm Booking</button>
+
+    	<div id="confirm-modal" class="modalDialog">
+  			<div>
+    			<a href="#close" title="Close" class="close">X</a>
+    			<h1>Booking Confirmed.</h1>
+    			<h2>Booking ID: 12345</h2>
+    			<h3>John</h3>
+    			<h3>TN-06-4035</h3>
+    			<h4>Skoda Rapid - White </h4>
+    			<h4>9433423543</h4>
+    			<a href="rider_dashboard.html">Go to Dashboard</a>
+  			</div>
+		</div>
+
+    	<button class="button button-accent bookride-cancel" onclick="window.location.href='#cancel-modal'">Cancel Booking</button>
+    	<div id="cancel-modal" class="modalDialog">
+  			<div>
+    			<a href="#close" title="Close" class="close">x</a>
+    			<h2>Cancelled successfully.</h2>
+    			<a href="rider_profile.html">Go back.</a>
+  			</div>
+		</div>
     	
     </div>
 

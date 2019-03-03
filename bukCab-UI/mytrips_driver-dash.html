@@ -8,7 +8,6 @@
 	<link  href="css/driver.css" rel="stylesheet" type="text/css">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 </head>
 
 <body onload="upcoming()">
@@ -17,13 +16,15 @@
 		<a href="index.html"><img src="img/logouber2.png" alt="Taxi logo" class="logo"></a>
 	</header>
 	<div class="vertical-menu">
-        <a class="drivernav" onclick="window.open('driver_profile.html', '_self');">Profile</a>
-        <a class="drivernav">My Trips</a>
+        <a class="drivernav" onclick="window.open('driver_dashboard.html', '_self');">Dashboard</a>
+        <a class="drivernav" onclick="window.open('driver_dashboard.html#driverprofile', '_self');">Profile</a> 
+        <a class="drivernav">My Trips</button>
         <a class="logout" href="index.html">Logout</a>
     </div> 
  	<div class="container3 driver">
- 			<div class="filter-drivertrips">
+ 			<div class="filter-drivertrips" style="margin-top: -2em;">
                 <label>Filter by : </label>
+
                 <a class="button button-accent upcoming" onclick="upcoming()">Upcoming</a>
                 <a class="button button-accent completed" onclick="completed()">Completed</a>
                 <a class="button button-accent cancelled" onclick="cancelled()">Cancelled</a>
@@ -41,11 +42,19 @@
                         <div class="content">
                             <h3 id="with">Your trip with John</h3>
                             <h3 id="fromto">From XYZ to ABC</h3>
+                            <button class="button button-accent update" onclick="window.location.href='#update-modal'">Update</button>
+                            <div id="update-modal" class="modalDialog">
+                                <div>
+                                    <a href="#close" title="Close" class="close">x</a>
+                                    <h2>Updated successfully.</h2>
+                                </div>
+                            </div>
                             <button class="button button-accent cancel" onclick="window.location.href='#cancel-modal'">Cancel</button>
                             <div id="cancel-modal" class="modalDialog">
                                 <div>
                                     <a href="#close" title="Close" class="close">x</a>
                                     <h2>Cancelled successfully.</h2>
+                                    <a href="rider_profile.html" style="color:#00ff6c">Book again?</a>
                                 </div>
                             </div>
                             </div>

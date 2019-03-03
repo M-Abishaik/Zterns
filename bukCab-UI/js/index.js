@@ -12,3 +12,13 @@ function viewsignup() {
   y.style.display = "block";
   x.style.display = "none";
 }
+
+function riderdriver(that) {
+	if (that.value == "driver") {
+		document.getElementById("driverlicense").style.display = "block";
+
+	}
+	else {
+		document.getElementById("driverlicense").style.display = "none";
+	}
+}
