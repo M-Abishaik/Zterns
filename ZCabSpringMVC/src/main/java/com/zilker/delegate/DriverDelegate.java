@@ -10,7 +10,7 @@ import com.zilker.dao.TaxiDAO;
 
 @Service
 public class DriverDelegate {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	/*
@@ -28,11 +28,11 @@ public class DriverDelegate {
 			response = taxiDAO.completeRide(bookingID, driverID);
 
 			if (response.equals(Constants.SUCCESS)) {
-				
+
 				zipCode = findZipByID(bookingID);
-				
+
 				updateDriverLocation(zipCode, driverID);
-				
+
 				return Constants.SUCCESS;
 			}
 
@@ -42,28 +42,27 @@ public class DriverDelegate {
 			return Constants.FAILURE;
 		}
 	}
-	
+
 	/*
 	 * Retrives the zipcode of the destination location.
 	 */
-	
+
 	public String findZipByID(int bookingID) {
-		
+
 		String zipCode = "";
 		TaxiDAO taxiDAO = null;
-		
+
 		try {
 			taxiDAO = new TaxiDAO();
 			zipCode = taxiDAO.getZipCode(bookingID);
-			
+
 			return zipCode;
-		}catch(Exception exception) {
+		} catch (Exception exception) {
 			LOGGER.log(Level.WARNING, "Error in transferring destinationID to DAO.");
 			return Constants.FAILURE;
 		}
-		
+
 	}
-	
 
 	/*
 	 * Updates current location of driver.
@@ -85,7 +84,7 @@ public class DriverDelegate {
 		}
 
 	}
-	
+
 	/*
 	 * Add licence details.
 	 */
@@ -126,7 +125,7 @@ public class DriverDelegate {
 			return Constants.FAILURE;
 		}
 	}
-	
+
 	/*
 	 * Retrieves the cab ID of a cab.
 	 */

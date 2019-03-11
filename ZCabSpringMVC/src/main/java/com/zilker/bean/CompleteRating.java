@@ -1,7 +1,7 @@
 package com.zilker.bean;
 
 public class CompleteRating {
-	
+
 	private int bookingID;
 	private String driver;
 	private String cab;
@@ -10,9 +10,10 @@ public class CompleteRating {
 	private String startTime;
 	private float price;
 	private float rating;
-	
-	public CompleteRating() {}
-	
+
+	public CompleteRating() {
+	}
+
 	public CompleteRating(int bookingID, String driver, String cab, String source, String destination, String startTime,
 			float price, float rating) {
 		super();
@@ -89,9 +90,5 @@ public class CompleteRating {
 	public void setRating(float rating) {
 		this.rating = rating;
 	}
-	
-	
-	
-	
 
 }

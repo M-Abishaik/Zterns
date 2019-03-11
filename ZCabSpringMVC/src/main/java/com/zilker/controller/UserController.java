@@ -27,16 +27,16 @@ import com.zilker.delegate.SharedDelegate;
 
 @Controller
 public class UserController {
-	
+
 	@Autowired
 	SharedDelegate sharedDelegate;
-	
+
 	@Autowired
 	CustomerDelegate customerDelegate;
-	
+
 	@Autowired
 	DriverDelegate driverDelegate;
-	
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	@RequestMapping(value = "/users/login", method = RequestMethod.POST)
@@ -74,7 +74,7 @@ public class UserController {
 
 						sourceExtract = customerDelegate.extractLocation(postConfirm.getSource(), 0);
 						destinationExtract = customerDelegate.extractLocation(postConfirm.getDestination(), 0);
-						
+
 						zipCodeSource = customerDelegate.extractLocation(postConfirm.getSource(), 1);
 						zipCodeDestination = customerDelegate.extractLocation(postConfirm.getDestination(), 1);
 
@@ -108,7 +108,7 @@ public class UserController {
 						mav = new ModelAndView("driver_dashboard");
 						mav.addObject("postConfirmInvoice", postConfirm);
 						mav.addObject("sourceZip", zipCodeSource);
-						mav.addObject("destinationZip", zipCodeDestination);						
+						mav.addObject("destinationZip", zipCodeDestination);
 						return mav;
 					} else {
 						cancelledList = sharedDelegate.displayCancelledRides(userPhone, 1);
@@ -139,13 +139,13 @@ public class UserController {
 			return mav;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/users/update", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView updateUser(HttpSession session, @RequestParam("profileType") String profileType, @RequestParam("password") String password,
-			@RequestParam("email") String email, @RequestParam("address") String address, @RequestParam("zipCode") String zipCode) {
-	
+	public ModelAndView updateUser(HttpSession session, @RequestParam("profileType") String profileType,
+			@RequestParam("password") String password, @RequestParam("email") String email,
+			@RequestParam("address") String address, @RequestParam("zipCode") String zipCode) {
+
 		User user = null;
 		UpdateProfile updateProfile = null;
 		String updateResponse = "";
@@ -156,90 +156,94 @@ public class UserController {
 		try {
 			sharedDelegate = new SharedDelegate();
 			updateProfile = new UpdateProfile();
-			phone = (String)session.getAttribute("userPhone");
-
+			phone = (String) session.getAttribute("userPhone");
 
 			addressList = customerDelegate.displayLocations();
-			
+
 			updateProfile = new UpdateProfile(email, address, zipCode, password, phone);
-			
+
 			updateResponse = sharedDelegate.updateProfile(updateProfile);
-			
+
 			user = sharedDelegate.displayProfile(phone);
 
 			if (updateResponse.equals(Constants.SUCCESS)) {
 				LOGGER.log(Level.INFO, "Account successfully updated.");
-				
-				if(profileType.equals("0")) {
+
+				if (profileType.equals("0")) {
 					mav = new ModelAndView("rider");
-					mav.addObject("addressList", addressList);		
-					mav.addObject("userProfile", user);					
+					mav.addObject("addressList", addressList);
+					mav.addObject("userProfile", user);
 
 					return mav;
 				}
-				
+
 				mav = new ModelAndView("driver");
-				mav.addObject("userProfile", user);					
+				mav.addObject("userProfile", user);
 				return mav;
-			} 
+			}
 			return null;
 
-		}catch(Exception exception) {
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/users", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView registerUser(HttpSession session, HttpServletResponse response, @RequestParam("registerUsername") String registerUsername, @RequestParam("registerContact") String registerContact,
-			@RequestParam("registerMail") String registerMail, @RequestParam("registerAddress") String registerAddress, @RequestParam("registerZipcode") String registerZipcode,
-			@RequestParam("registerPassword") String registerPassword, @RequestParam("registerRole") String registerRole, @RequestParam("licenceNumber") String licenceNumber) throws IOException {
-	
-	
+	public ModelAndView registerUser(HttpSession session, HttpServletResponse response,
+			@RequestParam("registerUsername") String registerUsername,
+			@RequestParam("registerContact") String registerContact, @RequestParam("registerMail") String registerMail,
+			@RequestParam("registerAddress") String registerAddress,
+			@RequestParam("registerZipcode") String registerZipcode,
+			@RequestParam("registerPassword") String registerPassword,
+			@RequestParam("registerRole") String registerRole, @RequestParam("licenceNumber") String licenceNumber)
+			throws IOException {
+
 		int driverID = -1;
 		ArrayList<Address> addressList = null;
 		String addLicenceResponse = "";
 		String registerResponse = "";
 		User user = null;
 		ModelAndView mav = null;
-		
+
 		try {
 			addressList = customerDelegate.displayLocations();
 			user = new User();
-			
+
 			registerMail = registerMail.toLowerCase();
-						
+
 			registerAddress = registerAddress.toLowerCase();
-									
-			user = new User(registerUsername, registerMail, registerContact, registerRole, registerPassword, registerAddress, registerZipcode);
+
+			user = new User(registerUsername, registerMail, registerContact, registerRole, registerPassword,
+					registerAddress, registerZipcode);
 			registerResponse = sharedDelegate.register(user);
-			
-			if(registerResponse.equals(Constants.SUCCESS)) {
+
+			if (registerResponse.equals(Constants.SUCCESS)) {
 				session.setAttribute("userPhone", registerContact);
 
-				if(registerRole.equals(Constants.CUSTOMER)) {
+				if (registerRole.equals(Constants.CUSTOMER)) {
 					addressList = customerDelegate.displayLocations();
 					mav = new ModelAndView("rider");
-					mav.addObject("addressList", addressList);		
+					mav.addObject("addressList", addressList);
 
 					return mav;
-					
-				} else if(registerRole.equals(Constants.DRIVER)) {
+
+				} else if (registerRole.equals(Constants.DRIVER)) {
 					driverID = sharedDelegate.getUserID(registerContact);
-					addLicenceResponse = driverDelegate.addLicenceDetails(licenceNumber, registerContact, registerZipcode);
+					addLicenceResponse = driverDelegate.addLicenceDetails(licenceNumber, registerContact,
+							registerZipcode);
 					user = sharedDelegate.displayProfile(registerContact);
 
-					if(addLicenceResponse.equals(Constants.SUCCESS)) {
+					if (addLicenceResponse.equals(Constants.SUCCESS)) {
 						mav = new ModelAndView("driver");
-						mav.addObject("userProfile", user);					
+						mav.addObject("userProfile", user);
 						return mav;
-					} 
+					}
 				}
-			} 
+			}
 			response.sendRedirect("index.jsp");
 			return null;
-		}catch(Exception exception) {
+		} catch (Exception exception) {
 			response.sendRedirect("index.jsp");
 			return null;
 		}
@@ -248,53 +252,51 @@ public class UserController {
 	@RequestMapping(value = "/riders", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView displayRider(HttpSession session) {
-	
+
 		User user = null;
 		String userPhone = "";
 		ModelAndView mav = null;
 
-		
 		try {
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			user = sharedDelegate.displayProfile(userPhone);
 			mav = new ModelAndView("rider");
-			mav.addObject("userProfile", user);					
+			mav.addObject("userProfile", user);
 
 			return mav;
 
-		} catch(Exception exception) {
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
+
 	@RequestMapping(value = "/drivers", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView displayDriver(HttpSession session) {
-	
+
 		User user = null;
 		String userPhone = "";
 		ModelAndView mav = null;
 
-		
 		try {
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			user = sharedDelegate.displayProfile(userPhone);
 			mav = new ModelAndView("driver");
-			mav.addObject("userProfile", user);					
+			mav.addObject("userProfile", user);
 
 			return mav;
 
-		} catch(Exception exception) {
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
+
 	@RequestMapping(value = "/dashboard/rider/profile", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView displayDashboardRider(HttpSession session) {
-	
+
 		User user = null;
 		String userPhone = "";
 		ModelAndView mav = null;
@@ -307,7 +309,7 @@ public class UserController {
 		PostConfirm postConfirm = null;
 
 		try {
-			userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String) session.getAttribute("userPhone");
 			bookingID = sharedDelegate.checkBookingStatus(userPhone, 0);
 			postConfirm = sharedDelegate.getBookingDetails(bookingID);
 
@@ -317,26 +319,24 @@ public class UserController {
 			zipCodeSource = customerDelegate.extractLocation(postConfirm.getSource(), 1);
 			zipCodeDestination = customerDelegate.extractLocation(postConfirm.getDestination(), 1);
 
-			
 			user = sharedDelegate.displayProfile(userPhone);
 			mav = new ModelAndView("rider_dashboard");
 			mav.addObject("userProfile", user);
 			mav.addObject("postConfirmInvoice", postConfirm);
 			mav.addObject("sourceZip", zipCodeSource);
-			mav.addObject("destinationZip", zipCodeDestination);				
-			
+			mav.addObject("destinationZip", zipCodeDestination);
+
 			return mav;
 
-		} catch(Exception exception) {
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboard/driver/profile", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView displayDashboardDriver(HttpSession session) {
-	
+
 		User user = null;
 		String userPhone = "";
 		ModelAndView mav = null;
@@ -349,7 +349,7 @@ public class UserController {
 		PostConfirm postConfirm = null;
 
 		try {
-			userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String) session.getAttribute("userPhone");
 			bookingID = sharedDelegate.checkBookingStatus(userPhone, 1);
 			postConfirm = sharedDelegate.getBookingDetails(bookingID);
 
@@ -359,31 +359,30 @@ public class UserController {
 			zipCodeSource = customerDelegate.extractLocation(postConfirm.getSource(), 1);
 			zipCodeDestination = customerDelegate.extractLocation(postConfirm.getDestination(), 1);
 
-			
 			user = sharedDelegate.displayProfile(userPhone);
 			mav = new ModelAndView("driver_dashboard");
 			mav.addObject("userProfile", user);
-			
-			mav.addObject("postConfirmInvoice", postConfirm); mav.addObject("sourceZip",
-			zipCodeSource); mav.addObject("destinationZip", zipCodeDestination);
-							
+
+			mav.addObject("postConfirmInvoice", postConfirm);
+			mav.addObject("sourceZip", zipCodeSource);
+			mav.addObject("destinationZip", zipCodeDestination);
+
 			return mav;
 
-		} catch(Exception exception) {
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	@ResponseBody
 	public void logoutUser(HttpSession session, HttpServletResponse response) {
-	
+
 		try {
 			session.invalidate();
-		
+
 			response.sendRedirect("index.jsp");
-		}catch(Exception exception) {
+		} catch (Exception exception) {
 		}
 	}
 }

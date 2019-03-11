@@ -12,8 +12,9 @@ public class User {
 	private String password;
 	private String address;
 	private String zipCode;
-	
-	public User() {}
+
+	public User() {
+	}
 
 	public User(String userName, String mail, String contact, String role, String password, String address,
 			String zipCode) {

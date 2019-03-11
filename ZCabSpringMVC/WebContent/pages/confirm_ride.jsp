@@ -1,72 +1,102 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+	pageEncoding="UTF-8"%>
 <%@ page import="com.zilker.config.Config"%>
 <%@ page import="com.zilker.bean.TravelInvoice"%>
 <%@ page import="com.zilker.bean.DisplayInvoice"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
 <head>
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Customer</title>
-		<link rel="stylesheet" href="${Config.BASE_PATH}/css/rider.css">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer</title>
+<link rel="stylesheet" href="${Config.BASE_PATH}/css/rider.css">
+<link rel="stylesheet"
+	href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+	integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+	crossorigin="anonymous">
 </head>
 <body id="bookridepage">
 	<header>
-		<a href="index.html"><img src="${Config.BASE_PATH}/img/logouber2.png" alt="Taxi logo" class="logo"></a>
+		<a href="index.html"><img
+			src="${Config.BASE_PATH}/img/logouber2.png" alt="Taxi logo"
+			class="logo"></a>
 	</header>
-	
-    <div style="position: relative; float: left; margin-top: 10em; margin-left: 5em; width:800px; height:400px;" id="map">    
-    </div>
-    
-    <% 	DisplayInvoice displayInvoice =  new DisplayInvoice();
-	displayInvoice = (DisplayInvoice)request.getAttribute("displayInvoice");%>
-	
-	
-	<% 	TravelInvoice travelInvoice =  new TravelInvoice();
-	travelInvoice = (TravelInvoice)request.getAttribute("travelInvoice");%>
-    
-    
-    <div class="bookride-container">
-    	<h2> Start DateTime :<span id="dateTime"><%=displayInvoice.getStartTime()%></span></h2>
-    	<h2> Source :<span id="source"><%= displayInvoice.getSource()%></span></h2>
-    	<h2> Destination :<span id="destination"><%= displayInvoice.getDestination()%></span></h2>
-    	<h2> Driver Details :<span><%= displayInvoice.getDriver()%></span></h2>
-    	<h2> Cab Details :<span><%= displayInvoice.getCab()%></span></h2>
-    	<h2> Seats :<span><%= displayInvoice.getSeats()%></span></h2>
-    	<h2> Distance :<span id="distance"></span> miles</h2>
-    	<h2> Price :<span id="price"></span></h2>
-    	<br> <br>
-    	<form id="confirmRideForm" action="${Config.BASE_PATH}ride/confirm" method="post">
-		<input type="hidden" name="travelInvoiceCustomerID" value=<%=travelInvoice.getCustomerID()%>>
-		<input type="hidden" name="travelInvoiceDriverID" value=<%=travelInvoice.getDriverID()%>>
-		<input type="hidden" name="travelInvoiceCabID" value=<%=travelInvoice.getCabID()%>>
-		<input type="hidden" name="travelInvoiceSourceID" value=<%=travelInvoice.getSourceID()%>>
-		<input type="hidden" name="travelInvoiceDestinationID" value=<%=travelInvoice.getDestinationID()%>>
-		<input type="hidden" name="travelInvoiceStartTimeDate" value="${travelInvoice.getFormattedTime()}"> 
-		<input type="hidden" name="travelInvoiceDistance" id="travelDistance"/> 
-		<input type="hidden" name="travelInvoicePrice" id="travelPrice"/> 
-    	<button class="button button-accent bookride-confirm" onclick="confirmBooking()" type="submit">Confirm Booking</button>
-    	</form>
- 		<form action="${Config.BASE_PATH}ride/cancel" method="get">
-    	<button class="button button-accent bookride-cancel">Cancel Booking</button>
-    	</form>
-    </div>
-        	
-	<div class="hideMe">
-		<span id="customerID"><%= travelInvoice.getCustomerID()%></span>
-		<span id="driverID"><%= travelInvoice.getDriverID()%></span>
-		<span id="cabID"><%= travelInvoice.getCabID()%></span>
-		<span id="sourceID"><%= travelInvoice.getSourceID()%></span>
-		<span id="destinationID"><%= travelInvoice.getDestinationID()%></span>
-		<span id="startTimeDate"><%= travelInvoice.getFormattedTime()%></span>
-		<span id="sourceZip"><%=request.getAttribute("source")%></span>
-		<span id="destinationZip"><%=request.getAttribute("destination")%></span>
+
+	<div
+		style="position: relative; float: left; margin-top: 10em; margin-left: 5em; width: 800px; height: 400px;"
+		id="map"></div>
+
+	<div class="bookride-container">
+		<h2>
+			Start DateTime :<span id="dateTime"><c:out
+					value="${displayInvoice.getStartTime()}" /></span>
+		</h2>
+		<h2>
+			Source :<span id="source"><c:out
+					value="${displayInvoice.getSource()}" /></span>
+		</h2>
+		<h2>
+			Destination :<span id="destination"><c:out
+					value="${displayInvoice.getDestination()}" /></span>
+		</h2>
+		<h2>
+			Driver Details :<span><c:out
+					value="${displayInvoice.getDriver()}" /></span>
+		</h2>
+		<h2>
+			Cab Details :<span><c:out value="${displayInvoice.getCab()}" /></span>
+		</h2>
+		<h2>
+			Seats :<span><c:out value="${displayInvoice.getSeats()}" /></span>
+		</h2>
+		<h2>
+			Distance :<span id="distance"></span> miles
+		</h2>
+		<h2>
+			Price :<span id="price"></span>
+		</h2>
+		<br> <br>
+		<form id="confirmRideForm" action="${Config.BASE_PATH}ride/confirm"
+			method="post">
+			<input type="hidden" name="travelInvoiceCustomerID"
+				value=<c:out value="${travelInvoice.getCustomerID()}"/>> <input
+				type="hidden" name="travelInvoiceDriverID"
+				value=<c:out value="${travelInvoice.getDriverID()}"/>> <input
+				type="hidden" name="travelInvoiceCabID"
+				value=<c:out value="${travelInvoice.getCabID()}"/>> <input
+				type="hidden" name="travelInvoiceSourceID"
+				value=<c:out value="${travelInvoice.getSourceID()}"/>> <input
+				type="hidden" name="travelInvoiceDestinationID"
+				value=<c:out value="${travelInvoice.getDestinationID()}"/>>
+			<input type="hidden" name="travelInvoiceStartTimeDate"
+				value=<c:out value="${travelInvoice.getFormattedTime()}"/>>
+			<input type="hidden" name="travelInvoiceDistance" id="travelDistance" />
+			<input type="hidden" name="travelInvoicePrice" id="travelPrice" />
+			<button class="button button-accent bookride-confirm"
+				onclick="confirmBooking()" type="submit">Confirm Booking</button>
+		</form>
+		<form action="${Config.BASE_PATH}ride/cancel" method="get">
+			<button class="button button-accent bookride-cancel">Cancel
+				Booking</button>
+		</form>
 	</div>
-	
-		<script>
+
+	<div class="hideMe">
+		<span id="customerID"><c:out
+				value="${travelInvoice.getCustomerID()}" /></span> <span id="driverID"><c:out
+				value="${travelInvoice.getDriverID()}" /></span> <span id="cabID"><c:out
+				value="${travelInvoice.getCabID()}" /></span> <span id="sourceID"><c:out
+				value="${travelInvoice.getSourceID()}" /></span> <span id="destinationID"><c:out
+				value="${travelInvoice.getDestinationID()}" /></span> <span
+			id="startTimeDate"><c:out
+				value="${travelInvoice.getFormattedTime()}" /></span> <span id="sourceZip"><c:out
+				value="${source}" /></span> <span id="destinationZip"><c:out
+				value="${destination}" /></span>
+	</div>
+
+	<script>
 	
 	function initMap() {
 	 	 
@@ -193,9 +223,10 @@
 		
 	}     
 	</script>
-    
+
 </body>
- 	<script src="${Config.BASE_PATH}/js/rider.js"></script>
- 	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-tHqrPlMWQqYYYGzu6s7u5TeQbwxtrbg&callback=initMap"
-        async defer></script>
+<script src="${Config.BASE_PATH}/js/rider.js"></script>
+<script
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA-tHqrPlMWQqYYYGzu6s7u5TeQbwxtrbg&callback=initMap"
+	async defer></script>
 </html>

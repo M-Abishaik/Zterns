@@ -14,9 +14,9 @@ import com.zilker.dao.TaxiDAO;
 
 @Service
 public class CustomerDelegate {
-	
-private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	
+
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
 	/*
 	 * Displays travel locations.
 	 */
@@ -37,30 +37,30 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			return null;
 		}
 	}
-	
+
 	/*
 	 * Extracts source location from the drop-down value
 	 */
-	
+
 	public String extractLocation(String source, int flag) {
-		
+
 		StringBuffer stringBuffer = new StringBuffer("");
-		
+
 		String address[] = source.split(", ");
 		int addressLength = address.length;
 		int i = -1;
-		
-		if(flag==0) {
-			for(i=0;i<addressLength-1;i++) {
+
+		if (flag == 0) {
+			for (i = 0; i < addressLength - 1; i++) {
 				stringBuffer.append(address[i] + ", ");
 			}
-			stringBuffer.setLength(stringBuffer.length()-2);
+			stringBuffer.setLength(stringBuffer.length() - 2);
 			return stringBuffer.toString();
 
 		}
-			return address[addressLength-1];
+		return address[addressLength - 1];
 	}
-	
+
 	/*
 	 * Retrieves the location ID using location.
 	 */
@@ -80,7 +80,7 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			return -1;
 		}
 	}
-	
+
 	/*
 	 * Finds the nearest cab corresponding to the source.
 	 */
@@ -107,7 +107,7 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			return -1;
 		}
 	}
-	
+
 	/*
 	 * Finds the driver ID.
 	 */
@@ -126,7 +126,7 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			return -1;
 		}
 	}
-	
+
 	/*
 	 * Checks if the cab with given seats is avaliable.
 	 */
@@ -166,7 +166,7 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 
 		int bookingID = -1;
 		String zipCode = "";
-		
+
 		SharedDelegate sharedDelegate = null;
 		TaxiDAO taxiDAO = null;
 
@@ -177,8 +177,9 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			if (flag == 0) {
 				bookingID = insertRideDetails(travelInvoice);
 
-				taxiDAO.insertRouteDetails(travelInvoice.getSourceID(), travelInvoice.getDestinationID(), travelInvoice.getDistance());
-				
+				taxiDAO.insertRouteDetails(travelInvoice.getSourceID(), travelInvoice.getDestinationID(),
+						travelInvoice.getDistance());
+
 				// Updates the driver and cab status to be unavailable until the current ride
 				// has been completed.
 
@@ -196,7 +197,7 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			return -1;
 		}
 	}
-	
+
 	/*
 	 * Inserts the ride details of the customer.
 	 */
@@ -216,7 +217,7 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			return -1;
 		}
 	}
-	
+
 	/*
 	 * Updates the ride details of a customer.
 	 */
@@ -231,10 +232,5 @@ private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
 			LOGGER.log(Level.WARNING, "Error in updating ride details.");
 		}
 	}
-
-
-
-	
-	
 
 }

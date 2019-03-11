@@ -95,7 +95,4 @@ public class TravelInvoice {
 		this.distance = distance;
 	}
 
-	
-
-	
 }

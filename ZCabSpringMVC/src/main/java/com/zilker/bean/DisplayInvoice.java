@@ -1,15 +1,16 @@
 package com.zilker.bean;
 
 public class DisplayInvoice {
-	
+
 	private String driver;
 	private String cab;
 	private String source;
 	private String destination;
 	private String startTime;
 	private int seats;
-	
-	public DisplayInvoice() {}
+
+	public DisplayInvoice() {
+	}
 
 	public DisplayInvoice(String driver, String cab, String source, String destination, String startTime, int seats) {
 		super();
@@ -68,8 +69,5 @@ public class DisplayInvoice {
 	public void setSeats(int seats) {
 		this.seats = seats;
 	}
-
-	
-	
 
 }

@@ -15,7 +15,6 @@ import com.zilker.util.DbConnect;
 
 @Repository
 public class TaxiDAO {
-	
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -42,7 +41,7 @@ public class TaxiDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Updates current location of driver after the ride.
 	 */
@@ -65,15 +64,14 @@ public class TaxiDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
-	
+
 	/*
 	 * Reads the zipCode corresponding to the destination ID.
 	 */
 
-	public String getZipCode(int bookingID){
+	public String getZipCode(int bookingID) {
 		String zipCode = "";
-		
+
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -97,13 +95,12 @@ public class TaxiDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Assigns the available cab to the driver.
 	 */
 
 	public void assignCabDriver(int cabID, int driverID) {
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -123,13 +120,12 @@ public class TaxiDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Updates the cab status as available or unavailable depending on the ride.
 	 */
 
 	public void updateCabStatus(int cabID, int flag) {
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -151,14 +147,12 @@ public class TaxiDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
 
 	/*
 	 * Inserts licence deatils of a driver.
 	 */
 
 	public void addLicenceDetails(int driverID, String licenceNumber, String zipCode) {
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -179,7 +173,7 @@ public class TaxiDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Reads the cab ID of the available cab.
 	 */
@@ -187,7 +181,6 @@ public class TaxiDAO {
 	public int getCabID() {
 		int cabID = -1;
 		String test = "";
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -213,13 +206,12 @@ public class TaxiDAO {
 		}
 	}
 
-
 	/*
 	 * Completes the current ride.
 	 */
 
 	public String completeRide(int bookingID, int driverID) {
-		
+
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -231,7 +223,7 @@ public class TaxiDAO {
 			preparedStatement.setInt(1, driverID);
 			preparedStatement.setInt(2, bookingID);
 			count = preparedStatement.executeUpdate();
-			if (count>0) {
+			if (count > 0) {
 				return Constants.SUCCESS;
 			}
 			return Constants.FAILURE;

@@ -13,9 +13,10 @@ public class BookingResponse {
 	private String destination;
 	private String startTime;
 	private float price;
-	
-	public BookingResponse() {}
-	
+
+	public BookingResponse() {
+	}
+
 	public BookingResponse(int bookingID, String driver, String cab, String source, String destination,
 			String startTime, float price) {
 		super();
@@ -83,9 +84,5 @@ public class BookingResponse {
 	public void setPrice(float price) {
 		this.price = price;
 	}
-	
-	
-
-	
 
 }

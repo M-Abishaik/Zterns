@@ -31,8 +31,7 @@ function riderviewtrips() {
 	// d.style.display = "none";
 }
 
-
-function upcoming () {
+function upcoming() {
 	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
@@ -41,34 +40,36 @@ function upcoming () {
 	c.style.display = "none";
 }
 
-function completed () {
-	
+function completed() {
+
 	let getParams = "http://localhost:8081/ZCabSpringMVC/riderratedrides";
-	
-	if(window.XMLHttpRequest){
+
+	if (window.XMLHttpRequest) {
 		xmlhttp = new XMLHttpRequest();
 	} else {
 		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 	}
-	
-	xmlhttp.onreadystatechange = function(){
-		if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
-		          console.log(xmlhttp.responseText); 
-		          let response = JSON.parse(xmlhttp.responseText);
-		          for(let i=0;i<response.bookingid.length;i++) {
-		        	  let rateButton = document.getElementById('rate-button-'+response.bookingid[i].bookingID);
-		        	  rateButton.style.display='none';
-		        	  for(let j=1;j<=response.bookingid[i].rating;j++) {
-		        		  let elem = document.getElementById('booking-id-'+response.bookingid[i].bookingID+'-'+j);
-		        		  elem.checked = true;
-		        	  }
-		          }		          
+
+	xmlhttp.onreadystatechange = function() {
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+			console.log(xmlhttp.responseText);
+			let response = JSON.parse(xmlhttp.responseText);
+			for (let i = 0; i < response.bookingid.length; i++) {
+				let rateButton = document.getElementById('rate-button-'
+						+ response.bookingid[i].bookingID);
+				rateButton.style.display = 'none';
+				for (let j = 1; j <= response.bookingid[i].rating; j++) {
+					let elem = document.getElementById('booking-id-'
+							+ response.bookingid[i].bookingID + '-' + j);
+					elem.checked = true;
+				}
+			}
 		}
 	};
-	
+
 	xmlhttp.open('GET', getParams, true);
 	xmlhttp.send();
-	
+
 	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
@@ -78,7 +79,7 @@ function completed () {
 
 }
 
-function cancelled () {
+function cancelled() {
 	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
@@ -86,4 +87,3 @@ function cancelled () {
 	b.style.display = "none";
 	c.style.display = "block";
 }
-

@@ -1,4 +1,4 @@
-function driverdash () {
+function driverdash() {
 	var a = document.getElementById("driverdash");
 	var b = document.getElementById("driverprofile");
 	var d = document.getElementById("drivercompleted");
@@ -16,8 +16,6 @@ function driverviewprofile() {
 	d.style.display = "none";
 }
 
-
-
 function drivercompleted() {
 	var a = document.getElementById("driverdash");
 	var b = document.getElementById("driverprofile");
@@ -27,9 +25,7 @@ function drivercompleted() {
 	d.style.display = "block";
 }
 
-
-
-function upcoming () {
+function upcoming() {
 	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
@@ -38,7 +34,7 @@ function upcoming () {
 	c.style.display = "none";
 }
 
-function completed () {
+function completed() {
 	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
@@ -47,7 +43,7 @@ function completed () {
 	c.style.display = "none";
 }
 
-function cancelled () {
+function cancelled() {
 	var a = document.getElementById("upcoming");
 	var b = document.getElementById("completed");
 	var c = document.getElementById("cancelled");
@@ -55,4 +51,3 @@ function cancelled () {
 	b.style.display = "none";
 	c.style.display = "block";
 }
-

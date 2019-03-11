@@ -17,10 +17,9 @@ import com.zilker.util.DbConnect;
 
 @Repository
 public class CustomerDAO {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-	
 	/*
 	 * Displays the travel locations.
 	 */
@@ -57,7 +56,7 @@ public class CustomerDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Retrieves the location ID using location.
 	 */
@@ -72,12 +71,12 @@ public class CustomerDAO {
 		ResultSet resultSet = null;
 
 		try {
-			
+
 			connection = DbConnect.getConnection();
-		
+
 			preparedStatement = connection.prepareStatement(SQLConstants.GET_ADDRESS_ID);
-			preparedStatement.setString(1,location);
-			preparedStatement.setString(2,zipCode);
+			preparedStatement.setString(1, location);
+			preparedStatement.setString(2, zipCode);
 			resultSet = preparedStatement.executeQuery();
 
 			if (resultSet.next()) {
@@ -95,7 +94,7 @@ public class CustomerDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Retrieves the nearest driver ID.
 	 */
@@ -134,7 +133,7 @@ public class CustomerDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Retrieves the nearest cab ID.
 	 */
@@ -168,7 +167,7 @@ public class CustomerDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-	
+
 	/*
 	 * Reads the driver ID of the available cab.
 	 */
@@ -177,11 +176,10 @@ public class CustomerDAO {
 		int driverID = -1;
 		String test = "";
 
-
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
-		
+
 		try {
 			connection = DbConnect.getConnection();
 			preparedStatement = connection.prepareStatement(SQLConstants.GET_DRIVER_BY_CAB_ID);
@@ -203,7 +201,7 @@ public class CustomerDAO {
 		}
 
 	}
-	
+
 	/*
 	 * Reads the model ID of the available cab.
 	 */
@@ -211,7 +209,7 @@ public class CustomerDAO {
 	public int getModelID(int cabID) {
 		int modelID = -1;
 		String test = "";
-		
+
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
@@ -237,14 +235,13 @@ public class CustomerDAO {
 		}
 
 	}
-	
+
 	/*
 	 * Checks if the cab with requested number of seats is available.
 	 */
 
 	public boolean isSeatExists(int modelID, int seats) {
 		int numSeats = -1;
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -283,14 +280,13 @@ public class CustomerDAO {
 
 		int bookingID = -1;
 		int count = 0;
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet resultSet = null;
 
 		try {
-			
+
 			connection = DbConnect.getConnection();
 			preparedStatement = connection.prepareStatement(SQLConstants.INSERT_RIDE_DETAILS);
 			preparedStatement.setInt(1, invoice.getCustomerID());
@@ -306,7 +302,8 @@ public class CustomerDAO {
 			count = preparedStatement.executeUpdate();
 
 			if (count > 0) {
-				bookingID = fetchBookingID(invoice.getCustomerID(), invoice.getDriverID(), invoice.getCabID(), invoice.getFormattedTime());
+				bookingID = fetchBookingID(invoice.getCustomerID(), invoice.getDriverID(), invoice.getCabID(),
+						invoice.getFormattedTime());
 			}
 			return bookingID;
 		} catch (SQLException e) {
@@ -317,7 +314,7 @@ public class CustomerDAO {
 		}
 
 	}
-	
+
 	/*
 	 * Retrieves the booking ID of a ride.
 	 */
@@ -325,7 +322,6 @@ public class CustomerDAO {
 	public int fetchBookingID(int customerID, int driverID, int cabID, String startTime) {
 		int bookingID = -1;
 		String test = "";
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -338,7 +334,7 @@ public class CustomerDAO {
 			preparedStatement.setInt(2, driverID);
 			preparedStatement.setInt(3, cabID);
 			preparedStatement.setString(4, startTime);
-			
+
 			resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				test = resultSet.getString(1);
@@ -356,13 +352,12 @@ public class CustomerDAO {
 		}
 
 	}
-	
+
 	/*
 	 * Updates the ride details of a customer.
 	 */
 
 	public void updateRideDetails(TravelInvoice invoice) {
-		
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
@@ -385,6 +380,5 @@ public class CustomerDAO {
 			DbConnect.closeConnection(connection, preparedStatement, resultSet);
 		}
 	}
-
 
 }

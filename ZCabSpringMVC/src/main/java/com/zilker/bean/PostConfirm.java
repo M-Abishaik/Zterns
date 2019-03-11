@@ -1,7 +1,7 @@
 package com.zilker.bean;
 
 public class PostConfirm {
-	
+
 	private int bookingID;
 	private String startTime;
 	private String source;
@@ -9,8 +9,9 @@ public class PostConfirm {
 	private String driver;
 	private String cab;
 	private float price;
-	
-	public PostConfirm() {}
+
+	public PostConfirm() {
+	}
 
 	public PostConfirm(int bookingID, String startTime, String source, String destination, String driver, String cab,
 			float price) {
@@ -79,7 +80,5 @@ public class PostConfirm {
 	public void setPrice(float price) {
 		this.price = price;
 	}
-	
-	
-	
+
 }

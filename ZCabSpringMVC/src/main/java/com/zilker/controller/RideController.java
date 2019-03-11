@@ -35,24 +35,24 @@ import com.zilker.delegate.SharedDelegate;
 
 @Controller
 public class RideController {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	
+
 	@Autowired
 	SharedDelegate sharedDelegate;
-	
+
 	@Autowired
 	CustomerDelegate customerDelegate;
-	
+
 	@Autowired
 	DriverDelegate driverDelegate;
 
 	@RequestMapping(value = "/book/ride", method = RequestMethod.POST)
 	@ResponseBody
-		 public ModelAndView bookRide(HttpSession session, @RequestParam("startDate") String startDate, 
-				 @RequestParam("startTime") String startTime, @RequestParam("source") String source, 
-				 @RequestParam("destination") String destination, @RequestParam("seats") String seats) {
-		
+	public ModelAndView bookRide(HttpSession session, @RequestParam("startDate") String startDate,
+			@RequestParam("startTime") String startTime, @RequestParam("source") String source,
+			@RequestParam("destination") String destination, @RequestParam("seats") String seats) {
+
 		int cabID = -1;
 		int sourceID = -1;
 		int destinationID = -1;
@@ -69,74 +69,74 @@ public class RideController {
 		String availabilityResponse = "";
 		String userPhone = "";
 		ArrayList<Address> address = null;
-		
-		
+
 		TravelInvoice travelInvoice = null;
 		DisplayInvoice displayInvoice = null;
 		ModelAndView mav = null;
-		
+
 		try {
 			numSeats = Integer.parseInt(seats);
-						
+
 			travelInvoice = new TravelInvoice();
 			displayInvoice = new DisplayInvoice();
-			
-			userPhone = (String)session.getAttribute("userPhone");
-			
+
+			userPhone = (String) session.getAttribute("userPhone");
+
 			customerID = sharedDelegate.getUserID(userPhone);
 			startTimeDate = startDate + " " + startTime;
-						
-			
-			sourceExtract = customerDelegate.extractLocation(source, 0); 
+
+			sourceExtract = customerDelegate.extractLocation(source, 0);
 			destinationExtract = customerDelegate.extractLocation(destination, 0);
-			
+
 			zipCodeSource = customerDelegate.extractLocation(source, 1);
 			zipCodeDestination = customerDelegate.extractLocation(destination, 1);
-			
+
 			sourceID = customerDelegate.findLocationID(sourceExtract, zipCodeSource);
 			destinationID = customerDelegate.findLocationID(destinationExtract, zipCodeDestination);
-			
+
 			cabID = customerDelegate.findNearestCab(zipCodeSource, 0);
-						
+
 			address = customerDelegate.displayLocations();
 
 			if (cabID == (-1)) {
-				
+
 				LOGGER.log(Level.INFO, "No nearest cab found. Please try later.");
-				
+
 				mav = new ModelAndView("customer");
 				mav.addObject("errorMessage", "No nearest cab found. Please try later.");
 				mav.addObject("addressList", address);
 
 				return mav;
 			}
-			
+
 			driverID = customerDelegate.getDriverID(cabID);
 			availabilityResponse = customerDelegate.checkCabSeats(cabID, numSeats);
 
 			if (availabilityResponse.equals(Constants.FAILURE)) {
 
-				LOGGER.log(Level.INFO,"The cab with the requested number of seats is not yet available. Please try later or wait for some time.");
-				
+				LOGGER.log(Level.INFO,
+						"The cab with the requested number of seats is not yet available. Please try later or wait for some time.");
+
 				mav = new ModelAndView("customer");
-				mav.addObject("errorMessage", "The cab with the requested number of seats is not yet available. Please try later or wait for some time.");
+				mav.addObject("errorMessage",
+						"The cab with the requested number of seats is not yet available. Please try later or wait for some time.");
 				mav.addObject("addressList", address);
-				
+
 				return mav;
 			} else {
 				LOGGER.log(Level.INFO, "The cab with the requested number of seats is available.");
 			}
-			
-			
+
 			if (driverID != (-1) && cabID != (-1)) {
-				
+
 				cab = sharedDelegate.findCabByID(cabID);
-				
+
 				driver = sharedDelegate.findDriverByID(driverID);
-				
+
 				displayInvoice = new DisplayInvoice(driver, cab, source, destination, startTimeDate, numSeats);
-				
-				travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, startTimeDate, 0.0f, 0.0f);
+
+				travelInvoice = new TravelInvoice(customerID, driverID, cabID, sourceID, destinationID, startTimeDate,
+						0.0f, 0.0f);
 
 				mav = new ModelAndView("confirm_ride");
 				mav.addObject("travelInvoice", travelInvoice);
@@ -148,20 +148,23 @@ public class RideController {
 			}
 
 			return null;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/ride/confirm", method = RequestMethod.POST)
 	@ResponseBody
-		 public ModelAndView confirmbookRide(HttpSession session, @RequestParam("travelInvoiceCustomerID") int travelInvoiceCustomerID, 
-				 @RequestParam("travelInvoiceDriverID") int travelInvoiceDriverID, @RequestParam("travelInvoiceCabID") int travelInvoiceCabID, 
-				 @RequestParam("travelInvoiceSourceID") int travelInvoiceSourceID, @RequestParam("travelInvoiceDestinationID") int travelInvoiceDestinationID, 
-				 @RequestParam("travelInvoiceStartTimeDate") String travelInvoiceStartTimeDate,  @RequestParam("travelInvoicePrice") float travelInvoicePrice, 
-				 @RequestParam("travelInvoiceDistance") float travelInvoiceDistance) {
+	public ModelAndView confirmbookRide(HttpSession session,
+			@RequestParam("travelInvoiceCustomerID") int travelInvoiceCustomerID,
+			@RequestParam("travelInvoiceDriverID") int travelInvoiceDriverID,
+			@RequestParam("travelInvoiceCabID") int travelInvoiceCabID,
+			@RequestParam("travelInvoiceSourceID") int travelInvoiceSourceID,
+			@RequestParam("travelInvoiceDestinationID") int travelInvoiceDestinationID,
+			@RequestParam("travelInvoiceStartTimeDate") String travelInvoiceStartTimeDate,
+			@RequestParam("travelInvoicePrice") float travelInvoicePrice,
+			@RequestParam("travelInvoiceDistance") float travelInvoiceDistance) {
 
 		TravelInvoice travelInvoice = null;
 		PostConfirm postConfirm = null;
@@ -173,40 +176,41 @@ public class RideController {
 		String sourceZipCode = "";
 		String destinationZipCode = "";
 		ModelAndView mav = null;
-		
+
 		try {
-		
-		travelInvoice = new TravelInvoice(travelInvoiceCustomerID, travelInvoiceDriverID, travelInvoiceCabID, travelInvoiceSourceID, travelInvoiceDestinationID, travelInvoiceStartTimeDate, travelInvoicePrice, travelInvoiceDistance);
-		
-		bookingID = customerDelegate.calculateTravel(travelInvoice, 0);
-		
-		source = sharedDelegate.findLocation(travelInvoiceSourceID);
-		sourceZipCode = customerDelegate.extractLocation(source, 1);
-		
-		destination = sharedDelegate.findLocation(travelInvoiceDestinationID);
-		destinationZipCode = customerDelegate.extractLocation(destination, 1);
-		
-		cab = sharedDelegate.findCabByID(travelInvoiceCabID);
-		
-		driver = sharedDelegate.findDriverByID(travelInvoiceDriverID);
-		
-		postConfirm = new PostConfirm(bookingID, travelInvoiceStartTimeDate, source, destination, driver, cab, travelInvoicePrice);
-		
-		mav = new ModelAndView("rider_dashboard");
-		mav.addObject("postConfirmInvoice", postConfirm);
-		mav.addObject("sourceZip", sourceZipCode);
-		mav.addObject("destinationZip", destinationZipCode);
-		    
-		return mav;
-		
-		
-		}catch(Exception exception) {
+
+			travelInvoice = new TravelInvoice(travelInvoiceCustomerID, travelInvoiceDriverID, travelInvoiceCabID,
+					travelInvoiceSourceID, travelInvoiceDestinationID, travelInvoiceStartTimeDate, travelInvoicePrice,
+					travelInvoiceDistance);
+
+			bookingID = customerDelegate.calculateTravel(travelInvoice, 0);
+
+			source = sharedDelegate.findLocation(travelInvoiceSourceID);
+			sourceZipCode = customerDelegate.extractLocation(source, 1);
+
+			destination = sharedDelegate.findLocation(travelInvoiceDestinationID);
+			destinationZipCode = customerDelegate.extractLocation(destination, 1);
+
+			cab = sharedDelegate.findCabByID(travelInvoiceCabID);
+
+			driver = sharedDelegate.findDriverByID(travelInvoiceDriverID);
+
+			postConfirm = new PostConfirm(bookingID, travelInvoiceStartTimeDate, source, destination, driver, cab,
+					travelInvoicePrice);
+
+			mav = new ModelAndView("rider_dashboard");
+			mav.addObject("postConfirmInvoice", postConfirm);
+			mav.addObject("sourceZip", sourceZipCode);
+			mav.addObject("destinationZip", destinationZipCode);
+
+			return mav;
+
+		} catch (Exception exception) {
 			return null;
 		}
-		
+
 	}
-	
-	
+
 	@RequestMapping(value = "/ride/cancel", method = RequestMethod.POST)
 	@ResponseBody
 	public ModelAndView cancelRide(HttpSession session,
@@ -216,7 +220,6 @@ public class RideController {
 		ArrayList<Address> address = null;
 		ModelAndView mav = null;
 
-
 		try {
 
 			check = sharedDelegate.cancelRide(travelInvoiceBookingID);
@@ -225,7 +228,7 @@ public class RideController {
 
 			mav = new ModelAndView("rider");
 			mav.addObject("addressList", address);
-			    
+
 			return mav;
 
 		} catch (InputMismatchException e) {
@@ -237,8 +240,7 @@ public class RideController {
 		}
 
 	}
-	
-	
+
 	@RequestMapping(value = "/ride/complete", method = RequestMethod.POST)
 	@ResponseBody
 	public ModelAndView completeRide(HttpSession session,
@@ -251,48 +253,47 @@ public class RideController {
 		int driverID = -1;
 		boolean check = false;
 		ModelAndView mav = null;
-		
+
 		try {
 			completeList = new ArrayList<BookingResponse>();
 
-			userPhone = (String)session.getAttribute("userPhone");
-						
+			userPhone = (String) session.getAttribute("userPhone");
+
 			driverID = sharedDelegate.getUserID(userPhone);
-			
+
 			check = sharedDelegate.checkBookingExists(travelInvoiceBookingID, driverID);
-			
-			if(check==true) {
-				
+
+			if (check == true) {
+
 				rideCompleteResponse = driverDelegate.completeRide(travelInvoiceBookingID, driverID);
-				
-				if(rideCompleteResponse.equals(Constants.SUCCESS)) {
+
+				if (rideCompleteResponse.equals(Constants.SUCCESS)) {
 					LOGGER.log(Level.INFO, "Location successfully updated.");
-					
+
 					completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
-					
+
 					mav = new ModelAndView("mytrips_driver");
 					mav.addObject("onCompleteResponse", completeList);
-					    
+
 					return mav;
-					
-				} 
-				
+
+				}
+
 				LOGGER.log(Level.INFO, "Ride completed successfully.");
-				
+
 			}
-				LOGGER.log(Level.INFO, "Error in updating location.");
-				return null;
-			
-		} catch(Exception exception) {
+			LOGGER.log(Level.INFO, "Error in updating location.");
+			return null;
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/ride/rate", method = RequestMethod.POST)
 	@ResponseBody
-	public ModelAndView rateRide(HttpSession session, @RequestParam("travelInvoiceBookingID") int travelInvoiceBookingID, 
-			@RequestParam("rating") float rating) {
+	public ModelAndView rateRide(HttpSession session,
+			@RequestParam("travelInvoiceBookingID") int travelInvoiceBookingID, @RequestParam("rating") float rating) {
 
 		String ratingResponse = "";
 		String userPhone = "";
@@ -300,35 +301,35 @@ public class RideController {
 		ModelAndView mav = null;
 
 		int flag = -1;
-		
+
 		try {
 			completeList = new ArrayList<BookingResponse>();
-		
-			userPhone = (String)session.getAttribute("userPhone");
+
+			userPhone = (String) session.getAttribute("userPhone");
 
 			ratingResponse = sharedDelegate.rateTrip(rating, travelInvoiceBookingID, userPhone);
-			
-			travelInvoiceBookingID = -1;
-			if(ratingResponse.equals(Constants.SUCCESS)) {
-				
-				completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
-								
-				travelInvoiceBookingID = sharedDelegate.checkBookingStatus(userPhone,0);
 
-				if(travelInvoiceBookingID!=(-1)) {
+			travelInvoiceBookingID = -1;
+			if (ratingResponse.equals(Constants.SUCCESS)) {
+
+				completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
+
+				travelInvoiceBookingID = sharedDelegate.checkBookingStatus(userPhone, 0);
+
+				if (travelInvoiceBookingID != (-1)) {
 					mav = new ModelAndView("mytrips_rider_dashboard");
-				}else {
+				} else {
 					mav = new ModelAndView("mytrips_rider");
 				}
 				mav.addObject("onCompleteResponse", completeList);
 				return mav;
 			}
 			return null;
-		}catch(Exception exception) {
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
+
 	@RequestMapping(value = "/ride/cancel", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView cancelRideRedirect(HttpSession session) {
@@ -341,7 +342,7 @@ public class RideController {
 
 			mav = new ModelAndView("rider");
 			mav.addObject("addressList", address);
-			    
+
 			return mav;
 
 		} catch (InputMismatchException e) {
@@ -354,29 +355,27 @@ public class RideController {
 
 	}
 
-	
 	@RequestMapping(value = "/locations", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView displayLocations(HttpSession session) {
-	
+
 		ArrayList<Address> addressList = null;
 		ModelAndView mav = null;
-		
+
 		try {
 			addressList = customerDelegate.displayLocations();
-			
+
 			mav = new ModelAndView("rider");
 			mav.addObject("addressList", addressList);
-			    
+
 			return mav;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
-		
+
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboard/rider", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView displayDashboardRider(HttpSession session) {
@@ -392,9 +391,9 @@ public class RideController {
 		String userPhone = "";
 
 		PostConfirm postConfirm = null;
-		
+
 		try {
-			userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String) session.getAttribute("userPhone");
 			user = sharedDelegate.displayProfile(userPhone);
 
 			mav = new ModelAndView("rider_dashboard");
@@ -413,19 +412,18 @@ public class RideController {
 			mav.addObject("postConfirmInvoice", postConfirm);
 			mav.addObject("sourceZip", zipCodeSource);
 			mav.addObject("destinationZip", zipCodeDestination);
-			    
+
 			return mav;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboard/driver", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView displayDashboardDriver(HttpSession session) {
-	
+
 		ModelAndView mav = null;
 
 		int bookingID = -1;
@@ -436,16 +434,14 @@ public class RideController {
 		String userPhone = "";
 		User user = null;
 
-
 		PostConfirm postConfirm = null;
-		
+
 		try {
-			userPhone = (String)session.getAttribute("userPhone");
+			userPhone = (String) session.getAttribute("userPhone");
 			user = sharedDelegate.displayProfile(userPhone);
 
 			mav = new ModelAndView("driver_dashboard");
 			mav.addObject("userProfile", user);
-
 
 			bookingID = sharedDelegate.checkBookingStatus(userPhone, 1);
 			postConfirm = sharedDelegate.getBookingDetails(bookingID);
@@ -459,430 +455,408 @@ public class RideController {
 			mav.addObject("postConfirmInvoice", postConfirm);
 			mav.addObject("sourceZip", zipCodeSource);
 			mav.addObject("destinationZip", zipCodeDestination);
-			    
+
 			return mav;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
-		
+
 	}
-	
 
 	@RequestMapping(value = "/rider/rides/completed", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView completedRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> completeList = null;
-	
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
 			completeList = new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
-			
+
 			mav = new ModelAndView("mytrips_rider");
 			mav.addObject("onCompleteResponse", completeList);
-			    
+
 			return mav;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
-		}	
+		}
 	}
-	
-	
+
 	@RequestMapping(value = "/driver/rides/completed", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView driverCompletedRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> completeList = null;
-	
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
 			sharedDelegate = new SharedDelegate();
 			completeList = new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
-			
+
 			mav = new ModelAndView("mytrips_driver");
 			mav.addObject("onCompleteResponse", completeList);
-			    
+
 			return mav;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
-		}	
+		}
 	}
-	
-	
+
 	@RequestMapping(value = "/rider/rides/ongoing", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView onGoingRides(HttpSession session) {
-	
+
 		BookingResponse bookingResponse = null;
 		String userPhone = "";
 		ModelAndView mav = null;
-		
+
 		try {
 			sharedDelegate = new SharedDelegate();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 0);
-			
+
 			mav = new ModelAndView("mytrips_rider");
 			mav.addObject("onGoingResponse", bookingResponse);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/driver/rides/ongoing", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView onGoingDriverRides(HttpSession session) {
-	
+
 		BookingResponse bookingResponse = null;
 		String userPhone = "";
 		ModelAndView mav = null;
-		
+
 		try {
 			sharedDelegate = new SharedDelegate();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 1);
-			
+
 			mav = new ModelAndView("mytrips_driver");
 			mav.addObject("onGoingResponse", bookingResponse);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
+
 	@RequestMapping(value = "/dashboard/rider/rides/ongoing", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView onGoingDashboardRides(HttpSession session) {
-	
+
 		BookingResponse bookingResponse = null;
 		String userPhone = "";
 		ModelAndView mav = null;
-		
+
 		try {
 			sharedDelegate = new SharedDelegate();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 0);
-			
+
 			mav = new ModelAndView("mytrips_rider_dashboard");
 			mav.addObject("onGoingResponse", bookingResponse);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboard/driver/rides/ongoing", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView onGoingDriverDashboardRides(HttpSession session) {
-	
+
 		BookingResponse bookingResponse = null;
 		String userPhone = "";
 		ModelAndView mav = null;
-		
+
 		try {
 			sharedDelegate = new SharedDelegate();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			bookingResponse = sharedDelegate.displayBookingDetails(userPhone, 1);
-			
+
 			mav = new ModelAndView("mytrips_driver_dashboard");
 			mav.addObject("onGoingResponse", bookingResponse);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-		
-	
+
 	@RequestMapping(value = "/dashboard/rider/rides/completed", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView CompletedDashboardRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> completeList = null;
-		
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
 			completeList = new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			completeList = sharedDelegate.displayCompletedRides(userPhone, 0);
-			
+
 			mav = new ModelAndView("mytrips_rider_dashboard");
 			mav.addObject("onCompleteResponse", completeList);
-			    
+
 			return mav;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboard/driver/rides/completed", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView CompletedDriverDashboardRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> completeList = null;
-		
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
 			completeList = new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			userPhone = (String) session.getAttribute("userPhone");
+
 			completeList = sharedDelegate.displayCompletedRides(userPhone, 1);
-			
+
 			mav = new ModelAndView("mytrips_driver_dashboard");
 			mav.addObject("onCompleteResponse", completeList);
-			    
+
 			return mav;
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
+
 	@RequestMapping(value = "/dashboard/rider/rides/cancelled", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView CancelledDashboardRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> cancelledList = null;
-		
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
-			cancelledList= new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			cancelledList = new ArrayList<BookingResponse>();
+			userPhone = (String) session.getAttribute("userPhone");
+
 			cancelledList = sharedDelegate.displayCancelledRides(userPhone, 0);
-			
+
 			mav = new ModelAndView("mytrips_rider_dashboard");
 			mav.addObject("onCancelResponse", cancelledList);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
-	
+
 	@RequestMapping(value = "/dashboard/driver/rides/cancelled", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView CancelledDriverDashboardRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> cancelledList = null;
-		
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
-			cancelledList= new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			cancelledList = new ArrayList<BookingResponse>();
+			userPhone = (String) session.getAttribute("userPhone");
+
 			cancelledList = sharedDelegate.displayCancelledRides(userPhone, 1);
-			
+
 			mav = new ModelAndView("mytrips_driver_dashboard");
 			mav.addObject("onCancelResponse", cancelledList);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
 		}
 	}
-	
-	
-	
-	
-	
+
 	@RequestMapping(value = "/rider/rides/cancelled", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView cancelledRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> cancelledList = null;
-		
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
-			cancelledList= new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			cancelledList = new ArrayList<BookingResponse>();
+			userPhone = (String) session.getAttribute("userPhone");
+
 			cancelledList = sharedDelegate.displayCancelledRides(userPhone, 0);
-			
+
 			mav = new ModelAndView("mytrips_rider");
 			mav.addObject("onCancelResponse", cancelledList);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
-		}	
+		}
 	}
-	
-	
+
 	@RequestMapping(value = "/driver/rides/cancelled", method = RequestMethod.GET)
 	@ResponseBody
 	public ModelAndView driverCancelledRides(HttpSession session) {
-	
+
 		ArrayList<BookingResponse> cancelledList = null;
-		
+
 		String userPhone = "";
-		
+
 		ModelAndView mav = null;
-		
+
 		try {
-			cancelledList= new ArrayList<BookingResponse>();
-			userPhone = (String)session.getAttribute("userPhone");
-			
+			cancelledList = new ArrayList<BookingResponse>();
+			userPhone = (String) session.getAttribute("userPhone");
+
 			cancelledList = sharedDelegate.displayCancelledRides(userPhone, 1);
-			
+
 			mav = new ModelAndView("mytrips_driver");
 			mav.addObject("onCancelResponse", cancelledList);
-			    
+
 			return mav;
-			
-			
-		}catch(Exception exception) {
+
+		} catch (Exception exception) {
 			return null;
-		}	
+		}
 	}
-	
+
 	@RequestMapping(value = "/driverratedrides", method = RequestMethod.GET)
 	@ResponseBody
-	public void DriverRatedRides(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws IOException {
-	
+	public void DriverRatedRides(HttpSession session, HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+
 		ArrayList<CompleteRating> ratingCompleteList = null;
 		CompleteRating completeRating = null;
 		String userPhone = "";
-		
-		JSONObject json      = new JSONObject();
-		JSONArray  bookingID = new JSONArray();
+
+		JSONObject json = new JSONObject();
+		JSONArray bookingID = new JSONArray();
 		JSONObject ratedBookingID;
-		
+
 		int size = -1;
 		int i = 0;
 		int flag = 1;
-		
-		try {
-		ratingCompleteList = new ArrayList<CompleteRating>();
 
-		userPhone = (String)session.getAttribute("userPhone");
-		ratingCompleteList = sharedDelegate.displayCompletedRatedRides(userPhone, flag);
-		
-		size = ratingCompleteList.size();
-		
-		for(i=0;i<size;i++) {
-			completeRating = ratingCompleteList.get(i);
-			
-			ratedBookingID = new JSONObject();
-			
-			ratedBookingID.put("bookingID", completeRating.getBookingID());
-			ratedBookingID.put("rating", completeRating.getRating());
-		    bookingID.put(ratedBookingID);
-		}
-		
-		json.put("bookingid", bookingID);
-		
-		}catch(Exception jse) {
-			
+		try {
+			ratingCompleteList = new ArrayList<CompleteRating>();
+
+			userPhone = (String) session.getAttribute("userPhone");
+			ratingCompleteList = sharedDelegate.displayCompletedRatedRides(userPhone, flag);
+
+			size = ratingCompleteList.size();
+
+			for (i = 0; i < size; i++) {
+				completeRating = ratingCompleteList.get(i);
+
+				ratedBookingID = new JSONObject();
+
+				ratedBookingID.put("bookingID", completeRating.getBookingID());
+				ratedBookingID.put("rating", completeRating.getRating());
+				bookingID.put(ratedBookingID);
+			}
+
+			json.put("bookingid", bookingID);
+
+		} catch (Exception jse) {
+
 		}
 		response.setContentType("application/json");
 		response.getWriter().write(json.toString());
-		
+
 	}
-	
-	
+
 	@RequestMapping(value = "/riderratedrides", method = RequestMethod.GET)
 	@ResponseBody
-	public void RiderRatedRides(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws IOException {
-	
+	public void RiderRatedRides(HttpSession session, HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+
 		ArrayList<CompleteRating> ratingCompleteList = null;
 		CompleteRating completeRating = null;
 		String userPhone = "";
-		
-		JSONObject json      = new JSONObject();
-		JSONArray  bookingID = new JSONArray();
+
+		JSONObject json = new JSONObject();
+		JSONArray bookingID = new JSONArray();
 		JSONObject ratedBookingID;
-		
+
 		int size = -1;
 		int i = 0;
 		int flag = 0;
-		
-		try {
-		ratingCompleteList = new ArrayList<CompleteRating>();
 
-		userPhone = (String)session.getAttribute("userPhone");
-		ratingCompleteList = sharedDelegate.displayCompletedRatedRides(userPhone, flag);
-		
-		size = ratingCompleteList.size();
-		
-		for(i=0;i<size;i++) {
-			completeRating = ratingCompleteList.get(i);
-			
-			ratedBookingID = new JSONObject();
-			
-			ratedBookingID.put("bookingID", completeRating.getBookingID());
-			ratedBookingID.put("rating", completeRating.getRating());
-		    bookingID.put(ratedBookingID);
-		}
-		
-		json.put("bookingid", bookingID);
-		
-		}catch(Exception jse) {
-			
+		try {
+			ratingCompleteList = new ArrayList<CompleteRating>();
+
+			userPhone = (String) session.getAttribute("userPhone");
+			ratingCompleteList = sharedDelegate.displayCompletedRatedRides(userPhone, flag);
+
+			size = ratingCompleteList.size();
+
+			for (i = 0; i < size; i++) {
+				completeRating = ratingCompleteList.get(i);
+
+				ratedBookingID = new JSONObject();
+
+				ratedBookingID.put("bookingID", completeRating.getBookingID());
+				ratedBookingID.put("rating", completeRating.getRating());
+				bookingID.put(ratedBookingID);
+			}
+
+			json.put("bookingid", bookingID);
+
+		} catch (Exception jse) {
+
 		}
 		response.setContentType("application/json");
 		response.getWriter().write(json.toString());
-		
+
 	}
 
 }
