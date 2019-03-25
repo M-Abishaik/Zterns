@@ -1,13 +1,35 @@
 package com.zilker.delegate;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
-
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
 import com.zilker.constants.Constants;
+import com.zilker.constants.URLConstants;
 import com.zilker.dao.SharedDAO;
 import com.zilker.bean.BookingResponse;
 import com.zilker.bean.CompleteRating;
@@ -23,14 +45,51 @@ public class SharedDelegate {
 	 * Checks if the login credentials are proper.
 	 */
 
-	public String login(String phone, String password) {
-		SharedDAO sharedDAO = null;
+	public String login(String phone, String password) throws JSONException {
 		String role = "";
-
+		JSONObject json = new JSONObject();
+		json.put("contact", phone);    
+		json.put("password", password);
+		
 		try {
-			sharedDAO = new SharedDAO();
 
-			role = sharedDAO.login(phone, password);
+			String url = "http://localhost:8082/users/login";
+			
+		    URL myurl = new URL(url);
+		    HttpURLConnection con = (HttpURLConnection)myurl.openConnection();
+		    con.setDoOutput(true);
+		    con.setDoInput(true);
+		    
+		    con.setRequestProperty("Content-Type", "application/json");
+		    con.setRequestProperty("Accept", "application/json");
+		    con.setRequestProperty("Method", "POST");
+			
+		    OutputStream os = con.getOutputStream();
+		    os.write(json.toString().getBytes("UTF-8"));
+		    os.close();
+			
+		    
+		    
+		    //StringBuilder sb = new StringBuilder();  
+		    //int HttpResult =con.getResponseCode();
+		 			
+			/*
+			 * if(HttpResult==HttpURLConnection.HTTP_OK){ BufferedReader br = new
+			 * BufferedReader(new InputStreamReader(con.getInputStream(),"utf-8"));
+			 * 
+			 * String line = null; while ((line = br.readLine()) != null) { sb.append(line +
+			 * "\n"); } br.close(); System.out.println(""+sb.toString());
+			 * 
+			 * }
+			 * 
+			 * JSONObject jsonObj = new JSONObject(sb.toString()); String isSuccess =
+			 * jsonObj.getString("isSuccess"); JSONArray jsonObject =
+			 * jsonObj.getJSONArray("responseBody");
+			 * 
+			 * System.out.println(jsonObject.length());
+			 * 
+			 */			
+		    role = sharedDAO.login(phone, password);
 			if (!role.equals("")) {
 				return role;
 			}
@@ -303,15 +362,60 @@ public class SharedDelegate {
 	 */
 
 	public ArrayList<BookingResponse> displayCompletedRides(String userPhone, int flag) {
+		String url = "";
+		String inputLine = "";
+		BufferedReader bufferedReader = null;
+		URL urlObject = null;
+		HttpURLConnection httpURLConnection = null;
+		StringBuffer response = null;
 		SharedDAO sharedDAO = null;
 		ArrayList<BookingResponse> completedRides = null;
 		int userID = -1;
+		BookingResponse bookingResponse = null;
+		String driver = "";
+		String cab = "";
+		String source = "";
+		String destination = "";
+		String startTime = "";
+		int bookingID = -1;
+		float price = 0.0f;
 
 		try {
 			completedRides = new ArrayList<BookingResponse>();
 			userID = getUserID(userPhone);
 			sharedDAO = new SharedDAO();
-			completedRides = sharedDAO.displayCompletedRides(userID, flag);
+
+			url = URLConstants.RIDER_RIDES_COMPLETED + userPhone;
+			urlObject = new URL(url);
+			httpURLConnection = (HttpURLConnection) urlObject.openConnection();
+			httpURLConnection.setRequestMethod("GET");
+
+			bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream()));
+			response = new StringBuffer();
+
+			while ((inputLine = bufferedReader.readLine()) != null) {
+				response.append(inputLine);
+			}
+			bufferedReader.close();
+
+			JSONObject jsonObj = new JSONObject(response.toString());
+			String isSuccess = jsonObj.getString("isSuccess");
+			JSONArray jsonObject = jsonObj.getJSONArray("responseBody");
+
+			for (int i = 0; i < jsonObject.length(); i++) {
+				JSONObject row = jsonObject.getJSONObject(i);
+
+				bookingID = row.getInt("bookingID");
+				driver = row.getString("driver");
+				cab = row.getString("cab");
+				source = row.getString("source");
+				destination = row.getString("destination");
+				startTime = row.getString("startTime");
+				price = Float.parseFloat(row.getString("price"));
+
+				bookingResponse = new BookingResponse(bookingID, driver, cab, source, destination, startTime, price);
+				completedRides.add(bookingResponse);
+			}
 
 			return completedRides;
 		} catch (Exception e) {

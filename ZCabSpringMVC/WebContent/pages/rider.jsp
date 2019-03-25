@@ -34,9 +34,9 @@
 <body onload="riderviewbook()" id="rider">
 	<%
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-		if (session.getAttribute("userPhone") == null) {
-			response.sendRedirect("http://localhost:8081/ZilkerBukCab/index.jsp");
-		}
+			if (session.getAttribute("userPhone") == null) {
+		response.sendRedirect("http://localhost:8081/ZilkerBukCab/index.jsp");
+			}
 	%>
 
 	<header>
@@ -65,33 +65,33 @@
 
 				<%
 					ArrayList<Address> address = null;
-					Address object = null;
-					int size = -1;
-					String userPhone = "";
-					int i = 0;
+							Address object = null;
+							int size = -1;
+							String userPhone = "";
+							int i = 0;
 
-					try {
-						address = new ArrayList<Address>();
-						address = (ArrayList<Address>) request.getAttribute("addressList");
-						userPhone = (String) session.getAttribute("userPhone");
+							try {
+								address = new ArrayList<Address>();
+								address = (ArrayList<Address>) request.getAttribute("addressList");
+								userPhone = (String) session.getAttribute("userPhone");
 
-						size = address.size();
-						for (i = 0; i < size; i++) {
-							object = address.get(i);
+								size = address.size();
+								for (i = 0; i < size; i++) {
+									object = address.get(i);
 				%>
 
 				<option><%=object.getAddress() + ", " + object.getZipCode()%></option>
 				<%
 					}
-					} catch (Exception exception) {
-					}
+							} catch (Exception exception) {
+							}
 				%>
 			</select> <label>Destination</label><select id="destination"
 				style="width: 60%" name="destination" required>
 
 				<%
 					for (i = 0; i < size; i++) {
-						object = address.get(i);
+								object = address.get(i);
 				%>
 				<option><%=object.getAddress() + ", " + object.getZipCode()%></option>
 				<%

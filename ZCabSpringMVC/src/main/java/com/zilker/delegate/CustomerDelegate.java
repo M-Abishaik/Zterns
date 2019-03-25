@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zilker.bean.Address;
@@ -14,6 +15,18 @@ import com.zilker.dao.TaxiDAO;
 
 @Service
 public class CustomerDelegate {
+	
+	@Autowired
+	SharedDelegate sharedDelegate;
+	
+	@Autowired
+	CustomerDAO customerDAO;
+	
+	@Autowired
+	TaxiDAO taxiDAO;
+
+	
+	
 
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -23,12 +36,10 @@ public class CustomerDelegate {
 
 	public ArrayList<Address> displayLocations() {
 
-		CustomerDAO customerDAO = null;
 		ArrayList<Address> address = null;
 
 		try {
 			address = new ArrayList<Address>();
-			customerDAO = new CustomerDAO();
 			address = customerDAO.displayLocations();
 
 			return address;
@@ -68,10 +79,8 @@ public class CustomerDelegate {
 	public int findLocationID(String location, String zipCode) {
 
 		int locationID = -1;
-		CustomerDAO customerDAO = null;
 
 		try {
-			customerDAO = new CustomerDAO();
 			locationID = customerDAO.findLocationID(location, zipCode);
 
 			return locationID;
@@ -87,12 +96,10 @@ public class CustomerDelegate {
 
 	public int findNearestCab(String zipCode, int flag) {
 
-		CustomerDAO customerDAO = null;
 		int cabID = -1;
 		int driverID = -1;
 
 		try {
-			customerDAO = new CustomerDAO();
 			driverID = customerDAO.findNearestDriver(zipCode, flag);
 
 			if (driverID != (-1)) {
@@ -114,10 +121,8 @@ public class CustomerDelegate {
 
 	public int getDriverID(int cabID) {
 		int driverID = -1;
-		CustomerDAO customerDAO = null;
 
 		try {
-			customerDAO = new CustomerDAO();
 			driverID = customerDAO.getDriverID(cabID);
 
 			return driverID;
@@ -133,11 +138,9 @@ public class CustomerDelegate {
 
 	public String checkCabSeats(int nearestCab, int seats) {
 		int modelID = -1;
-		CustomerDAO customerDAO = null;
 		boolean check = false;
 
 		try {
-			customerDAO = new CustomerDAO();
 			modelID = customerDAO.getModelID(nearestCab);
 
 			if (modelID != (-1)) {
@@ -167,12 +170,7 @@ public class CustomerDelegate {
 		int bookingID = -1;
 		String zipCode = "";
 
-		SharedDelegate sharedDelegate = null;
-		TaxiDAO taxiDAO = null;
-
 		try {
-			taxiDAO = new TaxiDAO();
-			sharedDelegate = new SharedDelegate();
 
 			if (flag == 0) {
 				bookingID = insertRideDetails(travelInvoice);
@@ -205,10 +203,8 @@ public class CustomerDelegate {
 	public int insertRideDetails(TravelInvoice invoice) {
 
 		int bookingID = -1;
-		CustomerDAO customerDAO = null;
 
 		try {
-			customerDAO = new CustomerDAO();
 			bookingID = customerDAO.insertRideDetails(invoice);
 
 			return bookingID;
@@ -224,9 +220,7 @@ public class CustomerDelegate {
 
 	public void updateRideDetails(TravelInvoice invoice) {
 
-		CustomerDAO customerDAO = null;
 		try {
-			customerDAO = new CustomerDAO();
 			customerDAO.updateRideDetails(invoice);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error in updating ride details.");

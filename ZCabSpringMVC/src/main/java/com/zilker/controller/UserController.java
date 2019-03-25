@@ -207,7 +207,6 @@ public class UserController {
 		ModelAndView mav = null;
 
 		try {
-			addressList = customerDelegate.displayLocations();
 			user = new User();
 
 			registerMail = registerMail.toLowerCase();
